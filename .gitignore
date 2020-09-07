@@ -1,0 +1,57 @@
+#build folder
+build
+
+#Prequisites
+*.d
+
+#binaries
+*.bin
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+#VISUAL STUDIO
+*.vscode
+*-workspace
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.appe
+
+#Temporaries
+*~
+
+#Solver outputfiles
+*.dat
+*.vtu
+*.vtr
+*.h5
+
+
+#Latex temp files
+*.log
+*.aux
+*.synctex*

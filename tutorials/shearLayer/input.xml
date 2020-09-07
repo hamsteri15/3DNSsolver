@@ -1,0 +1,83 @@
+<?xml version="1.0" ?>
+<Input>
+   
+    <Geometry>
+        	<Dim>2				</Dim>
+		<Lx>1.0				</Lx>
+		<Ly>1.0				</Ly>
+		<Lz>1.0				</Lz>
+    </Geometry>
+
+    <Grid>
+		<Nx> 100 </Nx>
+		<Ny> 100 </Ny>
+		<Nz> 1 </Nz>
+    </Grid>
+
+    <FluidProperties>
+		<Mu> 1E-4 </Mu>
+		<Pr> 0.71 </Pr>
+		<Gamma> 1.4 </Gamma>
+    </FluidProperties>
+
+	<Time>
+		<EndT> 5.0 </EndT>
+		<CFLmax> 0.4 </CFLmax>
+    </Time>
+
+	<OutputProperties>
+		<FileFormat>		Binary		</FileFormat>
+		<OutputInterval> 100 </OutputInterval>
+  </OutputProperties>
+
+	<InitialConditions>
+		<Case> shear_xy	</Case>
+    </InitialConditions>
+
+  
+	<BoundaryConditions>
+		<West> Periodic </West>
+		<East> Periodic </East>
+		<North> Periodic  </North>
+		<South> Periodic </South>
+		<Front> Periodic </Front>
+		<Back> Periodic </Back>
+    </BoundaryConditions>
+	
+
+	<!--
+	<BoundaryConditions>
+		<West> Neumann </West>
+		<East> Neumann </East>
+		<North> Neumann  </North>
+		<South> Neumann </South>
+		<Front> Neumann </Front>
+		<Back> Neumann </Back>
+    </BoundaryConditions>
+	-->
+
+
+	<NumericalSchemes>
+
+			<ConvectionScheme> 
+				<Scheme> Weno </Scheme>
+				<Order> 5 </Order>
+				<CharacteristicSpace> 0 </CharacteristicSpace>
+				<WeightType> Shu </WeightType>
+				<RiemannSolver> LaxFriedrichs </RiemannSolver> 
+			</ConvectionScheme>
+			
+			<DiffusionScheme> 
+					<Scheme> Centered </Scheme> 
+					<Order> 6 </Order>
+			</DiffusionScheme>
+		
+	</NumericalSchemes>
+
+	<DomainDecomposition>
+		<NprocX> 2 </NprocX>
+		<NprocY> 2 </NprocY>
+		<NprocZ> 1 </NprocZ>
+    </DomainDecomposition>
+
+</Input>
