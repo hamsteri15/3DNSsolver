@@ -3,7 +3,7 @@
 #include <cmath> //sqrt
 #include <cstring> //std::memcpy
 #include <algorithm> //std::max
-
+#include <vector>
 
 #include "containers/array_3d.hpp"
 #include "containers/array_4d.hpp"

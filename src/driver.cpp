@@ -70,7 +70,7 @@ void Driver::run(){
        
 		output_info.update(time, iter);
 
-		writer.write(output_info, grid, domain, decomposition, communicator, parameters );
+		//writer.write(output_info, grid, domain, decomposition, communicator, parameters );
 		
 		time_integrator.step(domain, grid, communicator, convection_operator, diffusion_operator);
 
