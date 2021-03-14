@@ -9,7 +9,6 @@
 #include <sstream>
 #include <string>
 
-
 class OutputInfo {
 
 public:

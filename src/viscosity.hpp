@@ -2,9 +2,9 @@
 #define Viscosity_hh
 #include <cmath> //sqrt
 
+#include "./params.hpp"
 #include "containers/array_3d.hpp"
 #include "containers/array_4d.hpp"
-#include "./params.hpp"
 
 class Viscosity {
 

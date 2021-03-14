@@ -1,33 +1,17 @@
-#include <iostream>
 #include "driver.hpp"
+#include <iostream>
 
+int main() {
 
-
-
-
-
-
-int main()
-{
-  
-
-
-	// Initialize the MPI environment
+    // Initialize the MPI environment
     MPI_Init(NULL, NULL);
 
+    Driver driver = Driver();
 
-	Driver driver = Driver();
+    driver.run();
 
-	
-	driver.run();
-	
-	
-	// Finalize the MPI environment.
+    // Finalize the MPI environment.
     MPI_Finalize();
-	
-	return 0;
-	
-  
+
+    return 0;
 }
-
-
