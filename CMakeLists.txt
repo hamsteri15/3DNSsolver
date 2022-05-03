@@ -17,20 +17,7 @@ target_compile_features(project_options INTERFACE cxx_std_11)
 #target_compile_features(project_options INTERFACE cxx_std_20)
 
 
-#Global compiler flags
 
-set(OptimizationFlags
-    -pedantic 
-    -msse3 
-    -mavx 
-    -mfpmath=sse 
-    -O3
-    -ffast-math 
-    -march=native 
-    -ftree-vectorize 
-)
-
-add_compile_options(${OptimizationFlags})
 
 
 
@@ -49,20 +36,19 @@ include(cmake/StaticAnalyzers.cmake)
 
 
 #Configure MPI
-FIND_PACKAGE(MPI REQUIRED)
-MESSAGE("STATUS MPI FOUND: ${MPI_CXX_FOUND}")
+#FIND_PACKAGE(MPI REQUIRED)
+#MESSAGE("STATUS MPI FOUND: ${MPI_CXX_FOUND}")
 
 
 #Configure HDF5
 #SET(HDF5_FIND_DEBUG true)
-SET(HDF5_PREFER_PARALLEL true)
-FIND_PACKAGE(HDF5 REQUIRED)
-MESSAGE(STATUS "Found HDF5: ${HDF5_FOUND}")
-MESSAGE(STATUS "HDF5 is parallel: ${HDF5_IS_PARALLEL}")
-MESSAGE(STATUS "Prefer parallel: ${HDF5_PREFER_PARALLEL}")
+#SET(HDF5_PREFER_PARALLEL true)
+#FIND_PACKAGE(HDF5 REQUIRED)
+#MESSAGE(STATUS "Found HDF5: ${HDF5_FOUND}")
+#MESSAGE(STATUS "HDF5 is parallel: ${HDF5_IS_PARALLEL}")
+#MESSAGE(STATUS "Prefer parallel: ${HDF5_PREFER_PARALLEL}")
 
 
-option(BUILD_SHARED_LIBS "Enable compilation of shared libraries" OFF)
 option(ENABLE_TESTING "Enable Test Builds" ON)
 
 #Configure OpenMP
@@ -86,5 +72,12 @@ INCLUDE_DIRECTORIES(src)
 ADD_SUBDIRECTORY(src)
 
 
+if(ENABLE_TESTING)
+  enable_testing()
+  message(
+    "Building Tests."
+  )
+  add_subdirectory(test)
+endif()
 
 
