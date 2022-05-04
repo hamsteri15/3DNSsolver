@@ -2,10 +2,11 @@
 A 3D N-S solver with MPI (distributed) and OpenMP (shared) parallelism support
 
 ##  Build
-    mkdir build
-    cd build
-    cmake ..
-    make
+git submodule update --init --recursive
+mkdir build
+cd build
+cmake ..
+make
 
 
 
