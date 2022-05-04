@@ -10,8 +10,8 @@ set(Sources
 add_library(convection ${Sources} ${Headers})
 
 target_include_directories(convection PUBLIC
-                            ${CMAKE_SOURCE_DIR}/libs/
-                            ${MPI_CXX_INCLUDE_PATH}
+                            ${CMAKE_SOURCE_DIR}/external/
+                            #${MPI_CXX_INCLUDE_PATH}
                           )
 
 target_link_libraries(convection PUBLIC 
