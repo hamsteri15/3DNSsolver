@@ -94,63 +94,20 @@ public:
 
 };
 
-/*
-namespace std {
-    template <typename T, typename U>
-    struct tuple_size<boost::tuples::cons<T, U>>
-        : boost::tuples::length<boost::tuples::cons<T, U>>
-    { };
 
-    template <size_t I, typename T, typename U>
-    struct tuple_element<I, boost::tuples::cons<T, U>>
-        : boost::tuples::element<I, boost::tuples::cons<T, U>>
-    { };
-}
-
-template<class Tuple>
-decltype(auto) sum_components(Tuple const& tuple) {
-  auto sum_them = [](auto const&... e)->decltype(auto) {
-    return (e+...);
-  };
-  return std::apply( sum_them, tuple );
-};
-*/
-
-namespace detail {
-template <class F, class Tuple, std::size_t... I>
-constexpr decltype(auto) apply_impl(F&& f, Tuple&& t, std::index_sequence<I...>)
-{
-    // This implementation is valid since C++20 (via P1065R2)
-    // In C++17, a constexpr counterpart of std::invoke is actually needed here
-    return std::invoke(std::forward<F>(f), topaz::get<I>(std::forward<Tuple>(t))...);
-}
-}  // namespace detail
-
-template <class F, class Tuple>
-constexpr decltype(auto) apply(F&& f, Tuple&& t)
-{
-    return detail::apply_impl(
-        std::forward<F>(f), std::forward<Tuple>(t),
-        std::make_index_sequence<std::tuple_size_v<std::remove_reference_t<Tuple>>>{});
-}
+template <size_t N> auto dot(const vectorField<N>& lhs, const vectorField<N>& rhs) {
 
 
+    const auto tmp = lhs * rhs;
 
+    const auto size = lhs.size();
 
-template <size_t N> scalarField dot(const vectorField<N>& lhs, const vectorField<N>& rhs) {
+    auto first = topaz::slice(tmp, size_t(0), size);
 
+    for (size_t i = 1; i < N; ++i){
+        first = first + topaz::slice(tmp, size_t(0)*i, (i+1)*size);
+    }
 
-    vectorField<N> tmp = lhs * rhs;
-
-    auto tuple_sum = [](const auto& tpl){
-        auto sum = [](auto l, auto r) {return l + r;};
-        return apply(sum, tpl);
-    };
-
-    scalarField result(lhs.size(), 0);
-
-    std::transform(tmp.zipped_begin(), tmp.zipped_end(), result.begin(), tuple_sum);
-
-    return result;
+    return first;
 
 }
