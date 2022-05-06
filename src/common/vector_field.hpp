@@ -19,7 +19,7 @@ template <typename tuple_t> constexpr auto make_array(tuple_t&& tuple) {
 ///
 ///@brief A field of N-dimensional vectors where the storage is allocated as a single large chunk
 ///(Struct-of-arrays-style). Although indexing is supported, assigning in a elementwise manner
-///should be avoided. Instead, use functions get_components() / set_components(f) 
+///should be avoided. Instead, use functions get_components() / set_components(f)
 ///
 ///@tparam N dimension of each individual vector
 ///
@@ -46,11 +46,11 @@ public:
     ///
     ///@brief Construct from an expression type to allow operator oveloads to be evaluated lazily
     ///
-    ///@tparam Expr 
+    ///@tparam Expr
     ///@param expr A range expression
     ///
     template<Expression_c Expr>
-    vectorField(const Expr& expr) : parent(expr) {} 
+    vectorField(const Expr& expr) : parent(expr) {}
 
     ///
     ///@brief Returns the number of vector elements in the field
@@ -67,7 +67,7 @@ public:
     ///@return range of components
     ///
     auto get_components(size_t i) { this->get_chunk(i); }
-    
+
     ///
     ///@brief Non-modifyable view to all i-th components of the individual vector elements
     ///
@@ -84,12 +84,12 @@ public:
     ///
     ///@brief Given a range of values, sets the i-th component of the individual vector elements
     ///
-    ///@tparam Range 
+    ///@tparam Range
     ///@param i the component index
     ///@param f the values to set as the components
     ///
     template<class Range>
-    void set_components(size_t i, const Range& f) {set_chunk(i, f);} 
+    void set_components(size_t i, const Range& f) {set_chunk(i, f);}
 
 
 };
@@ -116,73 +116,41 @@ decltype(auto) sum_components(Tuple const& tuple) {
 };
 */
 
+namespace detail {
+template <class F, class Tuple, std::size_t... I>
+constexpr decltype(auto) apply_impl(F&& f, Tuple&& t, std::index_sequence<I...>)
+{
+    // This implementation is valid since C++20 (via P1065R2)
+    // In C++17, a constexpr counterpart of std::invoke is actually needed here
+    return std::invoke(std::forward<F>(f), topaz::get<I>(std::forward<Tuple>(t))...);
+}
+}  // namespace detail
+
+template <class F, class Tuple>
+constexpr decltype(auto) apply(F&& f, Tuple&& t)
+{
+    return detail::apply_impl(
+        std::forward<F>(f), std::forward<Tuple>(t),
+        std::make_index_sequence<std::tuple_size_v<std::remove_reference_t<Tuple>>>{});
+}
+
+
+
+
 template <size_t N> scalarField dot(const vectorField<N>& lhs, const vectorField<N>& rhs) {
 
-    (void) lhs;
-    (void) rhs;    
-    /*
+
     vectorField<N> tmp = lhs * rhs;
 
-    auto begins = tmp.zipped_begin();
-    auto ends = tmp.zipped_end();
-
-    
-    auto sum = [](auto tpl) {
-        (void) tpl;
+    auto tuple_sum = [](const auto& tpl){
+        auto sum = [](auto l, auto r) {return l + r;};
+        return apply(sum, tpl);
     };
 
-    std::transform(begins, ends, result.begin(), sum);
-    */    
-    
     scalarField result(lhs.size(), 0);
+
+    std::transform(tmp.zipped_begin(), tmp.zipped_end(), result.begin(), tuple_sum);
 
     return result;
 
-    //auto tpl = tmp.get_all_components();
-    //return scalarField(lhs.size(), 0);
-
-
-
-    /*
-    auto sum = [](auto const&... e) -> decltype(auto){
-        return (e+...);
-    };
-    auto expr = boost::detail::apply(sum, tpl);
-
-    //auto result = sum_components(tpl);
-    (void) expr;
-    //auto array = make_array(tpl);
-    */
-
-
-    //return scalarField(result);
-    /*
-    return scalarField(10, 1);
-
-    auto tpl = get_all_chunks()
-    */
-
-
-
-
-
-    /*
-    using iterator = decltype(mult.begin());
-
-    std::array<iterator, N> begins;
-    std::array<iterator, N> ends;
-    for (size_t i = 0; i < N; ++i){
-        begins[i] = mult.begin() + i * lhs.size()
-    }
-    */
-
-    /*
-
-    scalarField ret(mult.size(), 0);
-
-    for (size_t i = 0; i < N; ++i){
-        ret = ret + mult.get_components(i);
-    }
-    */
-    //return ret;
 }

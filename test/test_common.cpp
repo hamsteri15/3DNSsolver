@@ -50,16 +50,17 @@ TEST_CASE("vectorField"){
             vectorField<2> c = a + b;
         }
 
-        
+        /*
         SECTION("dot")
         {
             vectorField<2> a(scalarField(10, 1), scalarField(10, 2));
             vectorField<2> b(scalarField(10, 3), scalarField(10, 4));
 
             scalarField s = dot(a, b);
-            CHECK(s[0] == 1 * 3 + 2 * 4); 
+            CHECK(s[0] == 1 * 3 + 2 * 4);
 
         }
+        */
 
 
 
