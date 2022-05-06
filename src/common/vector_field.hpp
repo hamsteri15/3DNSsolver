@@ -3,9 +3,9 @@
 #include <array>
 
 #include "common/allocator.hpp"
+#include "common/expression.hpp"
 #include "common/scalar.hpp"
 #include "common/scalar_field.hpp"
-#include "common/expression.hpp"
 
 #include "topaz/include/all.hpp"
 
@@ -19,7 +19,7 @@ template <typename tuple_t> constexpr auto make_array(tuple_t&& tuple) {
 ///
 ///@brief A field of N-dimensional vectors where the storage is allocated as a single large chunk
 ///(Struct-of-arrays-style). Although indexing is supported, assigning in a elementwise manner
-///should be avoided. Instead, use functions get_components() / set_components(f)
+/// should be avoided. Instead, use functions get_components() / set_components(f)
 ///
 ///@tparam N dimension of each individual vector
 ///
@@ -49,16 +49,16 @@ public:
     ///@tparam Expr
     ///@param expr A range expression
     ///
-    template<Expression_c Expr>
-    vectorField(const Expr& expr) : parent(expr) {}
+    template <Expression_c Expr>
+    vectorField(const Expr& expr)
+        : parent(expr) {}
 
     ///
     ///@brief Returns the number of vector elements in the field
     ///
     ///@return size_t number of vector elements
     ///
-    size_t size() const {return size_t(this->chunk_size());}
-
+    size_t size() const { return size_t(this->chunk_size()); }
 
     ///
     ///@brief Modifyable view to all i-th components of the individual vector elements
@@ -74,12 +74,10 @@ public:
     ///@param i the component index
     ///@return range of components
     ///
-    auto get_components(size_t i) const {this->get_chunk(i);}
+    auto get_components(size_t i) const { this->get_chunk(i); }
 
-
-    auto get_all_components() {return this->get_all_chunks();}
-    auto get_all_components() const {return this->get_all_chunks();}
-
+    auto get_all_components() { return this->get_all_chunks(); }
+    auto get_all_components() const { return this->get_all_chunks(); }
 
     ///
     ///@brief Given a range of values, sets the i-th component of the individual vector elements
@@ -88,26 +86,23 @@ public:
     ///@param i the component index
     ///@param f the values to set as the components
     ///
-    template<class Range>
-    void set_components(size_t i, const Range& f) {set_chunk(i, f);}
-
-
+    template <class Range> void set_components(size_t i, const Range& f) { set_chunk(i, f); }
 };
 
+template <class Tuple_t> decltype(auto) sum_components(const Tuple_t& tuple) {
+    auto sum_them = [](const auto&... e) -> decltype(auto) { return (e + ...); };
+    return std::apply(sum_them, tuple);
+};
 
 template <size_t N> auto dot(const vectorField<N>& lhs, const vectorField<N>& rhs) {
 
+    vectorField<N> tmp = lhs * rhs;
 
-    const auto tmp = lhs * rhs;
+    const auto components = tmp.get_all_components();
 
-    const auto size = lhs.size();
-
-    auto first = topaz::slice(tmp, size_t(0), size);
-
-    for (size_t i = 1; i < N; ++i){
-        first = first + topaz::slice(tmp, size_t(0)*i, (i+1)*size);
-    }
-
-    return first;
-
+    auto expr = sum_components(components);
+    // Explicit conversion is required here for some reason, otherwise the first component is not
+    // added.
+    // TODO: make it possible to return the expression instead
+    return scalarField(expr);
 }
