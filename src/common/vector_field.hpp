@@ -89,20 +89,12 @@ public:
     template <class Range> void set_components(size_t i, const Range& f) { set_chunk(i, f); }
 };
 
-template <class Tuple_t> decltype(auto) sum_components(const Tuple_t& tuple) {
-    auto sum_them = [](const auto&... e) -> decltype(auto) { return (e + ...); };
-    return std::apply(sum_them, tuple);
-};
 
 template <size_t N> auto dot(const vectorField<N>& lhs, const vectorField<N>& rhs) {
 
-    vectorField<N> tmp = lhs * rhs;
+    const auto tmp = lhs * rhs;
 
-    const auto components = tmp.get_all_components();
+    auto chunk_sum = [](const auto&... e){return (e + ...);};
 
-    auto expr = sum_components(components);
-    // Explicit conversion is required here for some reason, otherwise the first component is not
-    // added.
-    // TODO: make it possible to return the expression instead
-    return scalarField(expr);
+    return topaz::chunked_reduce<N>(tmp, chunk_sum);
 }
