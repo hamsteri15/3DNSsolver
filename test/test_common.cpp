@@ -148,11 +148,12 @@ TEST_CASE("vectorField"){
         SECTION("mag")
         {
             vectorField<2> a(scalarField(10, 1), scalarField(10, 2));
-            vectorField<2> b(scalarField(10, 3), scalarField(10, 4));
 
-            auto s = dot(a, b);
-            CHECK(s[0] == 1 * 3 + 2 * 4);
-            CHECK(s[1] == 1 * 3 + 2 * 4);
+            auto s = mag(a);
+            for (const auto& t : s){
+                REQUIRE(t == std::sqrt(1*1+2*2));
+            }
+
 
         }
 

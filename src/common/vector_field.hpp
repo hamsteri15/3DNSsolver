@@ -31,6 +31,8 @@ private:
 public:
     vectorField() = default;
 
+    vectorField(size_t size) : parent(size, scalar(0)) {}
+
     ///
     ///@brief Construct a new vectorField from pack of scalarFields.
     ///       Example: a vectorField<3> could be constructed from the array of vector components
@@ -88,15 +90,30 @@ public:
     ///@param i the component index
     ///@param f the values to set as the components
     ///
-    template <class Range> void set_components(size_t i, const Range& f) { set_chunk(i, f); }
+    template <class Range> void set_components(size_t i, const Range& f) {this->set_chunk(i, f); }
 };
 
 
+
+
+///
+///@brief Computes the elementwise dot-product of the two input vector fields.
+///
+///@tparam N spatial dimension of the vector fields
+///@param lhs left-hand side vector field
+///@param rhs righ-hand side vector field
+///@return auto a range which can be lazily converted to a scalar field
+///
 template <size_t N> auto dot(const vectorField<N>& lhs, const vectorField<N>& rhs) {
 
     const auto tmp = lhs * rhs;
 
-    auto chunk_sum = [](const auto&... e){return (e + ...);};
+    auto chunk_sum = [](const auto&... e) { return (e + ...); };
 
     return topaz::chunked_reduce<N>(tmp, chunk_sum);
+}
+
+
+template <size_t N> auto mag(const vectorField<N>& f) {
+    return topaz::sqrt(dot(f, f));
 }
