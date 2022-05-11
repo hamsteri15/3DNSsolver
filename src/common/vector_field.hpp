@@ -53,12 +53,14 @@ public:
     vectorField(const Expr& expr)
         : parent(expr) {}
 
+    /*
     ///
     ///@brief Returns the number of vector elements in the field
     ///
     ///@return size_t number of vector elements
     ///
     size_t size() const { return size_t(this->chunk_size()); }
+    */
 
     ///
     ///@brief Modifyable view to all i-th components of the individual vector elements
@@ -66,7 +68,7 @@ public:
     ///@param i the component index
     ///@return range of components
     ///
-    auto get_components(size_t i) { this->get_chunk(i); }
+    auto get_components(size_t i) { topaz::get_chunk(i, *this); }
 
     ///
     ///@brief Non-modifyable view to all i-th components of the individual vector elements
@@ -74,10 +76,10 @@ public:
     ///@param i the component index
     ///@return range of components
     ///
-    auto get_components(size_t i) const { this->get_chunk(i); }
+    auto get_components(size_t i) const { topaz::get_chunk(i, *this); }
 
-    auto get_all_components() { return this->get_all_chunks(); }
-    auto get_all_components() const { return this->get_all_chunks(); }
+    auto get_all_components() { return topaz::to_std_tuple(get_chunks<N>(*this)); }
+    auto get_all_components() const { return topaz::to_std_tuple(get_chunks<N>(*this)); }
 
     ///
     ///@brief Given a range of values, sets the i-th component of the individual vector elements

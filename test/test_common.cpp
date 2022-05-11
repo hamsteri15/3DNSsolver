@@ -106,6 +106,18 @@ TEST_CASE("vectorField"){
                 REQUIRE(t == 6);
             }
 
+
+            SECTION("Ensure scalarfield + vectorField not defined"){
+                /*
+                scalarField s(10, 3);
+                auto sad = a + s;
+                CHECK(sad[0] == 3);
+                */
+               //TODO: this should not compile
+
+            }
+
+
         }
         SECTION("multiplies"){
             vectorField<2> a(scalarField(10, 1), scalarField(10, 2));

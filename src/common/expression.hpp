@@ -5,4 +5,4 @@
 
 
 template<class T>
-concept Expression_c = topaz::IsRangeOrNumericVector_v<T>;
+concept Expression_c = topaz::IsRangeOrNumericArray_v<T>;
