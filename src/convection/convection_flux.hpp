@@ -2,10 +2,6 @@
 
 #include "common/math.hpp"
 
-struct Eos {
-
-    inline auto gamma() { return 1.4; }
-};
 
 template <size_t N>
 inline auto continuity_flux(const scalarField&    rho,

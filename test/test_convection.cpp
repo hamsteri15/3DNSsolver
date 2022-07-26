@@ -4,6 +4,11 @@
 #include "common/scalar_field.hpp"
 #include "common/vector_field.hpp"
 
+struct Eos {
+
+    inline auto gamma() { return 1.4; }
+};
+
 TEST_CASE("1D convection"){
 
     SECTION("continuity"){
@@ -25,6 +30,27 @@ TEST_CASE("1D convection"){
         vectorField<1> normal{Vector<1>{1.0}, Vector<1>{1.0}, Vector<1>{1.0}};
 
         vectorField<1> ret = momentum_flux(rho, p, U, normal);
+
+        //TODO: fixme
+        CHECK(1 == 2);
+
+        print(ret);
+
+//        CHECK(ret[0] == 1.0);
+//        CHECK(ret[1] == 1.0);
+
+    }
+
+    SECTION("energy"){
+        scalarField rho({1.0, 1.0, 1.0});
+        scalarField p({1.0, 1.0, 1.0});
+        vectorField<1> U{Vector<1>{1.0}, Vector<1>{1.0}, Vector<1>{1.0}};
+        vectorField<1> normal{Vector<1>{1.0}, Vector<1>{1.0}, Vector<1>{1.0}};
+
+        scalarField ret = energy_flux(rho, p, U, normal, Eos{});
+
+        //TODO: fixme
+        CHECK(1 == 2);
 
         print(ret);
 
