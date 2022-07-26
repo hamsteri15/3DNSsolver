@@ -16,6 +16,8 @@ TEST_CASE("1D convection"){
         CHECK(ret[0] == 1.0);
         CHECK(ret[1] == 1.0);
 
+        print(ret);
+        print(U);
     }
 
 
