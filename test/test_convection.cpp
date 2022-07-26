@@ -16,9 +16,28 @@ TEST_CASE("1D convection"){
         CHECK(ret[0] == 1.0);
         CHECK(ret[1] == 1.0);
 
-        print(ret);
-        print(U);
     }
+
+    SECTION("momentum"){
+        scalarField rho({1.0, 1.0, 1.0});
+        scalarField p({1.0, 1.0, 1.0});
+        vectorField<1> U{Vector<1>{1.0}, Vector<1>{1.0}, Vector<1>{1.0}};
+        vectorField<1> normal{Vector<1>{1.0}, Vector<1>{1.0}, Vector<1>{1.0}};
+
+        vectorField<1> ret = momentum_flux(rho, p, U, normal);
+
+        print(ret);
+
+//        CHECK(ret[0] == 1.0);
+//        CHECK(ret[1] == 1.0);
+
+    }
+
+
+}
+
+TEST_CASE("2D convection"){
+
 
 
 }
