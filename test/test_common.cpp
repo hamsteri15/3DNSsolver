@@ -1,7 +1,13 @@
 #include "catch.hpp"
 
-#include "common/scalar_field.hpp"
-#include "common/vector_field.hpp"
+#include "common/math.hpp"
+
+TEST_CASE("scalar"){
+
+    CHECK(mag(-3.0) == 3.0);
+    CHECK(mag(2.0) == 2.0);
+
+}
 
 TEST_CASE("scalarField"){
 
@@ -11,16 +17,60 @@ TEST_CASE("scalarField"){
 
     }
 
+    SECTION("mag"){
+        scalarField f(3, 3.0);
+        f[1] = -2;
+        scalarField r = mag(f);
+
+        CHECK(r[0] == 3.0);
+        CHECK(r[1] == 2.0);
+        CHECK(r[2] == 3.0);
+    }
 }
 
-void temp(const std::vector<double>& d) {
-    (void)d;
+
+
+TEST_CASE("Vector"){
+
+    Vector<3> a = {1.0, 2.0, 3.0};
+    Vector<3> b = {1.0, 2.0, 3.0};
+
+    CHECK(a == b);
+    CHECK(a + b == Vector<3>{2.0, 4.0, 6.0});
+    CHECK(dot(a,b) == 1.0 + 2.0*2.0 + 3.0*3.0);
+    CHECK(mag(Vector<3>{1,1,1}) == sqrt(3.0));
+    CHECK(3.0 * a * 1.0 == Vector<3>{3.0, 6.0, 9.0});
 }
 
 
+TEST_CASE("VectorField"){
 
+    SECTION("Constructors"){
 
+    }
 
+    SECTION("Mag"){
+        vectorField<2> f(3);
+        f[0] = Vector<2>{2,0};
+        f[1] = Vector<2>{0,3};
+        auto r = mag(f);
+        CHECK(r[0] == 2.0);
+        CHECK(r[1] == 3.0);
+    }
+
+    SECTION("Dot"){
+        vectorField<2> a{Vector<2>{1,0}, Vector<2>{0, 2}};
+        vectorField<2> b{Vector<2>{1,1}, Vector<2>{1, 2}};
+
+        auto r = dot(a, b);
+        CHECK(r[0] == 1.0);
+        CHECK(r[1] == 4.0);
+
+    }
+
+}
+
+/*
 TEST_CASE("vectorField"){
 
     SECTION("Constructors"){
@@ -107,15 +157,6 @@ TEST_CASE("vectorField"){
             }
 
 
-            SECTION("Ensure scalarfield + vectorField not defined"){
-                /*
-                scalarField s(10, 3);
-                auto sad = a + s;
-                CHECK(sad[0] == 3);
-                */
-               //TODO: this should not compile
-
-            }
 
 
         }
@@ -164,3 +205,4 @@ TEST_CASE("vectorField"){
 
 
 }
+*/

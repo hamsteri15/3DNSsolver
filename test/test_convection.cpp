@@ -4,13 +4,24 @@
 #include "common/scalar_field.hpp"
 #include "common/vector_field.hpp"
 
-TEST_CASE("ConvectionFlux1D"){
+TEST_CASE("1D convection"){
 
-    SECTION("Constructors"){
+    SECTION("continuity"){
+        scalarField rho({1.0, 1.0, 1.0});
+        vectorField<1> U{Vector<1>{1.0}, Vector<1>{1.0}, Vector<1>{1.0}};
+        vectorField<1> normal{Vector<1>{1.0}, Vector<1>{1.0}, Vector<1>{1.0}};
 
-        REQUIRE_NOTHROW(ConvectionFlux1D{});
+        scalarField ret = continuity_flux(rho, U, normal);
+
+        CHECK(ret[0] == 1.0);
+        CHECK(ret[1] == 1.0);
 
     }
+
+
+}
+
+TEST_CASE("ConvectionFlux1D"){
 
     /*
     SECTION("2D") {

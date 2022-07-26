@@ -1,14 +1,67 @@
 #pragma once
 
-#include "common/scalar_soa.hpp"
-#include "common/vector_field.hpp"
+#include "common/math.hpp"
 
-/*
 struct Eos {
 
     inline auto gamma() { return 1.4; }
 };
 
+template <size_t N>
+inline auto continuity_flux(const scalarField&    rho,
+                            const vectorField<N>& U,
+                            const vectorField<N>& normal) {
+
+    const auto q = dot(U, normal);
+    return rho * q;
+}
+
+template <size_t N>
+inline auto momentum_flux(const scalarField&    rho,
+                          const scalarField&    p,
+                          const vectorField<N>& U,
+                          const vectorField<N>& normal) {
+
+    const auto q = dot(U, normal);
+    return rho * q * U + p * normal;
+}
+
+template <size_t N, class EqState>
+inline auto energy_flux(const scalarField&    rho,
+                            const scalarField&    p,
+                            const vectorField<N>& U,
+                            const vectorField<N>& normal,
+                            EqState               eos) {
+
+
+    auto q     = dot(U, normal);
+    auto gamma = eos.gamma();
+    auto c     = sqrt(gamma * p / rho);
+    auto H     = sqr(c) / (gamma - scalar(1)) * 0.5 * mag(U*U);
+
+    return rho * q * H;
+
+}
+/*
+template <size_t N, class EqState>
+inline auto convection_flux(const scalarField&    rho,
+                            const scalarField&    p,
+                            const vectorField<N>& U,
+                            const vectorField<N>& normal,
+                            EqState               eos) {
+
+    auto q     = dot(U, normal);
+    auto gamma = eos.gamma();
+    auto c     = sqrt(gamma * p / rho);
+    auto H     = sqr(c) / (gamma - scalar(1)) * 0.5 * U * U;
+
+
+
+
+}
+*/
+
+/*
 inline auto
 convection_flux(const auto& rho, const auto& p, const auto& U, const auto& normal, auto eos) {
 
@@ -34,6 +87,7 @@ convection_flux(const auto& rho, const auto& p, const auto& U, const auto& norma
 
 }
 */
+
 /*
 void ConvectionFlux::euler_flux_from_primitive(
     const double* W, double* F, double gamma, double normal_x, double normal_y, double normal_z) {
@@ -55,13 +109,3 @@ void ConvectionFlux::euler_flux_from_primitive(
     F[4] = rho * q_n * w + p * normal_z;
 }
 */
-
-struct ConvectionFlux1D : public scalar_soa<3> {
-    enum class Components { cont = size_t(0), x_mom = size_t(1) };
-
-    // ConvectionFlux1D(size_t ads) {}
-};
-
-struct ConvectionFlux2D {};
-
-struct ConvectionFlux3D {};

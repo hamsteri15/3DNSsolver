@@ -1,6 +1,7 @@
 #pragma once
 
 #include "common/scalar.hpp"
+#include "common/vector.hpp"
 
 #ifdef __CUDACC__
 #include <thrust/device_vector.h>
@@ -19,3 +20,6 @@ using allocator_t = std::allocator<T>;
 
 
 using scalar_allocator_t = allocator_t<scalar>;
+
+template<size_t L>
+using vector_allocator_t = allocator_t<Vector<L>>;
