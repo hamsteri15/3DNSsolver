@@ -18,7 +18,6 @@ struct Mag {
 };
 
 struct Dot {
-
     template <class T>
     inline CUDA_HOSTDEV auto operator()(const T& a, const T& b) const
         -> decltype(dot(a,b)) {

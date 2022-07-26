@@ -33,12 +33,15 @@ inline auto energy_flux(const scalarField&    rho,
     auto q     = dot(U, normal);
     auto gamma = eos.gamma();
     auto c     = sqrt(gamma * p / rho);
-    auto H     = sqr(c) / (gamma - scalar(1)) * 0.5 * mag(U*U);
+    auto H     = sqr(c) / (gamma - scalar(1)) * 0.5 * dot(U, U);
 
     return rho * q * H;
 
 }
-/*
+
+
+
+
 template <size_t N, class EqState>
 inline auto convection_flux(const scalarField&    rho,
                             const scalarField&    p,
@@ -46,62 +49,99 @@ inline auto convection_flux(const scalarField&    rho,
                             const vectorField<N>& normal,
                             EqState               eos) {
 
-    auto q     = dot(U, normal);
-    auto gamma = eos.gamma();
-    auto c     = sqrt(gamma * p / rho);
-    auto H     = sqr(c) / (gamma - scalar(1)) * 0.5 * U * U;
+
+    const auto con = continuity_flux(rho, U, normal);
+    const auto ene = energy_flux(rho, p, U, normal, eos);
+    const auto mom = momentum_flux(rho, p, U, normal);
+
+    auto tuple_begin = topaz::adl_make_tuple(con.begin(), ene.begin(), mom.begin());
+    auto tuple_end = topaz::adl_make_tuple(con.end(), ene.end(), mom.end());
 
 
+    auto op = [](const auto& tpl){
+        Vector<N+2> ret;
+        ret[0] = topaz::get<0>(tpl);
+        ret[1] = topaz::get<1>(tpl);
 
+        Vector<N> v = topaz::get<2>(tpl);
 
-}
-*/
+        for (size_t i = 0; i < N; ++i){
+            ret[i + 2] = v[i];
+        }
+        return ret;
+    };
 
-/*
-inline auto
-convection_flux(const auto& rho, const auto& p, const auto& U, const auto& normal, auto eos) {
+    auto rng = topaz::transform(topaz::ZipRange(tuple_begin, tuple_end), op);
 
-    auto q     = dot(U, normal);
-    auto gamma = eos.gamma();
-    auto c     = sqrt(gamma * p / rho);
-    auto H     = sqr(c) / (gamma - scalar(1)) * 0.5 * U * U;
-
-    auto cont = rho * q;
-    auto ene  = rho * q * H;
-    auto mom(rho * q * U + p * normal);
-
-    static constexpr size_t N = 2; //topaz::chunk_count(U);
-
-    vectorField<N + size_t(2)> ret(rho.size());
-
-    ret.set_components(0, cont);
-    ret.set_components(1, ene);
-    for (size_t i = 0; i < N; ++i){
-        ret.set_components(i + 2, topaz::get_chunk(i, mom));
-    }
-    return ret;
+    return vectorField<N + 2>(rng);
 
 }
-*/
 
-/*
-void ConvectionFlux::euler_flux_from_primitive(
-    const double* W, double* F, double gamma, double normal_x, double normal_y, double normal_z) {
 
-    const double rho = W[0];
-    const double p   = W[1];
-    const double u   = W[2];
-    const double v   = W[3];
-    const double w   = W[4];
+template <size_t N, class EqState>
+inline auto max_eigenvalue(const scalarField&    rho,
+                            const scalarField&    p,
+                            const vectorField<N>& U,
+                            const vectorField<N>& normal,
+                            EqState               eos) {
 
-    const double q_n = u * normal_x + v * normal_y + w * normal_z;          // projected velocity
-    const double c = sqrt(gamma * p / rho);                                 // sound speed
-    const double H = c * c / (gamma - 1.0) + 0.5 * (u * u + v * v + w * w); // enthalpy
+    const auto q = dot(U, normal);
+    const auto c   = sqrt(eos.gamma() * p / rho);
 
-    F[0] = rho * q_n;
-    F[1] = rho * q_n * H;
-    F[2] = rho * q_n * u + p * normal_x;
-    F[3] = rho * q_n * v + p * normal_y;
-    F[4] = rho * q_n * w + p * normal_z;
+    const auto eig1 = mag(q - c);
+    const auto eig2 = mag(q + c);
+    return max(eig1, eig2);
+
 }
-*/
+//W = [rho, p, u]
+//U = [rho, rho*E, rho*u]
+template <size_t N, class EqState>
+inline auto primitive_to_conservative(const scalarField&    rho,
+                            const scalarField&    p,
+                            const vectorField<N>& U,
+                            EqState               eos) {
+
+
+    const auto E = p / ((eos.gamma()-1.0)*rho) + 0.5*dot(U, U);
+
+    const auto rhoE = rho * E;
+    const auto rhoU = rho * U;
+
+    auto begin = topaz::adl_make_tuple(rho.begin(), rhoE.begin(), rhoU.begin());
+    auto end = topaz::adl_make_tuple(rho.end(), rhoE.end(), rhoU.end());
+
+    auto op = [](const auto& tpl){
+        Vector<N + 2> ret;
+        ret[0] = topaz::get<0>(tpl);
+        ret[1] = topaz::get<1>(tpl);
+
+        Vector<N> v = topaz::get<2>(tpl);
+        for (size_t i = 0; i < N; ++i){
+            ret[i + 2] = v[i];
+        }
+        return ret;
+    };
+
+    auto rng = topaz::transform(topaz::ZipRange(begin, end), op);
+
+    return vectorField<N + 2>(rng);
+
+}
+
+
+template <size_t N, class EqState>
+inline auto lax_friedrichs_flux(const scalarField&    rho,
+                            const scalarField&    p,
+                            const vectorField<N>& U,
+                            const vectorField<N>& normal,
+                            EqState               eos) {
+
+    const auto F = convection_flux(rho, p, U, normal, eos);
+    const auto alpha = max_eigenvalue(rho, p, U, normal, eos);
+    const auto cons = primitive_to_conservative(rho, p, U, eos);
+    const vectorField<N+2> fl = 0.5*(F + alpha*cons);
+    const vectorField<N+2> fr = 0.5*(F - alpha*cons);
+
+    return std::make_tuple(fl, fr);
+
+}
