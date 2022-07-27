@@ -39,6 +39,7 @@ TEST_CASE("1D tests"){
         CHECK(ret[1] == Vector<1>{2.0});
         CHECK(ret[2] == Vector<1>{2.0});
 
+
     }
 
     SECTION("energy"){
