@@ -2,44 +2,28 @@
 
 #include "common/math.hpp"
 
-
-template <size_t N>
-inline auto continuity_flux(const scalarField&    rho,
-                            const vectorField<N>& U,
-                            const vectorField<N>& normal) {
+inline auto continuity_flux(const auto& rho, const auto& U, const auto& normal) {
 
     const auto q = dot(U, normal);
     return rho * q;
 }
 
-template <size_t N>
-inline auto momentum_flux(const scalarField&    rho,
-                          const scalarField&    p,
-                          const vectorField<N>& U,
-                          const vectorField<N>& normal) {
+inline auto momentum_flux(const auto& rho, const auto& p, const auto& U, const auto& normal) {
 
     const auto q = dot(U, normal);
     return rho * q * U + p * normal;
 }
 
-template <size_t N, class EqState>
-inline auto energy_flux(const scalarField&    rho,
-                            const scalarField&    p,
-                            const vectorField<N>& U,
-                            const vectorField<N>& normal,
-                            EqState               eos) {
-
+inline auto
+energy_flux(const auto& rho, const auto& p, const auto& U, const auto& normal, auto eos) {
 
     auto q     = dot(U, normal);
     auto gamma = eos.gamma();
     auto c     = sqrt(gamma * p / rho);
-    auto H     = sqr(c) / (gamma - scalar(1)) * 0.5 * dot(U, U);
+    auto H     = (c * c) / (gamma - scalar(1)) * 0.5 * dot(U, U);
 
     return rho * q * H;
-
 }
-
-
 
 
 template <size_t N, class EqState>
@@ -102,9 +86,8 @@ inline auto primitive_to_conservative(const scalarField&    rho,
                             EqState               eos) {
 
 
-    const auto E = p / ((eos.gamma()-1.0)*rho) + 0.5*dot(U, U);
-
-    const auto rhoE = rho * E;
+    const auto kin = 0.5 * rho * dot(U,U);
+    const auto rhoE = p /(eos.gamma() - 1.0) + kin;
     const auto rhoU = rho * U;
 
     auto begin = topaz::adl_make_tuple(rho.begin(), rhoE.begin(), rhoU.begin());
