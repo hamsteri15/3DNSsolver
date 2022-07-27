@@ -46,7 +46,6 @@ requires field_c<T>
 inline constexpr CUDA_HOSTDEV auto dot(const T& lhs, const Vector<N>& rhs){
     auto rng = make_constant_range(rhs, lhs.size());
     return transform(lhs, rng, Dot{});
-    //return smart_tranform(lhs, rhs, Dot{});
 }
 
 

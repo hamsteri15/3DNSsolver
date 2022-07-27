@@ -1,6 +1,7 @@
 #include "catch.hpp"
 
 #include "common/math.hpp"
+#include "common/mdspan.hpp"
 
 TEST_CASE("scalar"){
 
@@ -206,3 +207,28 @@ TEST_CASE("vectorField"){
 
 }
 */
+
+
+
+TEST_CASE("mdspan tests"){
+
+
+    SECTION("make_span"){
+
+        scalarField f(10, 1.0);
+
+        auto span = make_span(f, stdex::extents{2,5});
+
+        CHECK(span(0, 3) == 1.0);
+        CHECK(span(1, 4) == 1.0);
+        span(1,4) = 43.0;
+        CHECK(span(1,4) == 43.0);
+
+
+
+    }
+
+
+
+
+}
