@@ -212,18 +212,36 @@ TEST_CASE("vectorField"){
 
 TEST_CASE("mdspan tests"){
 
+    SECTION("extents"){
+
+        REQUIRE_NOTHROW(extents<3>{3,3,3});
+
+        std::array<size_t, 3> dims = {3,3,3};
+        REQUIRE_NOTHROW(extents<3>{dims});
+
+        extents<3> a{2,2,2};
+        extents<3> b{2,3,2};
+
+        //auto c = a + b;
+
+    }
+
 
     SECTION("make_span"){
 
         scalarField f(10, 1.0);
 
-        auto span = make_span(f, stdex::extents{2,5});
+        auto span = make_span(f, extents<2>{2,5});
 
         CHECK(span(0, 3) == 1.0);
         CHECK(span(1, 4) == 1.0);
         span(1,4) = 43.0;
         CHECK(span(1,4) == 43.0);
 
+        static_assert(rank(span) == size_t(2), "rank() not found");
+        CHECK(rank(span) == size_t(2));
+
+        CHECK(span(std::array<size_t,2>{1,1}) == 1.0);
 
 
     }
