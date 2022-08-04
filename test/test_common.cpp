@@ -322,6 +322,30 @@ TEST_CASE("mdspan tests"){
     }
     
 
+    SECTION("differentiate"){
+
+        std::vector<int> a(3*4, 1.0);
+        std::vector<int> b(3*4, 1.0);
+        auto aa = make_span(a, extents<2>{3,4});
+        auto bb = make_span(b, extents<2>{3,4});
+
+
+        auto v = md_indices(std::array{1,1}, std::array{2,3});
+
+        std::for_each(
+            std::begin(v),
+            std::end(v),
+            [=] (auto idx){
+                auto [i, j] = idx;
+                aa(i, j) = bb(i-1, j) + bb(i+1, j);
+            } 
+        );
+
+
+
+
+    }
+
 
 
 
