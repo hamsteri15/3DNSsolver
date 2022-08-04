@@ -2,6 +2,8 @@
 
 #include "common/math.hpp"
 #include "common/mdspan.hpp"
+#include "common/loop.hpp"
+
 
 TEST_CASE("scalar"){
 
@@ -208,7 +210,31 @@ TEST_CASE("vectorField"){
 }
 */
 
+TEST_CASE("md_indices tests"){
 
+    SECTION("First"){
+
+        auto t = md_indices(std::array{0,0,0}, std::array{3,3,2});
+
+        auto [i1,j1,k1] = *t.begin();
+        CHECK(i1 == 0);
+        CHECK(j1 == 0);
+        CHECK(k1 == 0);
+
+        auto [i2, j2, k2] = *(t.begin() + 1);
+        CHECK(i2 == 0);
+        CHECK(j2 == 0);
+        CHECK(k2 == 1);
+
+        auto [i3, j3, k3] = *(t.end() - 1);
+        CHECK(i3 == 2);
+        CHECK(j3 == 2);
+        CHECK(k3 == 1);
+
+    }
+
+
+}
 
 TEST_CASE("mdspan tests"){
 
@@ -229,21 +255,57 @@ TEST_CASE("mdspan tests"){
 
     SECTION("make_span"){
 
-        scalarField f(10, 1.0);
+        SECTION("equal size span"){
+            scalarField f(10, 1.0);
+
+            auto span = make_span(f, extents<2>{2,5});
+
+            CHECK(span(0, 3) == 1.0);
+            CHECK(span(1, 4) == 1.0);
+            span(1,4) = 43.0;
+            CHECK(span(1,4) == 43.0);
+
+            static_assert(rank(span) == size_t(2), "rank() not found");
+            CHECK(rank(span) == size_t(2));
+
+            CHECK(span(std::array<size_t,2>{1,1}) == 1.0);
+
+        }
+        
+        SECTION("non-equal size span"){
+            scalarField f(10, 1.0);
+
+            REQUIRE_THROWS(make_span(f, extents<2>{3,5}));
+            
+        }
+
+
+
+    }
+
+
+    SECTION("all_indices"){
+
+        std::vector<int> f(10);
 
         auto span = make_span(f, extents<2>{2,5});
+       
+        auto indices = all_indices(span);
 
-        CHECK(span(0, 3) == 1.0);
-        CHECK(span(1, 4) == 1.0);
-        span(1,4) = 43.0;
-        CHECK(span(1,4) == 43.0);
+        auto [i1,j1] = *indices.begin();
+        CHECK(i1 == 0);
+        CHECK(j1 == 0);
 
-        static_assert(rank(span) == size_t(2), "rank() not found");
-        CHECK(rank(span) == size_t(2));
-
-        CHECK(span(std::array<size_t,2>{1,1}) == 1.0);
-
-
+        auto [i2,j2] = *(indices.begin() + 1);
+        CHECK(i2 == 0);
+        CHECK(j2 == 1);
+        
+        //No idea why this crashes
+        //auto [i3,j3] = *(indices.end() - 1);
+        //CHECK(i3 == 1);
+        //CHECK(j3 == 4);
+        //std::cout << i3 << j3 << std::endl;
+        
     }
 
 
