@@ -290,23 +290,37 @@ TEST_CASE("mdspan tests"){
 
         auto span = make_span(f, extents<2>{2,5});
        
-        auto indices = all_indices(span);
 
-        auto [i1,j1] = *indices.begin();
-        CHECK(i1 == 0);
-        CHECK(j1 == 0);
+        std::vector<index_type> is;
+        std::vector<index_type> js;
 
-        auto [i2,j2] = *(indices.begin() + 1);
-        CHECK(i2 == 0);
-        CHECK(j2 == 1);
-        
-        //No idea why this crashes
-        //auto [i3,j3] = *(indices.end() - 1);
-        //CHECK(i3 == 1);
-        //CHECK(j3 == 4);
-        //std::cout << i3 << j3 << std::endl;
-        
+        for (auto [i, j] : all_indices(span)){
+            is.push_back(i);
+            js.push_back(j);
+        }
+
+        CHECK(is == std::vector<index_type>{0,0,0,0,0,1,1,1,1,1});
+        CHECK(js == std::vector<index_type>{0,1,2,3,4,0,1,2,3,4});
+ 
     }
+
+
+
+    SECTION("index span"){
+        std::vector<int> f(10, 1.0);
+        auto span = make_span(f, extents<2>{2,5});
+
+        for (auto t : all_indices(span)){
+            span(t) = 43;
+        }
+        
+        for (auto t : all_indices(span)){
+            CHECK(span(t) == 43);
+        }
+
+
+    }
+    
 
 
 
