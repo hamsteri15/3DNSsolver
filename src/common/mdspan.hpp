@@ -63,12 +63,7 @@ auto extent_to_array(auto ext){
 
 template<class Extents>
 bool extents_equal_size(size_t size, Extents dims){
-
-    auto arr = extent_to_array(dims);
-    using idx_t = typename decltype(arr)::value_type;
-    auto mult = std::accumulate(arr.begin(), arr.end(), idx_t(1), std::multiplies{});
-    return size_t(mult) == size;
-
+    return size == flat_size(dims);
 }
 
 template<class Field, class Extents>

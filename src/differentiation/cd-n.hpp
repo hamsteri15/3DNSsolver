@@ -4,9 +4,31 @@
 #include "common/loop.hpp"
 
 
-struct SomeOp{
+template<size_t N, class Op>
+std::array<size_t, N> get_padding(Op op){
+
+    (void) op;
+
+    std::array<size_t, N> ret{};
+    ret[Op::direction] = 1;
+
+    return ret;
+
+}
 
 
+template<size_t Dir>
+struct CD2{
+
+
+    static constexpr size_t direction = Dir;
+
+    auto operator()(auto span, auto idx) const{
+
+        (void) span;
+        (void) idx;
+        return 43;
+    }
 
 };
 
@@ -14,16 +36,17 @@ struct SomeOp{
 template<class Ext, class Op>
 auto make_padded_extent(Ext extent, Op op){
 
-    (void) op;
+
     static constexpr size_t N = Ext::rank();
 
     std::array<size_t, N> arr{};
+    auto padding = get_padding<N>(op);
+
 
     for (size_t i = 0; i < N; ++i){
-
-        arr[i] = extent.extent(i) + 2 * 1;
-
+        arr[i] = extent.extent(i) + 2 * padding[i];
     }
+
     return Ext(arr);
 
 }
@@ -33,13 +56,10 @@ auto make_padded_extent(Ext extent, Op op){
 template<class Ext, class Op>
 auto make_indices(Ext extent, Op op){
 
-    (void) op;
+
     static constexpr size_t N = Ext::rank();
 
-
-    std::array<size_t, N> padding{};
-    padding.fill(1); //This is wrong
-
+    auto padding = get_padding<N>(op);
 
     std::array<size_t, N> begin = padding;
     std::array<size_t, N> end{};
@@ -64,10 +84,6 @@ auto evaluate(const T& in, Ext extent, Op op){
     const auto a = make_span(in, padded);
     auto b = make_span(out, padded);
 
-
-    (void) a;
-    (void) b;
-
     auto v = make_indices(extent, op);
 
 
@@ -75,7 +91,10 @@ auto evaluate(const T& in, Ext extent, Op op){
         std::begin(v),
         std::end(v),
         [=](auto idx){
-            b(idx) = a(shift<0, 1>(idx)) - a(shift<0, -1>(idx));
+            //b(idx) = a(shift<0, 1>(idx)) - a(shift<0, -1>(idx));
+            b(idx) = op(a, idx);
+
+            //b(idx) = 43;
         }
 
     );
