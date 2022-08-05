@@ -6,6 +6,7 @@ add_library(catch_main STATIC catch_main.cpp)
 set(SerialTestSources
     test_convection.cpp;
     test_common.cpp;
+    test_differentiation.cpp;
 )
 
 add_executable(SerialTest.bin ${SerialTestSources})

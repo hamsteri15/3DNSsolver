@@ -6,17 +6,13 @@
 #include "common/math.hpp"
 #include "common/index_type.hpp"
 #include "common/runtime_assert.hpp"
+#include "common/extents.hpp"
 
 
 
 namespace stdex = std::experimental;
 
 using layout = stdex::layout_right;
-
-template<size_t N>
-using extents = stdex::dextents<size_t, N>;
-
-
 
 
 template<class ElementType, size_t N>
@@ -37,16 +33,16 @@ struct span : public span_base<ElementType, N>
     using parent::mdspan; //Inherit all constructors
     using parent::operator();
 
+
     template<class... Is>
-    auto& operator()(ranges::common_tuple<Is...> tpl){
+    ElementType& operator()(ranges::common_tuple<Is...> tpl){
         return parent::operator()(get_array_from_tuple(tpl));
     }
 
     template<class... Is>
-    const auto& operator()(ranges::common_tuple<Is...> tpl) const{
+    ElementType& operator()(ranges::common_tuple<Is...> tpl) const{
         return parent::operator()(get_array_from_tuple(tpl));
     }
-
 
 };
 
@@ -85,11 +81,12 @@ static inline auto make_span(Field& field, Extents dims){
 
 template<class Field, class Extents>
 static inline auto make_span(const Field& field, Extents dims){
-    using value_type = typename Field::value_type;
+    using value_type = const typename Field::value_type;
     static constexpr size_t N = Extents::rank();
     runtime_assert(extents_equal_size(field.size(), dims), "Dimension mismatch in make_span");
     return span<value_type, N>(field.data(), dims);
 }
+
 
 
 template<class Span>
@@ -103,9 +100,34 @@ auto shift(auto idx){
 
     std::get<dir>(idx) += amount;
     return idx;
-    /*
-    auto cpy = idx;
-    std::get<dir>(cpy) = std::get<N>(cpy) + amount;
-    return cpy;
-    */
+}
+
+
+template<class Span>
+void print(Span span){
+
+    if (rank(span) > 2){
+        throw std::logic_error("print not defined for spans of rank > 2");
+    }
+
+    if (rank(span) == 1){
+
+        for (auto idx : all_indices(span)){
+            std::cout << span(idx) << " ";
+        }
+        std::cout << std::endl;
+    }
+
+    for (size_t i = 0; i < span.extent(0); ++i){
+        for (size_t j = 0; j < span.extent(1); ++j){
+
+            std::cout << span(i,j) << " ";
+
+        }
+        std::cout << std::endl;
+    }
+
+
+
+
 }

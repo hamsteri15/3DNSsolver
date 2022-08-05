@@ -1,26 +1,21 @@
 #Build libraries
-set(libdirs 
+set(libdirs
     convection
 )
 SUBDIRS(${libdirs} )
 
 
-#TARGET_INCLUDE_DIRECTORIES(FlowSolver PUBLIC 
-#                            ${MPI_CXX_INCLUDE_PATH} 
+#TARGET_INCLUDE_DIRECTORIES(FlowSolver PUBLIC
+#                            ${MPI_CXX_INCLUDE_PATH}
 #                          )
 
 
-#TARGET_LINK_LIBRARIES(FlowSolver PUBLIC 
+#TARGET_LINK_LIBRARIES(FlowSolver PUBLIC
 #                        containers
 #                        boundary
-#                        diffop 
+#                        diffop
 #                        convection
-#                        diffusion 
+#                        diffusion
 #                        io
 #                        ${MPI_CXX_LIBRARIES}
 #                        OpenMP::OpenMP_CXX)
-
-
-
-
-
