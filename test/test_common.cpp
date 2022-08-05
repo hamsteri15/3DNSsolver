@@ -234,7 +234,40 @@ TEST_CASE("md_indices tests"){
     }
 
 
+    SECTION("shift"){
+
+        auto t = md_indices(std::array{0,0,0}, std::array{3,3,2});
+
+        auto [i1, j1, k1] = t[0];
+        CHECK(i1 == 0);
+        CHECK(j1 == 0);
+        CHECK(k1 == 0);
+
+
+        auto [i2, j2, k2] = shift<0,1>(t[0]);
+        CHECK(i2 == 1);
+        CHECK(j2 == 0);
+        CHECK(k2 == 0);
+
+        auto [i3, j3, k3] = shift<0,2>(t[0]);
+        CHECK(i3 == 2);
+        CHECK(j3 == 0);
+        CHECK(k3 == 0);
+
+
+        auto [i4, j4, k4] = shift<1, -1>(*(t.end() - 1));
+        CHECK(i4 == 2);
+        CHECK(j4 == 1);
+        CHECK(k4 == 1);
+
+
+
+    }
+
+
+
 }
+
 
 TEST_CASE("mdspan tests"){
 
@@ -271,12 +304,12 @@ TEST_CASE("mdspan tests"){
             CHECK(span(std::array<size_t,2>{1,1}) == 1.0);
 
         }
-        
+
         SECTION("non-equal size span"){
             scalarField f(10, 1.0);
 
             REQUIRE_THROWS(make_span(f, extents<2>{3,5}));
-            
+
         }
 
 
@@ -289,7 +322,7 @@ TEST_CASE("mdspan tests"){
         std::vector<int> f(10);
 
         auto span = make_span(f, extents<2>{2,5});
-       
+
 
         std::vector<index_type> is;
         std::vector<index_type> js;
@@ -301,7 +334,7 @@ TEST_CASE("mdspan tests"){
 
         CHECK(is == std::vector<index_type>{0,0,0,0,0,1,1,1,1,1});
         CHECK(js == std::vector<index_type>{0,1,2,3,4,0,1,2,3,4});
- 
+
     }
 
 
@@ -313,14 +346,14 @@ TEST_CASE("mdspan tests"){
         for (auto t : all_indices(span)){
             span(t) = 43;
         }
-        
+
         for (auto t : all_indices(span)){
             CHECK(span(t) == 43);
         }
 
 
     }
-    
+
 
     SECTION("differentiate"){
 
@@ -337,8 +370,9 @@ TEST_CASE("mdspan tests"){
             std::end(v),
             [=] (auto idx){
                 auto [i, j] = idx;
+
                 aa(i, j) = bb(i-1, j) + bb(i+1, j);
-            } 
+            }
         );
 
 

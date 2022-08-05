@@ -98,3 +98,14 @@ static constexpr size_t rank(const Span& span){
 }
 
 
+template<size_t dir, index_type amount>
+auto shift(auto idx){
+
+    std::get<dir>(idx) += amount;
+    return idx;
+    /*
+    auto cpy = idx;
+    std::get<dir>(cpy) = std::get<N>(cpy) + amount;
+    return cpy;
+    */
+}
