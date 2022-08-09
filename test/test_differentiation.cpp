@@ -1,12 +1,41 @@
 #include "catch.hpp"
 
 #include "differentiation/cd-n.hpp"
+#include "differentiation/evaluate_tiled.hpp"
 #include "common/mdspan.hpp"
+
 
 TEST_CASE("get_padding"){
 
-    CHECK(get_padding<2>(CD2<0>{}) == std::array<size_t, 2>{1,0});
-    CHECK(get_padding<2>(CD2<1>{}) == std::array<size_t, 2>{0,1});
+    SECTION("Single op"){
+
+        CHECK(get_padding<2>(CD2<0>{}) == std::array<size_t, 2>{1,0});
+        CHECK(get_padding<2>(CD2<1>{}) == std::array<size_t, 2>{0,1});
+
+    }
+    SECTION("Multiple ops"){
+
+
+        SECTION("Test 1"){
+            auto tpl = std::make_tuple(CD2<0>{}, CD2<1>{}, CD2<2>{});
+            auto arr = get_padding<3>(tpl);
+
+            CHECK(arr == std::array<size_t, 3>{1, 1, 1});
+        }
+        SECTION("Test 2"){
+            auto tpl = std::make_tuple(CD2<1>{}, CD2<1>{}, CD2<2>{});
+            auto arr = get_padding<3>(tpl);
+
+            CHECK(arr == std::array<size_t, 3>{0, 1, 1});
+        }
+        SECTION("Test 3"){
+            auto tpl = std::make_tuple(CD2<0>{}, CD2<1>{}, CD2<2>{});
+            auto arr = get_padding<5>(tpl);
+
+            CHECK(arr == std::array<size_t, 5>{1, 1, 1, 0, 0});
+        }
+
+    }
 }
 
 
@@ -35,7 +64,7 @@ TEST_CASE("cd-2"){
 
         std::vector<int> a(flat_size(padded_dims));
 
-        auto b = evaluate(a, dims, CD2<0>{});
+        auto b = evaluate_tiled(a, dims, CD2<0>{});
 
         print(make_span(b, padded_dims));
 
