@@ -98,21 +98,18 @@ auto shift(auto idx){
 }
 
 
-template<class Span>
-void print(Span span){
 
-    if (rank(span) > 2){
-        throw std::logic_error("print not defined for spans of rank > 2");
+template<class T>
+void print(span<T, 1> span){
+
+    for (size_t i = 0; i < span.extent(0); ++i){
+        std::cout << span(i) << " ";
     }
+    std::cout << std::endl;
+}
 
-    if (rank(span) == 1){
-
-        for (auto idx : all_indices(span)){
-            std::cout << span(idx) << " ";
-        }
-        std::cout << std::endl;
-    }
-
+template<class T>
+void print(span<T, 2> span){
     for (size_t i = 0; i < span.extent(0); ++i){
         for (size_t j = 0; j < span.extent(1); ++j){
 
@@ -121,8 +118,4 @@ void print(Span span){
         }
         std::cout << std::endl;
     }
-
-
-
-
 }

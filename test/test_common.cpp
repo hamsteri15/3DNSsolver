@@ -157,6 +157,10 @@ TEST_CASE("mdspan tests"){
 
         extents<3> a{2,2,2};
         extents<3> b{2,3,2};
+        extents<3> c{2,3,2};
+
+        CHECK(a != b);
+        CHECK(b == c);
 
         //auto c = a + b;
 
