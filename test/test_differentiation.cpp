@@ -3,7 +3,7 @@
 #include "differentiation/cd-n.hpp"
 #include "differentiation/evaluate_tiled.hpp"
 #include "common/mdspan.hpp"
-
+#include "common/make_field.hpp"
 
 TEST_CASE("get_padding"){
 
@@ -60,22 +60,44 @@ void set_linear(span<T, N> s){
 
 
 
+
 TEST_CASE("cd-2"){
 
-
-    SECTION("d_CD2"){
+    SECTION("evaluate_tiled 1"){
 
         d_CD2<0> op;
+        extents<1> interior{5};
+        extents<1> padded = make_padded_extent(interior, op);
+        CHECK(padded == extents<1>{7});
 
-        extents<1> dims{5};
-        extents<1> padded_dims = make_padded_extent(dims, op);
-        std::vector<int> in(flat_size(padded_dims));
-        set_linear<0>(make_span(in, padded_dims));
-        auto out = evaluate_tiled(in, dims, op);
-
+        std::vector<int> in(flat_size(padded));
+        std::vector<int> out(flat_size(padded));
+        auto s_in = make_span(in, padded);
+        auto s_out = make_span(out, padded);
+        
+        set_linear<0>(s_in);
+        
+        evaluate_tiled(s_in, s_out, op);
         CHECK(out == std::vector<int>{0, 2, 2, 2, 2, 2, 0});
 
+
     }
+    SECTION("evaluate tiled 2"){
+
+
+        d_CD2<0> op;
+        extents<1> interior{5};
+
+        scalarField in = make_scalar_field(interior, op);
+
+        set_linear<0>(make_span(in, make_padded_extent(interior, op)));
+
+        scalarField out = evaluate_tiled(in, interior, op);
+
+        CHECK(std::vector<double>(out.begin(), out.end()) == std::vector<double>{0, 2, 2, 2, 2, 2, 0});
+
+    }
+    
 
 
 }
