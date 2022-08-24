@@ -94,7 +94,7 @@ TEST_CASE("cd-2"){
 
         scalarField out = evaluate_tiled(in, interior, op);
 
-        CHECK(std::vector<double>(out.begin(), out.end()) == std::vector<double>{0, 2, 2, 2, 2, 2, 0});
+        CHECK(out == scalarField{0, 2, 2, 2, 2, 2, 0});
 
     }
     
