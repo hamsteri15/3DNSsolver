@@ -87,7 +87,7 @@ TEST_CASE("1D cd-2"){
 
 TEST_CASE("2D cd-2"){
 
-    SECTION("0-dir"){
+    SECTION("0-dir evaluate_tiled"){
 
 
         d_CD2<0> op;
@@ -116,7 +116,7 @@ TEST_CASE("2D cd-2"){
         
     }    
     
-    SECTION("1-dir"){
+    SECTION("1-dir evaluate_tiled"){
 
 
         d_CD2<1> op;
@@ -144,7 +144,7 @@ TEST_CASE("2D cd-2"){
         
     }    
     
-    SECTION("Both dirs"){
+    SECTION("Both dirs evaluate_tiled"){
 
 
         d_CD2<0> op0;
