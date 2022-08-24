@@ -30,20 +30,3 @@ void evaluate_tiled(span<ET1, N> in, span<ET2, N> out, Op op)
     );
 
 }
-
-template<class T, class Ext, class Op>
-auto evaluate_tiled(const T& in, Ext interior, Op op){
-
-    T out(in.size());
-
-    auto padded = make_padded_extent(interior, op);
-
-    const auto a = make_span(in, padded);
-    auto b = make_span(out, padded);
-
-    evaluate_tiled(a, b, op);
-
-    return out;
-}
-
-

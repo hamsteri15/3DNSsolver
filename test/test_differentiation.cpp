@@ -82,23 +82,6 @@ TEST_CASE("1D cd-2"){
 
 
     }
-    SECTION("evaluate tiled 2"){
-
-
-        d_CD2<0> op;
-        extents<1> interior{5};
-
-        scalarField in = make_scalar_field(interior, op);
-
-        set_linear<0>(make_span(in, make_padded_extent(interior, op)));
-
-        scalarField out = evaluate_tiled(in, interior, op);
-
-        CHECK(out == scalarField{0, 2, 2, 2, 2, 2, 0});
-
-    }
-    
-
 
 }
 
