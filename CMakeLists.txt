@@ -66,11 +66,13 @@ SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
     
 
-#INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/src/containers)
-#Build solvers
+#Build sources
 INCLUDE_DIRECTORIES(src)
 ADD_SUBDIRECTORY(src)
 
+#Build apps
+INCLUDE_DIRECTORIES(apps)
+ADD_SUBDIRECTORY(apps)
 
 if(ENABLE_TESTING)
   enable_testing()
