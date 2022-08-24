@@ -49,21 +49,17 @@ std::array<size_t, N> get_padding(std::tuple<Ts...> tpl){
     };
 
     std::apply(f2, arr_tpl);
-
-
     return current;
-
-
 }
 
 
-template<class Ext, class T>
-auto make_padded_extent(Ext extent, const TiledStencil<T>& op){
+template<class Ext, class... Ts>
+auto make_padded_extent(Ext extent, Ts... ops){
 
     static constexpr size_t N = Ext::rank();
 
     std::array<size_t, N> arr{};
-    auto padding = get_padding<N>(op);
+    auto padding = get_padding<N>(std::make_tuple(ops...));
 
     for (size_t i = 0; i < N; ++i){
         arr[i] = extent.extent(i) + 2 * padding[i];
@@ -73,13 +69,13 @@ auto make_padded_extent(Ext extent, const TiledStencil<T>& op){
 }
 
 
-template<class Ext, class Op>
-auto make_indices(Ext extent, Op op){
 
+template<class Ext, class... Ts>
+auto make_indices(Ext extent, Ts... ops){
 
     static constexpr size_t N = Ext::rank();
 
-    auto padding = get_padding<N>(op);
+    auto padding = get_padding<N>(std::make_tuple(ops...));
 
     std::array<size_t, N> begin = padding;
     std::array<size_t, N> end{};
@@ -87,7 +83,6 @@ auto make_indices(Ext extent, Op op){
     for (size_t i = 0; i < N; ++i){
         end[i] = begin[i] + extent.extent(i);
     }
-
 
     return md_indices(begin, end);
 }
