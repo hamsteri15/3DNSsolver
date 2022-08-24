@@ -61,7 +61,7 @@ void set_linear(span<T, N> s){
 
 
 
-TEST_CASE("cd-2"){
+TEST_CASE("1D cd-2"){
 
     SECTION("evaluate_tiled 1"){
 
@@ -98,6 +98,119 @@ TEST_CASE("cd-2"){
 
     }
     
+
+
+}
+
+TEST_CASE("2D cd-2"){
+
+    SECTION("0-dir"){
+
+
+        d_CD2<0> op;
+        extents<2> interior{2,3};
+
+        scalarField in = make_scalar_field(interior, op);
+        scalarField out = make_scalar_field(interior, op);
+
+        set_linear<0>(make_span(in, make_padded_extent(interior, op)));
+
+        evaluate_tiled(
+            make_span(in, make_padded_extent(interior, op)),
+            make_span(out, make_padded_extent(interior, op)),
+            op
+        );        
+
+        CHECK(
+            out == scalarField
+            {
+                0, 0, 0,
+                2, 2, 2,
+                2, 2, 2,
+                0, 0, 0
+            }
+        );
+        
+    }    
+    
+    SECTION("1-dir"){
+
+
+        d_CD2<1> op;
+        extents<2> interior{2,3};
+
+        scalarField in = make_scalar_field(interior, op);
+        scalarField out = make_scalar_field(interior, op);
+
+        set_linear<1>(make_span(in, make_padded_extent(interior, op)));
+
+        evaluate_tiled(
+            make_span(in, make_padded_extent(interior, op)),
+            make_span(out, make_padded_extent(interior, op)),
+            op
+        );        
+
+
+        CHECK(
+            out == scalarField
+            {
+                0, 2, 2, 2, 0,
+                0, 2, 2, 2, 0
+            }
+        );
+        
+    }    
+    
+    SECTION("Both dirs"){
+
+
+        d_CD2<0> op0;
+        d_CD2<1> op1;
+        extents<2> interior{2,3};
+
+        scalarField in = make_scalar_field(interior, op0, op1);
+        scalarField out = make_scalar_field(interior, op0, op1);
+
+        set_linear<0>(make_span(in, make_padded_extent(interior, op0, op1)));
+
+        evaluate_tiled(
+            make_span(in, make_padded_extent(interior, op0, op1)),
+            make_span(out, make_padded_extent(interior, op0, op1)),
+            op0
+        );        
+
+
+        CHECK(
+            out == scalarField
+            {
+                0, 0, 0, 0, 0,
+                2, 2, 2, 2, 2,
+                2, 2, 2, 2, 2,
+                0, 0, 0, 0, 0
+            }
+        );
+
+        std::transform(out.begin(), out.end(), out.begin(), [](auto a){(void) a; return 0.0;});
+
+        set_linear<1>(make_span(in, make_padded_extent(interior, op0, op1)));
+
+        evaluate_tiled(
+            make_span(in, make_padded_extent(interior, op0, op1)),
+            make_span(out, make_padded_extent(interior, op0, op1)),
+            op1
+        );        
+        
+        CHECK(
+            out == scalarField
+            {
+                0, 2, 2, 2, 0,
+                0, 2, 2, 2, 0,
+                0, 2, 2, 2, 0,
+                0, 2, 2, 2, 0
+            }
+        );
+
+    }    
 
 
 }
