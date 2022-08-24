@@ -111,6 +111,41 @@ inline auto primitive_to_conservative(const scalarField&    rho,
 
 }
 
+template<size_t L, class EqState>
+inline auto conservative_to_primitive(const vectorField<L>& cons, EqState eos)
+{
+
+    static constexpr size_t N = L - 2;
+
+    scalarField rho_field(cons.size());
+    scalarField p_field(cons.size());
+    vectorField<N> U_field(cons.size());
+
+    for (size_t j = 0; j < cons.size(); ++j){
+
+        auto v = cons[j];
+
+        scalar rho = v[0];
+        scalar E = v[1] / rho;
+        
+        Vector<N> U;
+
+        for (size_t i = 0; i < N; ++i){
+            auto component = v[i + 2];
+            U[i] = component / rho;
+        }
+        scalar p = (eos.gamma() - 1.0) * rho * (E - 0.5 * dot(U,U));
+    
+        rho_field[j] = rho;
+        p_field[j] = p;
+        U_field[j] = U;
+    }
+
+    return std::make_tuple(rho_field, p_field, U_field);
+
+
+}
+
 
 template <size_t N, class EqState>
 inline auto lax_friedrichs_flux(const scalarField&    rho,
