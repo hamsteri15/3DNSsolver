@@ -17,6 +17,25 @@ U = [rho, rho*E, rho*u]
 */
 
 
+/*
+//TODO: something like this
+auto W = primitive_variables(grid);
+
+auto F = numerical_flux(primitiveVariables);
+
+auto U = conservative_variables(primitiveVariables);
+
+Equation euler
+(
+	d_dt(U) + div(F) == zero;
+);
+
+euler.solve();
+
+W = conservative_to_primitive(U);
+
+*/
+
 struct Eos{
 
     scalar gamma() const {return 1.4;}

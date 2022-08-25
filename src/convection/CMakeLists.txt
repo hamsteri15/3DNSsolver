@@ -1,9 +1,11 @@
 set(Headers
     ./convection_flux.hpp
+    ./numerical_flux.hpp
 )
 
 set(Sources
     ./convection_flux.cpp
+    ./numerical_flux.cpp
 )
 
 
