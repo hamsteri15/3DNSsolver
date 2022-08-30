@@ -1,11 +1,10 @@
 #pragma once
 
 #include <iostream>
-#include <concepts>
-#include "common/scalar_array.hpp"
+#include "common/scalar.hpp"
+#include "common/field.hpp"
 
-
-using scalarField = scalar_array;
+using scalarField = Field<scalar>;
 
 static inline void print(const scalarField& f){
 

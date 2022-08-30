@@ -1,15 +1,12 @@
 #pragma once
 
 #include <iostream>
-
-#include "common/allocator.hpp"
-#include "common/scalar.hpp"
-#include "common/scalar_field.hpp"
+#include "common/field.hpp"
 #include "common/vector.hpp"
 #include "topaz/include/all.hpp"
 
 template<size_t L>
-using vectorField = topaz::NumericArray<Vector<L>, vector_allocator_t<L>>;
+using vectorField = Field<Vector<L>>;
 
 template<size_t L>
 static inline void print(const vectorField<L>& f){

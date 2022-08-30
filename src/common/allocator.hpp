@@ -18,8 +18,3 @@ using allocator_t = std::allocator<T>;
 
 #endif
 
-
-using scalar_allocator_t = allocator_t<scalar>;
-
-template<size_t L>
-using vector_allocator_t = allocator_t<Vector<L>>;

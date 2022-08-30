@@ -19,7 +19,7 @@ TEST_CASE("1D tests"){
         vectorField<1> U{Vector<1>{1.0}, Vector<1>{1.0}, Vector<1>{1.0}};
         vectorField<1> normal{Vector<1>{1.0}, Vector<1>{1.0}, Vector<1>{1.0}};
 
-        scalarField ret = continuity_flux(rho, U, normal);
+        scalarField ret = mass_flux(rho, U, normal);
 
         CHECK(ret[0] == 0.5);
         CHECK(ret[1] == 1.0);

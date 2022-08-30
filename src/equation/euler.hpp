@@ -16,9 +16,13 @@ template <size_t N> struct PrimitiveVariables {
     vectorField<N> U;
 };
 
+/*
+template<size_t N> struct Flux : public vectorField<N>{
 
+    Flux(const PrimitiveVariables<N>& prim) : vector{}
 
-
+};
+*/
 
 template <size_t N> struct Euler {
 

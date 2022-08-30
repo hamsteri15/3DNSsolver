@@ -1,8 +1,10 @@
 #include "catch.hpp"
 
 #include "equation/cartesian_grid.hpp"
+#include "equation/surface_field.hpp"
 
-TEST_CASE("CartesianGrid"){
+
+TEST_CASE("Test CartesianGrid"){
 
     SECTION("Constructors"){
 
@@ -40,6 +42,56 @@ TEST_CASE("CartesianGrid"){
 
     }
 
+
+    SECTION("surface_field_dims"){
+
+        CartesianGrid g(extents<2>{2,2}, Vector<2>{0, 0}, Vector<2>{1, 1});
+        CHECK(surface_field_dims(0, g) == extents<2>{3, 2});
+        CHECK(surface_field_dims(1, g) == extents<2>{2, 3});
+
+    }
+
+    SECTION("surface_count"){
+        CartesianGrid g(extents<2>{2,2}, Vector<2>{0, 0}, Vector<2>{1, 1});
+        CHECK(surface_count(g) == 12);
+    }
+
+
+
+}
+
+
+TEST_CASE("Test SurfaceField"){
+
+    SECTION("Constructors"){
+        CartesianGrid g(extents<2>{2,2}, Vector<2>{0, 0}, Vector<2>{1, 1});
+
+        SurfaceField<int, 2> f1(g);
+        SurfaceField<int, 2> f2(g);
+        SurfaceField<int, 2> f3(g);
+
+        f3 = f1 + f2;
+
+    }
+
+    SECTION("get/set"){
+
+        CartesianGrid g(extents<2>{2,2}, Vector<2>{0, 0}, Vector<2>{1, 1});
+
+        SurfaceField<scalar, 2> f1(g);
+
+        CHECK(f1.get<0>().size() == 6);
+        CHECK(f1.get<1>().size() == 6);
+
+        scalarField f2(6, 1);
+        f1.set<0>(f2);
+
+        for (size_t i = 0; i < 6; ++i){
+            CHECK(f1[i] == 1.0);
+        }
+
+
+    }
 
 
 }

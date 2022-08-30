@@ -21,6 +21,7 @@ template <size_t N> struct CartesianGrid : public Grid {
 
     extents<N> dimensions() const { return m_extents; }
 
+
     Vector<N> p0() const {return m_p0;}
     Vector<N> p1() const {return m_p1;}
 
@@ -59,5 +60,24 @@ vectorField<N> points(const CartesianGrid<N>& grid){
     }
 
     return ret;
-
 }
+
+template<size_t N>
+auto surface_field_dims(size_t dir, const CartesianGrid<N>& grid){
+
+    runtime_assert(dir < N, "Invalid direction.");
+    auto d = extent_to_array(grid.dimensions());
+    d[dir] += 1;
+    return extents<N>{d};
+}
+
+template<size_t N>
+auto surface_count(const CartesianGrid<N>& grid){
+
+    size_t count = 0;
+    for (size_t i = 0; i < N; ++i){
+        count += flat_size(surface_field_dims(i, grid));
+    }
+    return count;
+
+} 

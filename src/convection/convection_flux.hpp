@@ -2,28 +2,29 @@
 
 #include "common/math.hpp"
 
-inline auto continuity_flux(const auto& rho, const auto& U, const auto& normal) {
 
-    const auto q = dot(U, normal);
-    return rho * q;
+inline auto mass_flux(const auto& rho, const auto& U, const auto& normal){
+    return dot(U, normal) * rho;
 }
 
-inline auto momentum_flux(const auto& rho, const auto& p, const auto& U, const auto& normal) {
-
-    const auto q = dot(U, normal);
-    return rho * q * U + p * normal;
-}
 
 inline auto
 energy_flux(const auto& rho, const auto& p, const auto& U, const auto& normal, auto eos) {
 
-    auto q     = dot(U, normal);
     auto gamma = eos.gamma();
-    auto c     = sqrt(gamma * p / rho);
-    auto H     = (c * c) / (gamma - scalar(1)) * 0.5 * dot(U, U);
+    auto c = sqrt(gamma * p / rho);
+    auto H = (c * c) / (gamma - scalar(1)) * 0.5 * dot(U, U);
 
-    return rho * q * H;
+    return mass_flux(rho, U, normal) * H;
 }
+
+
+inline auto momentum_flux(const auto& rho, const auto& p, const auto& U, const auto& normal) {
+
+    auto phi = mass_flux(rho, U, normal);
+    return phi * U + p * normal;
+}
+
 
 
 template <size_t N, class EqState>
@@ -34,7 +35,7 @@ inline auto convection_flux(const scalarField&    rho,
                             EqState               eos) {
 
 
-    const auto con = continuity_flux(rho, U, normal);
+    const auto con = mass_flux(rho, U, normal);
     const auto ene = energy_flux(rho, p, U, normal, eos);
     const auto mom = momentum_flux(rho, p, U, normal);
 
