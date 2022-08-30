@@ -7,6 +7,7 @@ set(SerialTestSources
     test_convection.cpp;
     test_common.cpp;
     test_differentiation.cpp;
+    test_equation.cpp;
 )
 
 add_executable(SerialTest.bin ${SerialTestSources})

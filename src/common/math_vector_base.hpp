@@ -354,3 +354,14 @@ template<class T, size_t L, class S>
 static constexpr T mag(const MathVectorBase<T,L,S>& v) {
     return sqrt(dot(v, v));
 }
+
+template<class T, size_t L, class S>
+static constexpr T all_positive(const MathVectorBase<T,L,S>& v) {
+
+    for (const auto& e : v){
+        if (e < T(0)) {
+            return false;
+        }
+    }
+    return true;
+}
