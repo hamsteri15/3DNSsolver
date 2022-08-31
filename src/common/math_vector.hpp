@@ -7,6 +7,9 @@
 template <class T, size_t L>
 struct MathVector : public MathVectorBase<T, L, MathVector<T, L>> {
 
+    using base_type = MathVectorBase<T, L, MathVector<T, L>>;
+
+    using base_type::operator=;
 
     inline constexpr MathVector() = default;
 

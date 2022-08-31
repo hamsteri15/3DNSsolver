@@ -2,7 +2,18 @@
 
 #include "equation/cartesian_grid.hpp"
 #include "equation/surface_field.hpp"
+#include "equation/euler.hpp"
 
+template<size_t N>
+auto make_euler_equation(extents<N> dims){
+
+    Vector<N> p0;
+    Vector<N> p1;
+    p0 = 0.0;
+    p1 = 1.0;
+    CartesianGrid<N> grid(dims, p0, p1);
+    return Euler(grid, EquationOfState{});
+}
 
 TEST_CASE("Test CartesianGrid"){
 
@@ -93,5 +104,15 @@ TEST_CASE("Test SurfaceField"){
 
     }
 
+
+}
+
+TEST_CASE("Euler convection flux"){
+
+    auto eq = make_euler_equation<1>(extents<1>{10});
+
+    auto flux = convection_flux(eq);
+
+    (void) flux;
 
 }
