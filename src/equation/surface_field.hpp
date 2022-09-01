@@ -8,10 +8,7 @@
 
 template <class ET, size_t N> struct SurfaceField : public Field<ET> {
 
-private:
     using base_type = Field<ET>;
-
-public:
     using base_type::operator=;
 
     SurfaceField(const CartesianGrid<N>& grid)

@@ -278,7 +278,37 @@ TEST_CASE("mdspan tests"){
 
     }
 
+}
 
+TEST_CASE("subspan tests"){
+
+    SECTION("make_subspan"){
+
+        std::vector<int> a = 
+        {
+            0,0,0,0,
+            0,1,1,0,
+            0,1,1,0,
+            0,0,0,0
+        };
+        auto s = make_span(a, extents<2>{4,4});
+        auto ss = make_subspan(s, std::array<size_t,2>{1,1}, std::array<size_t,2>{2,2});
+        CHECK(ss(0,0) == 1);
+
+        ss(-1, -1) = 4;
+        ss(2,2) = 7;
+        ss(2,1) = 5;
+
+        std::vector<int> correct = 
+        {
+            4,0,0,0,
+            0,1,1,0,
+            0,1,1,0,
+            0,0,5,7
+        };
+        CHECK(a == correct);
+
+    }
 
 
 }

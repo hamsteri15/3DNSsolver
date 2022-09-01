@@ -107,6 +107,7 @@ TEST_CASE("Test SurfaceField"){
 
 }
 
+/*
 TEST_CASE("Euler convection flux"){
 
     auto eq = make_euler_equation<1>(extents<1>{10});
@@ -116,3 +117,4 @@ TEST_CASE("Euler convection flux"){
     (void) flux;
 
 }
+*/

@@ -3,6 +3,7 @@ set(Headers
     ./euler.hpp
     ./grid.hpp
     ./cartesian_grid.hpp
+    ./volumetric_field.hpp
     ./surface_field.hpp
 )
 
@@ -11,6 +12,7 @@ set(Sources
     ./euler.cpp
     ./grid.cpp
     ./cartesian_grid.cpp
+    ./volumetric_field.cpp
     ./surface_field.hpp
 )
 
