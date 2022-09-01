@@ -80,15 +80,21 @@ template <size_t dir, index_type amount> auto shift(auto idx) {
     return idx;
 }
 
-template <class T> void print(span<T, 1> span) {
+template <class Span> void print(Span span) {
 
-    for (size_t i = 0; i < span.extent(0); ++i) { std::cout << span(i) << " "; }
-    std::cout << std::endl;
-}
+    if constexpr(rank(span)==1){
 
-template <class T> void print(span<T, 2> span) {
-    for (size_t i = 0; i < span.extent(0); ++i) {
-        for (size_t j = 0; j < span.extent(1); ++j) { std::cout << span(i, j) << " "; }
+        for (size_t i = 0; i < span.extent(0); ++i) { std::cout << span(i) << " "; }
         std::cout << std::endl;
     }
+    else if constexpr (rank(span) == 2){
+        for (size_t i = 0; i < span.extent(0); ++i) {
+            for (size_t j = 0; j < span.extent(1); ++j) { std::cout << span(i, j) << " "; }
+            std::cout << std::endl;
+        }
+    }
+    else{
+        throw std::logic_error("Only ranks 1 and 2 spans can be printed");
+    }
 }
+

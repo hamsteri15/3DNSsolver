@@ -292,8 +292,11 @@ TEST_CASE("subspan tests"){
             0,0,0,0
         };
         auto s = make_span(a, extents<2>{4,4});
-        auto ss = make_subspan(s, std::array<size_t,2>{1,1}, std::array<size_t,2>{2,2});
+        auto ss = make_subspan(s, std::array<size_t,2>{1,1}, std::array<size_t,2>{3,3});
         CHECK(ss(0,0) == 1);
+
+        CHECK(ss.extent(0) == 2);
+        CHECK(ss.extent(1) == 2);
 
         ss(-1, -1) = 4;
         ss(2,2) = 7;
@@ -307,6 +310,7 @@ TEST_CASE("subspan tests"){
             0,0,5,7
         };
         CHECK(a == correct);
+
 
     }
 
