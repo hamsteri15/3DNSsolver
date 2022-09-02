@@ -3,6 +3,7 @@
 #include "equation/cartesian_grid.hpp"
 #include "equation/surface_field.hpp"
 #include "equation/euler.hpp"
+#include "equation/volumetric_field.hpp"
 
 template<size_t N>
 auto make_euler_equation(extents<N> dims){
@@ -106,6 +107,73 @@ TEST_CASE("Test SurfaceField"){
 
 
 }
+
+
+TEST_CASE("Test VolumetricField"){
+
+    SECTION("Constructors"){
+
+        CartesianGrid<2> grid(extents<2>{2,3}, Vector<2>{0,0}, Vector<2>{1,1});
+
+        volScalarField<2> f1(grid);
+        CHECK(f1.dimensions() == extents<2>{2,3});
+
+        volScalarField<2> f2(grid, extents<2>{1,2});
+        CHECK(f2.dimensions() == extents<2>{2,3});
+        CHECK(f2.padding() == extents<2>{1,2});
+
+    }
+
+    SECTION("make_full_span"){
+        
+        CartesianGrid<2> grid(extents<2>{2,2}, Vector<2>{0,0}, Vector<2>{1,1});
+        volScalarField<2> f(grid, extents<2>{1,1});
+
+        auto s = make_full_span(f);
+        s(1,1) = 3;
+        s(2,1) = 5;
+        std::vector<scalar> correct = 
+        {
+            0,0,0,0,
+            0,3,0,0,
+            0,5,0,0,
+            0,0,0,0
+        };
+
+        CHECK(std::vector<scalar>{f.begin(), f.end()} == correct);
+
+
+    }
+
+    SECTION("make_internal_span"){
+        
+        CartesianGrid<2> grid(extents<2>{2,2}, Vector<2>{0,0}, Vector<2>{1,1});
+        volScalarField<2> f(grid, extents<2>{1,1});
+
+        auto s = make_internal_span(f);
+        s(0,0) = 1;
+        s(0,1) = 2;
+        s(1,0) = 3;
+        s(1,1) = 4;
+        s(-1,0) = 7;
+        std::vector<scalar> correct = 
+        {
+            0,7,0,0,
+            0,1,2,0,
+            0,3,4,0,
+            0,0,0,0
+        };
+
+        print(s);
+
+        CHECK(std::vector<scalar>{f.begin(), f.end()} == correct);
+
+
+    }
+
+
+}
+
 
 /*
 TEST_CASE("Euler convection flux"){
