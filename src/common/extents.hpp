@@ -32,3 +32,7 @@ size_t flat_size(auto ext){
     return ret;
 
 }
+
+template <class Extents> bool extents_equal_size(size_t size, Extents dims) {
+    return size == flat_size(dims);
+}

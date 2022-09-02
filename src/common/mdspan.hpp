@@ -4,6 +4,7 @@
 #include "common/index_type.hpp"
 #include "common/math.hpp"
 #include "common/runtime_assert.hpp"
+#include "common/utils.hpp"
 #include <experimental/mdspan>
 #include <range/v3/view/indices.hpp>
 
@@ -14,12 +15,6 @@ using layout = stdex::layout_right;
 template <class ElementType, size_t N>
 using span_base = stdex::mdspan<ElementType, extents<N>, layout>;
 
-template <typename tuple_t> constexpr auto get_array_from_tuple(tuple_t&& tuple) {
-    constexpr auto get_array = [](auto&&... x) {
-        return std::array{std::forward<decltype(x)>(x)...};
-    };
-    return std::apply(get_array, std::forward<tuple_t>(tuple));
-}
 
 template <class ElementType, size_t N> struct span : public span_base<ElementType, N> {
     using parent = span_base<ElementType, N>;
@@ -35,9 +30,6 @@ template <class ElementType, size_t N> struct span : public span_base<ElementTyp
     }
 };
 
-template <class Extents> bool extents_equal_size(size_t size, Extents dims) {
-    return size == flat_size(dims);
-}
 
 template <class Field, class Extents> static inline auto make_span(Field& field, Extents dims) {
     using value_type          = typename Field::value_type;
