@@ -5,6 +5,7 @@ set(Headers
     ./cartesian_grid.hpp
     ./volumetric_field.hpp
     ./surface_field.hpp
+    ./equation_of_state.hpp
 )
 
 set(Sources
@@ -14,6 +15,7 @@ set(Sources
     ./cartesian_grid.cpp
     ./volumetric_field.cpp
     ./surface_field.hpp
+    ./equation_of_state.cpp
 )
 
 

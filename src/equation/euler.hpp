@@ -1,33 +1,31 @@
 #pragma once
 
-#include "common/scalar_field.hpp"
-#include "common/vector_field.hpp"
 #include "convection/convection_flux.hpp"
 #include "equation/cartesian_grid.hpp"
 #include "equation/surface_field.hpp"
+#include "equation/equation_of_state.hpp"
+#include "equation/volumetric_field.hpp"
+
 
 template <size_t N> struct PrimitiveVariables {
 
-    PrimitiveVariables(size_t size)
-        : rho(size)
-        , p(size)
-        , U(size) {}
+    PrimitiveVariables(const CartesianGrid<N>& grid, extents<N> padding)
+        : rho(grid, padding)
+        , p(grid, padding)
+        , U(grid, padding) {}
 
-    scalarField    rho;
-    scalarField    p;
-    vectorField<N> U;
+    volScalarField<N>    rho;
+    volScalarField<N>    p;
+    volVectorField<N, N> U;
 };
 
-struct EquationOfState {
 
-    double gamma() const { return 1.4; }
-};
 
 template <size_t N> struct Euler {
 
-    Euler(const CartesianGrid<N>& grid, EquationOfState eos)
+    Euler(const CartesianGrid<N>& grid, extents<N> padding, EquationOfState eos)
         : m_grid(grid)
-        , m_variables(flat_size(grid.dimensions()))
+        , m_variables(grid, padding)
         , m_eos(eos) {}
 
     auto eos() const { return m_eos; }
@@ -45,6 +43,9 @@ private:
     EquationOfState       m_eos;
 };
 
+
+
+/*
 template <size_t N> inline auto convection_flux(const Euler<N>& eq) {
 
     SurfaceVectorField<N, N+2> ret(eq.grid());
@@ -65,3 +66,4 @@ template <size_t N> inline auto convection_flux(const Euler<N>& eq) {
 
     return ret;
 }
+*/

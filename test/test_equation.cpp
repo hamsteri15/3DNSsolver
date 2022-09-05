@@ -6,14 +6,14 @@
 #include "equation/volumetric_field.hpp"
 
 template<size_t N>
-auto make_euler_equation(extents<N> dims){
+auto make_euler_equation(extents<N> dims, extents<N> padding){
 
     Vector<N> p0;
     Vector<N> p1;
     p0 = 0.0;
     p1 = 1.0;
     CartesianGrid<N> grid(dims, p0, p1);
-    return Euler(grid, EquationOfState{});
+    return Euler(grid, padding, EquationOfState{});
 }
 
 TEST_CASE("Test CartesianGrid"){
@@ -164,16 +164,23 @@ TEST_CASE("Test VolumetricField"){
             0,0,0,0
         };
 
-        print(s);
-
         CHECK(std::vector<scalar>{f.begin(), f.end()} == correct);
-
 
     }
 
 
 }
 
+
+TEST_CASE("Test Euler equation"){
+
+
+    auto eq = make_euler_equation<1>(extents<1>{10}, extents<1>{1});
+
+    (void) eq;
+
+
+}
 
 /*
 TEST_CASE("Euler convection flux"){
