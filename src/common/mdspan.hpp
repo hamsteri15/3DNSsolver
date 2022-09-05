@@ -10,14 +10,13 @@
 
 namespace stdex = std::experimental;
 
-using layout = stdex::layout_right;
 
-template <class ElementType, size_t N>
-using span_base = stdex::mdspan<ElementType, extents<N>, layout>;
+template <class ElementType, size_t N, class Layout>
+using span_base = stdex::mdspan<ElementType, extents<N>, Layout>;
 
-
-template <class ElementType, size_t N> struct span : public span_base<ElementType, N> {
-    using parent = span_base<ElementType, N>;
+template <class ElementType, size_t N, class Layout = stdex::layout_right>
+struct span : public span_base<ElementType, N, Layout> {
+    using parent = span_base<ElementType, N, Layout>;
     using parent::mdspan; // Inherit all constructors
     using parent::operator();
 
@@ -29,7 +28,6 @@ template <class ElementType, size_t N> struct span : public span_base<ElementTyp
         return parent::operator()(get_array_from_tuple(tpl));
     }
 };
-
 
 template <class Field, class Extents> static inline auto make_span(Field& field, Extents dims) {
     using value_type          = typename Field::value_type;

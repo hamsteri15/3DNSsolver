@@ -32,19 +32,21 @@ void evaluate_tiled(span<ET1, N> in, span<ET2, N> out, Op op)
 }
 
 template<size_t N, class ET, class Op>
-void evaulate_tiled(const VolumetricField<ET, N>& in, VolumetricField<ET, N>& out, Op op){
+void evaluate_tiled(const VolumetricField<ET, N>& in, VolumetricField<ET, N>& out, Op op){
 
 
-    auto indices = md_indices(internal_begin(in), internal_end(in));
 
     auto s_in = make_internal_span(in);
     auto s_out = make_internal_span(out);
+    auto indices = all_indices(s_in);
 
     std::for_each(
         std::begin(indices),
         std::end(indices),
         [=](auto idx){
-            s_out(idx) = op(s_in, idx);
+            //TODO: This is bullshit but subspans currently dont support ranges:common_tuple indexing
+            auto ii = get_array_from_tuple(idx); 
+            s_out(ii) = op(s_in, ii);
         }
     );
 

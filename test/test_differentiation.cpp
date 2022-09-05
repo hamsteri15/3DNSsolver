@@ -7,6 +7,7 @@
 #include "common/mdspan.hpp"
 #include "common/make_field.hpp"
 
+#include "test_helpers.hpp"
 
 
 TEST_CASE("weno weights"){
@@ -65,16 +66,6 @@ TEST_CASE("make_padded_extent"){
 
 }
 
-template<size_t Dir, size_t N, class T>
-void set_linear(span<T, N> s){
-
-    auto indices = all_indices(s);
-    for (auto idx : indices){
-        auto ii = std::get<Dir>(idx);
-        s(idx) = T(ii);
-    }
-
-}
 
 
 

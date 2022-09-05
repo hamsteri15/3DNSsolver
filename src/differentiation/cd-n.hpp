@@ -10,7 +10,6 @@ template <size_t Dir> struct d_CD2 : public TiledStencil<d_CD2<Dir>> {
 
     auto operator()(auto span, auto idx) const {
         return (span(shift<Dir, 1>(idx)) - span(shift<Dir, -1>(idx)));
-        ;
     }
 };
 

@@ -5,6 +5,11 @@
 #include "equation/euler.hpp"
 #include "equation/volumetric_field.hpp"
 
+#include "differentiation/cd-n.hpp"
+#include "differentiation/evaluate_tiled.hpp"
+
+#include "test_helpers.hpp"
+
 template<size_t N>
 auto make_euler_equation(extents<N> dims, extents<N> padding){
 
@@ -168,6 +173,72 @@ TEST_CASE("Test VolumetricField"){
 
     }
 
+    SECTION("interal_begin/end"){
+
+        CartesianGrid<2> grid(extents<2>{2,2}, Vector<2>{0,0}, Vector<2>{1,1});
+        volScalarField<2> f(grid, extents<2>{1,1});
+
+        CHECK(internal_begin(f) == std::array<size_t, 2>{1,1});
+        CHECK(internal_end(f) == std::array<size_t, 2>{3,3});
+
+    }
+
+    
+    SECTION("loop internal"){
+
+
+        CartesianGrid<2> grid(extents<2>{2,2}, Vector<2>{0,0}, Vector<2>{1,1});
+        volScalarField<2> f(grid, extents<2>{1,1});
+
+        auto s = make_internal_span(f);
+
+        for (auto i : all_indices(s)){
+            auto ii = get_array_from_tuple(i);
+            s(ii) = 43;
+
+        }
+
+        std::vector<scalar> correct = 
+        {
+            0,0,0,0,
+            0,43,43,0,
+            0,43,43,0,
+            0,0,0,0
+        };
+        CHECK(std::vector<scalar>{f.begin(), f.end()} == correct);
+
+
+        //print(make_full_span(f));
+
+
+
+    }
+    
+
+
+    
+    SECTION("tiled differentiation"){
+
+        CartesianGrid<2> grid(extents<2>{2,2}, Vector<2>{0,0}, Vector<2>{1,1});
+        volScalarField<2> in(grid, extents<2>{1,1});
+        volScalarField<2> out(grid, extents<2>{1,1});
+
+
+        set_linear<0>(make_full_span(in));
+        evaluate_tiled(in, out, d_CD2<0>{});
+
+        
+        std::vector<scalar> correct = 
+        {
+            0,0,0,0,
+            0,2,2,0,
+            0,2,2,0,
+            0,0,0,0
+        };
+        CHECK(std::vector<scalar>{out.begin(), out.end()} == correct);
+
+    }
+    
 
 }
 
