@@ -8,6 +8,8 @@ template <class ET, size_t N> struct VolumetricField : public Field<ET> {
     using base_type = Field<ET>;
     using base_type::operator=;
 
+    VolumetricField() = default;
+
     VolumetricField(const CartesianGrid<N>& grid, extents<N> padding = extents<N>{})
         : Field<ET>(size_to_allocate(grid, padding))
         , m_grid(grid)

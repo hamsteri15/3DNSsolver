@@ -34,8 +34,10 @@ template <size_t N> struct Euler {
     auto&       primitive_variables() { return m_variables; }
 
     const auto& grid() const { return m_grid; }
-
     auto& grid() { return m_grid; }
+
+
+    auto padding() const {return primitive_variables().rho.padding();}
 
 private:
     CartesianGrid<N>      m_grid;
@@ -43,27 +45,78 @@ private:
     EquationOfState       m_eos;
 };
 
-
-
 /*
-template <size_t N> inline auto convection_flux(const Euler<N>& eq) {
+//W = [rho, p, u]
+//U = [rho, rho*E, rho*u]
+template<size_t N>
+auto compute_conserved(const Euler<N>& eq){
 
-    SurfaceVectorField<N, N+2> ret(eq.grid());
+    const auto& prim = eq.primitive_variables();
+    const auto& rho = prim.rho;
+    const auto& p = prim.p;
+    const auto& U = prim.U;
 
-    const auto& primitive = eq.primitive_variables();
+    const auto kin = 0.5 * rho * dot(U,U);
+    const auto rhoE = p /(eq.eos().gamma() - 1.0) + kin;
+    const auto rhoU = rho * U;
 
-    for (size_t I = 0; I < N; ++I) {
+    return std::make_tuple(rho, rhoE, rhoU);
 
+}
 
-        Vector<N> normal{};
-        normal[I] = 1.0;
-        vectorField<N> normal_field(primitive.rho.size(), normal);
+template<size_t N>
+auto compute_convection(const Euler<N>& eq, Vector<N> normal){
 
-        auto Fi = convection_flux(primitive.rho, primitive.p, primitive.U, normal_field, eq.eos());
+    const auto& prim = eq.primitive_variables();
+    const auto& rho = prim.rho;
+    const auto& p = prim.p;
+    const auto& U = prim.U;
 
-        ret.set(I, Fi);
-    }
+    auto nf = topaz::make_constant_range(normal, p.size());
 
-    return ret;
+    auto H = enthalpy(rho, p, U, eq.eos());
+
+    auto phi = dot(U, nf) * rho;
+    auto phiH = phi * H;
+    auto phiU = phi*U + p * nf;
+
+    return std::make_tuple(phi, phiH, phiU);
+
 }
 */
+
+template<size_t N>
+struct ConvectionFlux{
+
+    ConvectionFlux(const Euler<N>& eq)
+    {
+        
+        for (size_t i = 0; i < N; ++i){
+            fluxes[i] = volVectorField<N, N+2>(eq.grid(), eq.padding());
+        }
+        compute_euler_convection(eq);
+
+    } 
+
+    std::array<volVectorField<N, N+2>, N> fluxes;
+
+private:
+
+    void compute_euler_convection(const Euler<N>& eq){
+
+        const auto& p = eq.primitive_variables();        
+        for (size_t i = 0; i < N; ++i){
+            Vector<N> normal{};
+            normal[i] = scalar(1);
+            vectorField<N> nf(p.rho.size(), normal);
+            auto F = convection_flux(p.rho, p.p, p.U, nf, eq.eos());
+
+            topaz::copy(F, fluxes[i]);
+        }        
+
+    }
+
+};
+
+
+

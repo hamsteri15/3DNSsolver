@@ -10,16 +10,6 @@
 
 #include "test_helpers.hpp"
 
-template<size_t N>
-auto make_euler_equation(extents<N> dims, extents<N> padding){
-
-    Vector<N> p0;
-    Vector<N> p1;
-    p0 = 0.0;
-    p1 = 1.0;
-    CartesianGrid<N> grid(dims, p0, p1);
-    return Euler(grid, padding, EquationOfState{});
-}
 
 TEST_CASE("Test CartesianGrid"){
 
@@ -245,22 +235,29 @@ TEST_CASE("Test VolumetricField"){
 
 TEST_CASE("Test Euler equation"){
 
+    SECTION("1D ConvectionFlux"){
 
-    auto eq = make_euler_equation<1>(extents<1>{10}, extents<1>{1});
+        auto eq = make_euler_equation<1>(extents<1>{3}, extents<1>{1});
+        assign_shocktube<0>(eq);
 
-    (void) eq;
+        ConvectionFlux<1> F(eq);
 
+        std::vector<Vector<3>> correct =
+        {
+            Vector<3>{0,0,1},
+            Vector<3>{0,0,1},
+            Vector<3>{0,0,0.1},
+            Vector<3>{0,0,0.1},
+            Vector<3>{0,0,0.1}
+
+        };
+
+
+        CHECK(std::vector<Vector<3>>{F.fluxes[0].begin(), F.fluxes[0].end()}
+        == correct);
+
+
+
+    }
 
 }
-
-/*
-TEST_CASE("Euler convection flux"){
-
-    auto eq = make_euler_equation<1>(extents<1>{10});
-
-    auto flux = convection_flux(eq);
-
-    (void) flux;
-
-}
-*/

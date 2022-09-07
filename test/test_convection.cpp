@@ -42,6 +42,22 @@ TEST_CASE("1D tests"){
 
     }
 
+    SECTION("momentum 2"){
+        scalarField rho({0.5, 1.0, 1.0});
+        scalarField p({1.0, 1.0, 1.0});
+        vectorField<1> U{Vector<1>{1.0}, Vector<1>{1.0}, Vector<1>{1.0}};
+        
+        auto normal = topaz::make_constant_range(Vector<1>{1}, 3);
+        //Vector<1> normal = {1};
+
+        vectorField<1> ret = momentum_flux(rho, p, U, normal);
+        CHECK(ret[0] == Vector<1>{1.5});
+        CHECK(ret[1] == Vector<1>{2.0});
+        CHECK(ret[2] == Vector<1>{2.0});
+
+    }
+
+
     SECTION("energy"){
 
         scalarField rho({1.4, 1.4, 1.4});

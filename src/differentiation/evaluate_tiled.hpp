@@ -33,9 +33,7 @@ void evaluate_tiled(span<ET1, N> in, span<ET2, N> out, Op op)
 
 template<size_t N, class ET, class Op>
 void evaluate_tiled(const VolumetricField<ET, N>& in, VolumetricField<ET, N>& out, Op op){
-
-
-
+    
     auto s_in = make_internal_span(in);
     auto s_out = make_internal_span(out);
     auto indices = all_indices(s_in);
