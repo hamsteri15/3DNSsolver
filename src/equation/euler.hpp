@@ -31,7 +31,23 @@ template<size_t N> struct ConservedVariables{
 
 };
 
+template<size_t N, class Range>
+auto operator+(const ConservedVariables<N>& lhs, const Range& rhs){
 
+    ConservedVariables<N> ret(lhs);
+
+    for (size_t i = 0; i < rhs.size(); ++i){
+
+        ret.rho[i] += rhs[i][0];
+        ret.rhoE[i] += rhs[i][1];
+
+        for (size_t j = 0; j < N; ++j){
+            ret.rhoU[i][j] += rhs[i][j+2];
+        }
+    }
+
+    return ret;
+}
 
 
 
@@ -78,6 +94,31 @@ ConservedVariables<N> compute_conserved(const Euler<N>& eq){
     return ret;
 
 }
+
+
+template<size_t N>
+PrimitiveVariables<N> conserved_to_primitive(const Euler<N>& eq, const ConservedVariables<N>& cons){
+
+    PrimitiveVariables<N> ret(eq.grid(), eq.padding());
+
+
+    auto rho = cons.rho;
+    auto E = cons.rhoE / cons.rho;
+    auto U = cons.rhoU / cons.rho;
+
+
+    auto p = (eq.eos().gamma() - 1.0) * rho * (E - 0.5 * dot(U, U));
+
+
+    ret.rho = cons.rho;
+    ret.p = p;
+    ret.U = U;
+
+
+    return ret;
+
+}
+
 
 
 

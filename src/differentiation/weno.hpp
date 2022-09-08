@@ -3,6 +3,7 @@
 #include <array>
 
 #include "differentiation/tiled_stencil.hpp"
+#include "differentiation/eno.hpp"
 
 template <typename T>
 std::array<T, 3> weights_shu(T f_m2, T f_m1, T f_, T f_p1, T f_p2, std::array<double, 3> d) {

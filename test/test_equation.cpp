@@ -8,6 +8,9 @@
 
 #include "differentiation/cd-n.hpp"
 #include "differentiation/evaluate_tiled.hpp"
+#include "differentiation/weno.hpp"
+#include "differentiation/upwind.hpp"
+#include "differentiation/downwind.hpp"
 
 #include "test_helpers.hpp"
 
@@ -378,6 +381,93 @@ TEST_CASE("Test euler_flux"){
         CHECK(fr.phiU[1][0] == Approx(0.05));  //Right side domain
 
     }
+
+    
+    SECTION("Solve 1D shock tube CD2"){
+
+        size_t nx = 10;
+        scalar dt = 0.001;
+        scalar dx = 1.0/nx;
+
+        auto eq = make_euler_equation<1>(extents<1>{nx}, extents<1>{3});
+        assign_shocktube<0>(eq);
+
+
+        auto cons = compute_conserved(eq);
+
+        auto F = combine_fields(compute_flux(eq, Vector<1>{1}));
+        auto dF(F);
+        evaluate_tiled(F, dF, d_CD2<0>{});
+
+
+        auto dU = dt * (dF / (-2*dx));
+
+        auto cons_new = cons + dU;
+
+        auto W = conserved_to_primitive(eq, cons_new);
+
+
+        for (auto r : W.rho){
+            std::cout << r << std::endl;
+        }
+        std::cout << "==========" << std::endl;
+        for (auto r : W.p){
+            std::cout << r << std::endl;
+        }
+        std::cout << "==========" << std::endl;
+        for (auto r : W.U){
+            std::cout << r << std::endl;
+        }
+    }
+    
+
+
+    /*
+    SECTION("Solve 1D shock tube weno"){
+
+        size_t nx = 10;
+
+        scalar dx = 1.0/nx;
+
+        auto eq = make_euler_equation<1>(extents<1>{nx}, extents<1>{3});
+        assign_shocktube<0>(eq);
+
+
+        auto cons = compute_conserved(eq);
+
+        auto [fl, fr] = laxfriedrichs_flux(eq, Vector<1>{1});
+
+
+        auto Fl = combine_fields(fl);
+        auto Fr = combine_fields(fr);
+
+        auto Rl(Fl);
+        auto Rr(Fr);
+        auto dRl(Fl);
+        auto dRr(Fr);
+
+
+        auto R(Fr);
+        
+
+
+        evaluate_tiled(Fl, Rl, Weno_left<0>{});
+        evaluate_tiled(Fr, Rr, Weno_right<0>{});
+
+        evaluate_tiled(Rl, dRl, Upwind1<0>{});
+        evaluate_tiled(Rr, dRr, Downwind1<0>{});
+
+
+        R = (dRl + dRr)/dx;
+
+
+
+        for (auto r : R){
+            std::cout << r << std::endl;
+        }
+    }
+    */
+
 
 
 }

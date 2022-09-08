@@ -16,7 +16,6 @@ target_include_directories(OnedEuler PUBLIC
                           )
 
 target_link_libraries(OnedEuler PUBLIC 
-                        convection
                         project_options
                         #OpenMP::OpenMP_CXX 
                         project_warnings

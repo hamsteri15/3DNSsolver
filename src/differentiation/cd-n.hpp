@@ -3,6 +3,7 @@
 #include "common/mdspan.hpp"
 #include "differentiation/tiled_stencil.hpp"
 
+
 template <size_t Dir> struct d_CD2 : public TiledStencil<d_CD2<Dir>> {
 
     static constexpr size_t padding   = 1;
