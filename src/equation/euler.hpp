@@ -20,19 +20,20 @@ template <size_t N> struct PrimitiveVariables {
 
 template<size_t N> struct ConservedVariables{
 
+    ConservedVariables(const CartesianGrid<N>& grid, extents<N> padding)
+        : rho(grid, padding)
+        , rhoE(grid, padding)
+        , rhoU(grid, padding) {}
+
     volScalarField<N> rho;
     volScalarField<N> rhoE;
     volVectorField<N, N> rhoU;
 
 };
 
-template<size_t N> struct ConvectionFlux{
 
-    volScalarField<N> phi;
-    volScalarField<N> phiH;
-    volVectorField<N, N> phiU;
 
-};
+
 
 template <size_t N> struct Euler {
 
@@ -67,7 +68,7 @@ ConservedVariables<N> compute_conserved(const Euler<N>& eq){
     const auto& p = prim.p;
     const auto& U = prim.U;
 
-    ConservedVariables<N> ret;
+    ConservedVariables<N> ret(eq.grid(), eq.padding());
     const auto kin = 0.5 * rho * dot(U,U);
 
     ret.rho  = rho;
@@ -78,39 +79,6 @@ ConservedVariables<N> compute_conserved(const Euler<N>& eq){
 
 }
 
-inline auto enthalpy(const auto& rho, const auto& p, const auto& U, auto eos){
-
-    auto gamma = eos.gamma();
-    auto c = sqrt(gamma * p / rho);
-    auto H = (c * c) / (gamma - scalar(1)) * 0.5 * dot(U, U);
-    return H;
-}
-
-template<size_t N, class NormalField>
-ConvectionFlux<N> compute_flux(const Euler<N>& eq, const NormalField& normal){
-
-    const auto& prim = eq.primitive_variables();
-    const auto& rho = prim.rho;
-    const auto& p = prim.p;
-    const auto& U = prim.U;
-
-    auto H = enthalpy(rho, p, U, eq.eos());
-
-    ConvectionFlux<N> ret;
-
-    auto phi = dot(U, normal) * rho;
-
-    ret.phi  = phi;
-    ret.phiH = phi * H;
-    ret.phiU = phi*U + p * normal;
-
-    return ret;
-}
-
-template <size_t N> ConvectionFlux<N> compute_flux(const Euler<N>& eq, const Vector<N>& normal) {
-
-    return compute_flux(eq, topaz::make_constant_range(normal, eq.primitive_variables().p.size()));
-}
 
 
 template <size_t N, class NormalField>
@@ -138,28 +106,5 @@ auto max_eigenvalue(const Euler<N>& eq, const Vector<N>& normal) {
 }
 
 
-template<size_t N, class NormalField>
-std::pair<ConvectionFlux<N>, ConvectionFlux<N>>
-laxfriedrichs_flux(const Euler<N>& eq, const NormalField& normal){
-
-    auto F = compute_flux(eq, normal);
-    auto cons = compute_conserved(eq);
-    auto alpha = max_eigenvalue(eq, normal);
-
-    ConvectionFlux<N> fl, fr;
-
-    fl.phi = 0.5 * (F.phi + alpha*cons.rho);
-    fl.phiH = 0.5 * (F.phiH + alpha * cons.rhoE);
-    fl.phiU = 0.5 * (F.phiU + alpha * cons.rhoU);
-
-    fr.phi = 0.5 * (F.phi - alpha*cons.rho);
-    fr.phiH = 0.5 * (F.phiH - alpha * cons.rhoE);
-    fr.phiU = 0.5 * (F.phiU - alpha * cons.rhoU);
-
-
-    return std::make_pair(fl, fr);
-
-
-}
 
 

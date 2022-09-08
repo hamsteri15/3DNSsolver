@@ -3,6 +3,7 @@
 #include "equation/cartesian_grid.hpp"
 #include "equation/surface_field.hpp"
 #include "equation/euler.hpp"
+#include "equation/euler_flux.hpp"
 #include "equation/volumetric_field.hpp"
 
 #include "differentiation/cd-n.hpp"
@@ -116,6 +117,28 @@ TEST_CASE("Test VolumetricField"){
         volScalarField<2> f2(grid, extents<2>{1,2});
         CHECK(f2.dimensions() == extents<2>{2,3});
         CHECK(f2.padding() == extents<2>{1,2});
+
+
+        SECTION("Bug 1, 8.9.2022 missing constructor in ConvectionFlux causing slicing and missing grid"){
+
+            extents<1> dims{1};
+            extents<1> padding{0};
+
+            CartesianGrid<1> grid(dims, Vector<1>{0}, Vector<1>{1});
+
+            Euler<1> eq(grid, padding, EquationOfState{});
+
+            auto flux = compute_flux(eq, Vector<1>{1});
+
+            REQUIRE_NOTHROW(
+
+                volVectorField<1, 1+2>(flux.phi.get_grid(), flux.phi.padding())
+            );
+            
+
+
+        }
+
 
     }
 
@@ -235,50 +258,11 @@ TEST_CASE("Test VolumetricField"){
 
 TEST_CASE("Test Euler equation"){
 
-    SECTION("PhysicalFlux"){
+    SECTION("Constructors"){
 
-        
-
-        SECTION("1D"){
-
-            auto eq = make_euler_equation<1>(extents<1>{3}, extents<1>{0});
-
-            auto& p = eq.primitive_variables();
-
-            p.rho = scalarField({0.5, 1.0, 1.0});
-            p.p = scalarField({1.0, 1.0, 1.0});
-            p.U = vectorField<1>{Vector<1>{1.0}, Vector<1>{1.0}, Vector<1>{1.0}};
-
-
-            auto flux = compute_flux(eq, Vector<1>{1});
-
-
-            auto phi = flux.phi;
-            auto phiU = flux.phiU;
-
-            CHECK(phi == scalarField({0.5, 1.0, 1.0}));
-
-
-
-            CHECK(phiU == 
-                vectorField<1>
-                {
-                    Vector<1>{1.5},
-                    Vector<1>{2.0},
-                    Vector<1>{2.0}
-                });
-
-            p.rho = scalarField({1.4, 1.4, 1.4});
-
-            auto flux2 = compute_flux(eq, Vector<1>{1});
-
-            CHECK(flux2.phiH[0] == Approx(1.75));        
-            CHECK(flux2.phiH[1] == Approx(1.75));        
-            CHECK(flux2.phiH[2] == Approx(1.75));        
-        
-        }
 
     }
+
 
     SECTION("max_eigenvalue"){
 
@@ -292,6 +276,74 @@ TEST_CASE("Test Euler equation"){
 
 
     }
+
+    
+
+
+}
+
+TEST_CASE("Test euler_flux"){
+
+
+
+    SECTION("combine_fields"){
+        
+        auto eq = make_euler_equation<1>(extents<1>{1}, extents<1>{0});
+        ConvectionFlux<1> flux(eq.grid(), eq.padding());
+
+        flux.phi = scalarField({1});
+        flux.phiH = scalarField({2});
+        flux.phiU = vectorField<1>{Vector<1>{3}};
+
+
+        auto combined = combine_fields(flux);
+        CHECK(combined[0] == Vector<3>({1, 2, 3}));
+
+
+    }
+
+
+
+
+    SECTION("1D compute_flux"){
+
+        auto eq = make_euler_equation<1>(extents<1>{3}, extents<1>{0});
+
+        auto& p = eq.primitive_variables();
+
+        p.rho = scalarField({0.5, 1.0, 1.0});
+        p.p = scalarField({1.0, 1.0, 1.0});
+        p.U = vectorField<1>{Vector<1>{1.0}, Vector<1>{1.0}, Vector<1>{1.0}};
+
+
+        auto flux = compute_flux(eq, Vector<1>{1});
+
+
+        auto phi = flux.phi;
+        auto phiU = flux.phiU;
+
+        CHECK(phi == scalarField({0.5, 1.0, 1.0}));
+
+
+
+        CHECK(phiU == 
+            vectorField<1>
+            {
+                Vector<1>{1.5},
+                Vector<1>{2.0},
+                Vector<1>{2.0}
+            });
+
+        p.rho = scalarField({1.4, 1.4, 1.4});
+
+        auto flux2 = compute_flux(eq, Vector<1>{1});
+
+        CHECK(flux2.phiH[0] == Approx(1.75));        
+        CHECK(flux2.phiH[1] == Approx(1.75));        
+        CHECK(flux2.phiH[2] == Approx(1.75));        
+    
+    }
+
 
     SECTION("laxfriedrichs_flux"){
 

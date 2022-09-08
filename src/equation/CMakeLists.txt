@@ -1,6 +1,7 @@
 set(Headers
     ./equation.hpp
     ./euler.hpp
+    ./euler_flux.hpp
     ./grid.hpp
     ./cartesian_grid.hpp
     ./volumetric_field.hpp
@@ -11,6 +12,7 @@ set(Headers
 set(Sources
     ./equation.cpp
     ./euler.cpp
+    ./euler_flux.cpp
     ./grid.cpp
     ./cartesian_grid.cpp
     ./volumetric_field.cpp
