@@ -235,29 +235,97 @@ TEST_CASE("Test VolumetricField"){
 
 TEST_CASE("Test Euler equation"){
 
-    SECTION("1D ConvectionFlux"){
+    SECTION("PhysicalFlux"){
 
-        auto eq = make_euler_equation<1>(extents<1>{3}, extents<1>{1});
+        
+
+        SECTION("1D"){
+
+            auto eq = make_euler_equation<1>(extents<1>{3}, extents<1>{0});
+
+            auto& p = eq.primitive_variables();
+
+            p.rho = scalarField({0.5, 1.0, 1.0});
+            p.p = scalarField({1.0, 1.0, 1.0});
+            p.U = vectorField<1>{Vector<1>{1.0}, Vector<1>{1.0}, Vector<1>{1.0}};
+
+
+            auto flux = compute_flux(eq, Vector<1>{1});
+
+
+            auto phi = flux.phi;
+            auto phiU = flux.phiU;
+
+            CHECK(phi == scalarField({0.5, 1.0, 1.0}));
+
+
+
+            CHECK(phiU == 
+                vectorField<1>
+                {
+                    Vector<1>{1.5},
+                    Vector<1>{2.0},
+                    Vector<1>{2.0}
+                });
+
+            p.rho = scalarField({1.4, 1.4, 1.4});
+
+            auto flux2 = compute_flux(eq, Vector<1>{1});
+
+            CHECK(flux2.phiH[0] == Approx(1.75));        
+            CHECK(flux2.phiH[1] == Approx(1.75));        
+            CHECK(flux2.phiH[2] == Approx(1.75));        
+        
+        }
+
+    }
+
+    SECTION("max_eigenvalue"){
+
+        /*
+        auto eq = make_euler_equation<1>(extents<1>{3}, extents<1>{0});
         assign_shocktube<0>(eq);
+        auto mmax = max_eigenvalue(eq, Vector<1>{});
 
-        ConvectionFlux<1> F(eq);
-
-        std::vector<Vector<3>> correct =
-        {
-            Vector<3>{0,0,1},
-            Vector<3>{0,0,1},
-            Vector<3>{0,0,0.1},
-            Vector<3>{0,0,0.1},
-            Vector<3>{0,0,0.1}
-
-        };
-
-
-        CHECK(std::vector<Vector<3>>{F.fluxes[0].begin(), F.fluxes[0].end()}
-        == correct);
-
+        CHECK(mmax[0] == 3);
+        */
 
 
     }
+
+    SECTION("laxfriedrichs_flux"){
+
+        auto eq = make_euler_equation<1>(extents<1>{2}, extents<1>{0});
+        assign_shocktube<0>(eq);
+
+        auto [fl, fr] = laxfriedrichs_flux(eq, Vector<1>{1});
+
+
+        //Continuity
+
+        CHECK(fl.phi[0] == Approx(0.59160798)); //Left side domain
+        CHECK(fl.phi[1] == Approx(0.0661437)); //Right side domain
+
+        CHECK(fr.phi[0] == Approx(-0.59160798)); //Left side domain
+        CHECK(fr.phi[1] == Approx(-0.0661437));  //Right side domain
+
+        //Energy
+        
+        CHECK(fl.phiH[0] == Approx(1.47901995)); //Left side domain
+        CHECK(fl.phiH[1] == Approx(0.1322875)); //Right side domain
+
+        CHECK(fr.phiH[0] == Approx(-1.47901995)); //Left side domain
+        CHECK(fr.phiH[1] == Approx(-0.1322875));  //Right side domain
+
+        //Momentum
+        
+        CHECK(fl.phiU[0][0] == Approx(0.5)); //Left side domain
+        CHECK(fl.phiU[1][0] == Approx(0.05)); //Right side domain
+
+        CHECK(fr.phiU[0][0] == Approx(0.5)); //Left side domain
+        CHECK(fr.phiU[1][0] == Approx(0.05));  //Right side domain
+
+    }
+
 
 }

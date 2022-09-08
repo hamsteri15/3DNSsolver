@@ -3,7 +3,6 @@
 #include "common/mdspan.hpp"
 #include "common/make_field.hpp"
 #include "differentiation/cd-n.hpp"
-#include "convection/convection_flux.hpp"
 #include "differentiation/evaluate_tiled.hpp"
 
 /*

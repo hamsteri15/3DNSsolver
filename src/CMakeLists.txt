@@ -1,6 +1,5 @@
 #Build libraries
 set(libdirs
-    convection
     equation
 )
 SUBDIRS(${libdirs} )
