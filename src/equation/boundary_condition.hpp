@@ -36,8 +36,6 @@ template <class ET, size_t N> void mirror(VolumetricField<ET, N>& f, Vector<N> n
     runtime_assert(std::abs(normal.elementwise_sum()) == scalar(1),
                    "Only unit normal mirroring supported for now.");
 
-
-
     auto b_span = boundary_subspan(f, normal);
 
     auto padding = f.padding();

@@ -3,6 +3,8 @@
 #include "common/mdspan.hpp"
 #include "equation/euler.hpp"
 #include "equation/volumetric_field.hpp"
+#include "equation/boundary_condition.hpp"
+
 
 template<size_t Dir, size_t N, class T>
 void set_linear(span<T, N> s){
@@ -52,4 +54,27 @@ void assign_shocktube(Euler<N>& eq){
         }
 
     }
+}
+
+template<size_t N>
+void mirror_all(Euler<N>& eq){
+
+
+    auto& p = eq.primitive_variables();
+
+    for (size_t i = 0; i < N; ++i){
+
+        Vector<N> normal{};
+        normal[i] = 1;
+        mirror(p.rho, normal);
+        mirror(p.p, normal);
+        mirror(p.U, normal);
+
+        normal[i] = -1;
+        mirror(p.rho, normal);
+        mirror(p.p, normal);
+        mirror(p.U, normal);
+
+    }
+
 }

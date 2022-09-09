@@ -26,6 +26,7 @@ template <size_t N> struct CartesianGrid : public Grid {
     Vector<N> p1() const {return m_p1;}
 
 
+
 private:
     extents<N> m_extents;
     Vector<N>  m_p0;
@@ -34,14 +35,23 @@ private:
 
 
 template<size_t N>
-vectorField<N> points(const CartesianGrid<N>& grid){
+Vector<N> spatial_stepsize(const CartesianGrid<N>& grid)
+{
 
     auto L = grid.p1() - grid.p0();
     auto nPoints = grid.dimensions();
-    Vector<N> delta;
+    Vector<N> deltas;
     for (size_t i = 0; i < N; ++i){
-        delta[i] = L[i] / scalar(nPoints.extent(i));
+        deltas[i] = L[i] / scalar(nPoints.extent(i));
     }
+    return deltas;
+}
+
+
+template<size_t N>
+vectorField<N> points(const CartesianGrid<N>& grid){
+
+    auto delta = spatial_stepsize(grid);
 
     vectorField<N> ret(grid.point_count());
 

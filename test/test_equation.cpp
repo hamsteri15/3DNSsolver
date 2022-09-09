@@ -398,31 +398,35 @@ TEST_CASE("Test VolumetricField"){
 
 TEST_CASE("Test boundary_condition"){
 
-    CartesianGrid<2> grid(extents<2>{2,2}, Vector<2>{0,0}, Vector<2>{1,1});
-    volScalarField<2> f(grid, extents<2>{1,1});
+    SECTION("mirror"){
+        CartesianGrid<2> grid(extents<2>{2,2}, Vector<2>{0,0}, Vector<2>{1,1});
+        volScalarField<2> f(grid, extents<2>{1,1});
 
-    f = scalarField
-    {
-        0,0,0,0,
-        0,1,2,0,
-        0,3,4,0,
-        0,0,0,0
-    };
+        f = scalarField
+        {
+            0,0,0,0,
+            0,1,2,0,
+            0,3,4,0,
+            0,0,0,0
+        };
 
-    std::vector<scalar> correct = 
-    {
-        0,1,2,0,
-        1,1,2,2,
-        3,3,4,4,
-        0,3,4,0
-    };
-    
+        std::vector<scalar> correct = 
+        {
+            0,1,2,0,
+            1,1,2,2,
+            3,3,4,4,
+            0,3,4,0
+        };
+        
 
-    mirror(f, Vector<2>{1,0});
-    mirror(f, Vector<2>{0,1});
-    mirror(f, Vector<2>{-1,0});
-    mirror(f, Vector<2>{0,-1});
-    CHECK(std::vector<scalar>{f.begin(), f.end()} == correct);
+        mirror(f, Vector<2>{1,0});
+        mirror(f, Vector<2>{0,1});
+        mirror(f, Vector<2>{-1,0});
+        mirror(f, Vector<2>{0,-1});
+        CHECK(std::vector<scalar>{f.begin(), f.end()} == correct);
+
+    }
+
 
 }
 
@@ -550,76 +554,24 @@ TEST_CASE("Test euler_flux"){
 
     }
 
-    /*
-    
-    SECTION("Solve 1D shock tube CD2"){
 
-        size_t nx = 10;
-        scalar dt = 0.001;
-        scalar dx = 1.0/nx;
+    auto take_step = [](auto& eq, scalar dt){
 
-        auto eq = make_euler_equation<1>(extents<1>{nx}, extents<1>{3});
-        assign_shocktube<0>(eq);
+        mirror_all(eq);
 
+        auto dx = spatial_stepsize(eq.grid())[0];
 
         auto cons = compute_conserved(eq);
-
-        auto F = combine_fields(compute_flux(eq, Vector<1>{1}));
-        auto dF(F);
-        evaluate_tiled(F, dF, d_CD2<0>{});
-
-
-        auto dU = dt * (dF / (-2*dx));
-
-        auto cons_new = cons + dU;
-
-        auto W = conserved_to_primitive(eq, cons_new);
-
-
-        for (auto r : W.rho){
-            std::cout << r << std::endl;
-        }
-        std::cout << "==========" << std::endl;
-        for (auto r : W.p){
-            std::cout << r << std::endl;
-        }
-        std::cout << "==========" << std::endl;
-        for (auto r : W.U){
-            std::cout << r << std::endl;
-        }
-    }
-    
-    */
-
-    /*
-    SECTION("Solve 1D shock tube weno"){
-
-        size_t nx = 10;
-
-        scalar dx = 1.0/nx;
-
-        auto eq = make_euler_equation<1>(extents<1>{nx}, extents<1>{3});
-        assign_shocktube<0>(eq);
-
-
-        auto cons = compute_conserved(eq);
-
-        auto [fl, fr] = laxfriedrichs_flux(eq, Vector<1>{1});
-
+        auto [fl ,fr] = laxfriedrichs_flux(eq, Vector<1>{});
 
         auto Fl = combine_fields(fl);
         auto Fr = combine_fields(fr);
+
 
         auto Rl(Fl);
         auto Rr(Fr);
         auto dRl(Fl);
         auto dRr(Fr);
-
-
-        auto R(Fr);
-        
-
-
         evaluate_tiled(Fl, Rl, Weno_left<0>{});
         evaluate_tiled(Fr, Rr, Weno_right<0>{});
 
@@ -627,16 +579,41 @@ TEST_CASE("Test euler_flux"){
         evaluate_tiled(Rr, dRr, Downwind1<0>{});
 
 
-        R = (dRl + dRr)/dx;
+        auto dU = (dRl + dRr)/(-dx);
+
+        auto new_U = cons + dt*dU;
+
+        auto new_W = conserved_to_primitive(eq, new_U);
+
+        eq.primitive_variables() = conserved_to_primitive(eq, new_U);
 
 
+    };
 
-        for (auto r : R){
-            std::cout << r << std::endl;
+    SECTION("Solve 1D shock tube weno"){
+
+        size_t nx = 50;
+        scalar dt = 0.001;
+        scalar T = 0.3;
+        auto eq = make_euler_equation<1>(extents<1>{nx}, extents<1>{3});
+        assign_shocktube<0>(eq);
+
+
+        scalar time = 0.;
+
+        while (time < T){
+
+            take_step(eq, dt);
+
+            time += dt;
         }
-    }
-    */
 
+        print(make_full_span(eq.primitive_variables().rho));
+
+
+
+
+    }
 
 
 }

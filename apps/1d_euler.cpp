@@ -1,6 +1,7 @@
 #include <iostream>
 #include "equation/euler.hpp"
 #include "equation/euler_flux.hpp"
+#include "equation/boundary_condition.hpp"
 #include "differentiation/weno.hpp"
 #include "differentiation/evaluate_tiled.hpp"
 
