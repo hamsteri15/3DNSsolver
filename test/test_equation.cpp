@@ -136,7 +136,7 @@ TEST_CASE("Test VolumetricField"){
 
             REQUIRE_NOTHROW(
 
-                volVectorField<1, 1+2>(flux.phi.get_grid(), flux.phi.padding())
+                volVectorField<1, 1+2>(flux.phi.grid(), flux.phi.padding())
             );
 
         }
@@ -385,8 +385,8 @@ TEST_CASE("Test VolumetricField"){
         std::vector<scalar> correct = 
         {
             0,0,0,0,
-            0,2,2,0,
-            0,2,2,0,
+            0,1,1,0,
+            0,1,1,0,
             0,0,0,0
         };
         CHECK(std::vector<scalar>{out.begin(), out.end()} == correct);
@@ -519,6 +519,22 @@ TEST_CASE("Test euler_flux"){
     
     }
 
+    SECTION("Shocktube physical flux"){
+
+        auto eq = make_euler_equation<1>(extents<1>{2}, extents<1>{0});
+        assign_shocktube<0>(eq);
+
+        auto flux = compute_flux(eq, Vector<1>{1});
+
+        CHECK(flux.phi[0] == 0);
+        CHECK(flux.phi[1] == 0);
+        CHECK(flux.phiH[0] == 0);
+        CHECK(flux.phiH[1] == 0);
+        CHECK(flux.phiU[0] == Vector<1>{1});
+        CHECK(flux.phiU[1] == Vector<1>{0.1});
+
+    }
+
 
     SECTION("laxfriedrichs_flux"){
 
@@ -554,66 +570,43 @@ TEST_CASE("Test euler_flux"){
 
     }
 
+    SECTION("Flux differentiation"){
 
-    auto take_step = [](auto& eq, scalar dt){
+        /*
+        SECTION("unsplit flux"){
+            auto eq = make_euler_equation<1>(extents<1>{5}, extents<1>{2});
+            assign_shocktube<0>(eq);
 
-        mirror_all(eq);
+            auto F = compute_flux(eq, Vector<1>{1});
 
-        auto dx = spatial_stepsize(eq.grid())[0];
-
-        auto cons = compute_conserved(eq);
-        auto [fl ,fr] = laxfriedrichs_flux(eq, Vector<1>{});
-
-        auto Fl = combine_fields(fl);
-        auto Fr = combine_fields(fr);
+            volVectorField<1, 3> dF = d_di(F, d_CD2<0>{});
 
 
-        auto Rl(Fl);
-        auto Rr(Fr);
-        auto dRl(Fl);
-        auto dRr(Fr);
-        evaluate_tiled(Fl, Rl, Weno_left<0>{});
-        evaluate_tiled(Fr, Rr, Weno_right<0>{});
+            for (auto f : dF){
+                std::cout << f << std::endl;
+            }
 
-        evaluate_tiled(Rl, dRl, Upwind1<0>{});
-        evaluate_tiled(Rr, dRr, Downwind1<0>{});
+        }
+        */
+        SECTION("split flux"){
+            auto eq = make_euler_equation<1>(extents<1>{5}, extents<1>{2});
+            assign_shocktube<0>(eq);
 
+            auto F = laxfriedrichs_flux(eq, Vector<1>{1});
 
-        auto dU = (dRl + dRr)/(-dx);
+            volVectorField<1, 3> dF = d_di(F, Weno_left<0>{}, Weno_right<0>{});
 
-        auto new_U = cons + dt*dU;
+            std::cout << "rho: " << std::endl;
+            for (auto f : dF){
+                std::cout << -f[0] << std::endl;
+            }
 
-        auto new_W = conserved_to_primitive(eq, new_U);
-
-        eq.primitive_variables() = conserved_to_primitive(eq, new_U);
-
-
-    };
-
-    SECTION("Solve 1D shock tube weno"){
-
-        size_t nx = 50;
-        scalar dt = 0.001;
-        scalar T = 0.3;
-        auto eq = make_euler_equation<1>(extents<1>{nx}, extents<1>{3});
-        assign_shocktube<0>(eq);
-
-
-        scalar time = 0.;
-
-        while (time < T){
-
-            take_step(eq, dt);
-
-            time += dt;
         }
 
-        print(make_full_span(eq.primitive_variables().rho));
 
 
 
 
     }
-
 
 }

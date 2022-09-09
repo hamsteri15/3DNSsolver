@@ -16,7 +16,6 @@ void set_linear(span<T, N> s){
     }
 
 }
-
 template<size_t N>
 auto make_euler_equation(extents<N> dims, extents<N> padding){
 

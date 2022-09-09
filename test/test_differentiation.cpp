@@ -87,7 +87,7 @@ TEST_CASE("1D cd-2"){
         set_linear<0>(s_in);
         
         evaluate_tiled(s_in, s_out, op);
-        CHECK(out == std::vector<int>{0, 2, 2, 2, 2, 2, 0});
+        CHECK(out == std::vector<int>{0, 1, 1, 1, 1, 1, 0});
 
 
     }
@@ -119,8 +119,8 @@ TEST_CASE("2D cd-2"){
             out == scalarField
             {
                 0, 0, 0,
-                2, 2, 2,
-                2, 2, 2,
+                1, 1, 1,
+                1, 1, 1,
                 0, 0, 0
             }
         );
@@ -148,8 +148,8 @@ TEST_CASE("2D cd-2"){
         CHECK(
             out == scalarField
             {
-                0, 2, 2, 2, 0,
-                0, 2, 2, 2, 0
+                0, 1, 1, 1, 0,
+                0, 1, 1, 1, 0
             }
         );
         
@@ -178,8 +178,8 @@ TEST_CASE("2D cd-2"){
             out == scalarField
             {
                 0, 0, 0, 0, 0,
-                2, 2, 2, 2, 2,
-                2, 2, 2, 2, 2,
+                1, 1, 1, 1, 1,
+                1, 1, 1, 1, 1,
                 0, 0, 0, 0, 0
             }
         );
@@ -197,10 +197,10 @@ TEST_CASE("2D cd-2"){
         CHECK(
             out == scalarField
             {
-                0, 2, 2, 2, 0,
-                0, 2, 2, 2, 0,
-                0, 2, 2, 2, 0,
-                0, 2, 2, 2, 0
+                0, 1, 1, 1, 0,
+                0, 1, 1, 1, 0,
+                0, 1, 1, 1, 0,
+                0, 1, 1, 1, 0
             }
         );
 

@@ -18,8 +18,8 @@ template <class ET, size_t N> struct VolumetricField : public Field<ET> {
     auto padding() const { return m_padding; }
     auto dimensions() const { return m_grid.dimensions(); }
 
-    const auto& get_grid() const { return m_grid; }
-    auto&       get_grid() { return m_grid; }
+    const auto& grid() const { return m_grid; }
+    auto&       grid() { return m_grid; }
 
 private:
     static size_t size_to_allocate(const CartesianGrid<N>& grid, extents<N> padding) {

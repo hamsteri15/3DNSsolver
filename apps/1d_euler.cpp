@@ -1,48 +1,30 @@
 #include <iostream>
-#include "equation/euler.hpp"
-#include "equation/euler_flux.hpp"
-#include "equation/boundary_condition.hpp"
-#include "differentiation/weno.hpp"
-#include "differentiation/evaluate_tiled.hpp"
 
-
-struct Eos{
-    scalar gamma() const {return 1.4;}
-};
-
+#include "euler_solver.hpp"
+#include "initial_condition.hpp"
 
 
 int main(){
 
-    /*
-    std::cout << "Solver begins" << std::endl;
 
-    scalar T = 0.3;
-    scalar L = 1.0;
-    size_t nx = 50;
-    scalar dx = L / nx;
-    scalar dt = 0.0001;
-    size_t nt = T / dt;
-    auto [rho, p, U] = make_fields(nx);
+    EulerSolver1D solver;
 
+    scalar dt = 0.0005;
+    scalar T = 0.1;
+    auto eq = make_euler_equation<1>(extents<1>{40}, extents<1>{2});
+    assign_shocktube<0>(eq);
 
-    for(size_t n = 0; n < nt; ++n){
-    
-        scalar time = n * dt;
-
-        std::cout << "Time: " << time << std::endl;
-
-        //boundary update here
-        take_step(nx, dx, dt, rho, p, U);
-
-
+    scalar time = 0.;
+    while (time < T){
+        solver.takes_step(eq, dt);
+        time += dt;
     }
 
 
-    print(p);
+    print(make_full_span(eq.primitive_variables().rho));
 
-    std::cout << "End" << std::endl;
-    */
+
+
     return 0;
 
 

@@ -1,6 +1,8 @@
 #pragma once
 
 #include "equation/euler.hpp"
+#include "differentiation/upwind.hpp"
+#include "differentiation/downwind.hpp"
 
 
 template<size_t N> struct ConvectionFlux{
@@ -22,7 +24,7 @@ template<size_t N>
 volVectorField<N, N+2> combine_fields(const ConvectionFlux<N>& flux){
 
 
-    volVectorField<N, N+2> ret(flux.phi.get_grid(), flux.phi.padding());
+    volVectorField<N, N+2> ret(flux.phi.grid(), flux.phi.padding());
 
     const auto con = flux.phi;
     const auto ene = flux.phiH;
@@ -108,5 +110,50 @@ laxfriedrichs_flux(const Euler<N>& eq, const NormalField& normal){
 
     return std::make_pair(fl, fr);
 
+}
+
+template<size_t N, class Scheme>
+auto d_di(const ConvectionFlux<N>& F, Scheme scheme){
+
+    auto FF = combine_fields(F);
+    auto dF(FF);
+    auto delta = spatial_stepsize(F.phi.grid())[Scheme::direction];
+    evaluate_tiled(FF, dF, scheme);
+
+    auto ret(dF);
+    ret = dF / delta;
+    return ret;
+
+}
+
+
+template<size_t N, class Scheme1, class Scheme2>
+auto d_di(const std::pair<ConvectionFlux<N>,ConvectionFlux<N>>& F, Scheme1 scheme1, Scheme2 scheme2){
+
+    static constexpr auto dir = Scheme1::direction;
+    static_assert(dir == Scheme2::direction, "Direction mismatch in flux differentiation");
+
+    auto Fl = combine_fields(std::get<0>(F));
+    auto Fr = combine_fields(std::get<1>(F));
+
+    auto Fl_int(Fl);
+    auto Fr_int(Fr);
+
+    evaluate_tiled(Fl, Fl_int, scheme1);
+    evaluate_tiled(Fr, Fr_int, scheme2);
+
+    auto dFl(Fl);
+    auto dFr(Fr);
+
+
+    evaluate_tiled(Fl_int, dFl, Upwind1<dir>{});
+    evaluate_tiled(Fr_int, dFr, Downwind1<dir>{});
+
+
+    auto delta = spatial_stepsize(Fl.grid())[dir];
+
+    auto ret(Fl);
+    ret = (dFl + dFr) / delta;
+    return ret;
 
 }

@@ -48,6 +48,23 @@ auto operator+(const ConservedVariables<N>& lhs, const Range& rhs){
 
     return ret;
 }
+template<size_t N, class Range>
+auto operator-(const ConservedVariables<N>& lhs, const Range& rhs){
+
+    ConservedVariables<N> ret(lhs);
+
+    for (size_t i = 0; i < size_t(rhs.size()); ++i){
+
+        ret.rho[i] -= rhs[i][0];
+        ret.rhoE[i] -= rhs[i][1];
+
+        for (size_t j = 0; j < N; ++j){
+            ret.rhoU[i][j] -= rhs[i][j+2];
+        }
+    }
+
+    return ret;
+}
 
 
 
