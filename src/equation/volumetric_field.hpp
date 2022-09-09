@@ -124,8 +124,6 @@ template <class ET, size_t N>
 std::array<size_t, N> boundary_subspan_begin(const VolumetricField<ET, N>& f, Vector<N> normal) {
 
     auto begin = extent_to_array(f.padding());
-
-    //auto full_dims = full_extent(f);
     for (size_t i = 0; i < N; ++i) {
         if (normal[i] > 0) { begin[i] = f.dimensions().extent(i); }
     }
