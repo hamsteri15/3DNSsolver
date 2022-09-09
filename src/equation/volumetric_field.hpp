@@ -101,6 +101,65 @@ auto make_internal_span(const VolumetricField<ET, N>& f){
 }
 
 
+
+
+template <class ET, size_t N>
+std::array<size_t, N> boundary_subspan_dims(const VolumetricField<ET, N>& f, Vector<N> normal) {
+
+    std::array<size_t, N> s_dims{};
+
+
+    for (size_t i = 0; i < N; ++i) {
+        if (normal[i] != 0) {
+            s_dims[i] = f.padding().extent(i);
+        } else {
+            s_dims[i] = f.dimensions().extent(i);
+        }
+    }
+
+    return s_dims;
+}
+
+template <class ET, size_t N>
+std::array<size_t, N> boundary_subspan_begin(const VolumetricField<ET, N>& f, Vector<N> normal) {
+
+    auto begin = extent_to_array(f.padding());
+
+    //auto full_dims = full_extent(f);
+    for (size_t i = 0; i < N; ++i) {
+        if (normal[i] > 0) { begin[i] = f.dimensions().extent(i); }
+    }
+
+    return begin;
+}
+template <class ET, size_t N>
+std::array<size_t, N> boundary_subspan_end(const VolumetricField<ET, N>& f, Vector<N> normal) {
+
+    auto begin = boundary_subspan_begin(f, normal);
+    auto dims  = boundary_subspan_dims(f, normal);
+
+    std::array<size_t, N> end{};
+    for (size_t i = 0; i < N; ++i) { end[i] = begin[i] + dims[i]; }
+
+    return end;
+}
+
+template <class ET, size_t N> auto boundary_subspan(VolumetricField<ET, N>& f, Vector<N> normal) {
+
+    return make_subspan(
+        make_full_span(f), boundary_subspan_begin(f, normal), boundary_subspan_end(f, normal));
+}
+
+template <class ET, size_t N> auto boundary_subspan(const VolumetricField<ET, N>& f, Vector<N> normal) {
+
+    return make_subspan(
+        make_full_span(f), boundary_subspan_begin(f, normal), boundary_subspan_end(f, normal));
+}
+
+
+
+
+
 template<size_t N>
 using volScalarField = VolumetricField<scalar, N>;
 

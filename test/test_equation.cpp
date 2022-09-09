@@ -137,8 +137,6 @@ TEST_CASE("Test VolumetricField"){
 
                 volVectorField<1, 1+2>(flux.phi.get_grid(), flux.phi.padding())
             );
-            
-
 
         }
 
@@ -223,13 +221,152 @@ TEST_CASE("Test VolumetricField"){
         };
         CHECK(std::vector<scalar>{f.begin(), f.end()} == correct);
 
+    }
+    
 
-        //print(make_full_span(f));
+    SECTION("boundary_subspan"){
 
+        
+        SECTION("boundary_subspan_dims"){
+            CartesianGrid<2> grid(extents<2>{2,2}, Vector<2>{0,0}, Vector<2>{1,1});
+            volScalarField<2> f(grid, extents<2>{1,1});
+
+            auto dims = boundary_subspan_dims(f, Vector<2>{1,0});
+
+            CHECK(dims == std::array<size_t, 2>{1, 2});
+
+        }
+        SECTION("boundary_subspan_begin"){
+
+            CartesianGrid<2> grid(extents<2>{2,2}, Vector<2>{0,0}, Vector<2>{1,1});
+            volScalarField<2> f(grid, extents<2>{1,1});
+
+            auto begin = boundary_subspan_begin(f, Vector<2>{1,0});
+
+            CHECK(begin == std::array<size_t, 2>{2, 1});
+
+        }
+        SECTION("boundary_subspan_end"){
+
+            CartesianGrid<2> grid(extents<2>{2,2}, Vector<2>{0,0}, Vector<2>{1,1});
+            volScalarField<2> f(grid, extents<2>{1,1});
+
+            auto end = boundary_subspan_end(f, Vector<2>{1,0});
+
+            CHECK(end == std::array<size_t, 2>{3, 3});
+
+        }
+        
+
+       
+
+        SECTION("boundary_subspan loops"){
+            
+
+            auto assign_linear = [](auto s){
+                scalar first = 1;
+                for (auto idx : all_indices(s)){
+                    auto ii = get_array_from_tuple(idx);
+                    s(ii) = first;
+                    first = first + 1;
+                }
+            };
+
+            auto test_kernel = [=](auto dims, auto padding, auto normal){
+                
+                CartesianGrid<2> grid(dims, Vector<2>{0,0}, Vector<2>{1,1});
+                volScalarField<2> f(grid, padding);
+                
+                auto span = boundary_subspan(f, normal);
+                assign_linear(span);                
+
+                return std::vector<scalar>{f.begin(), f.end()};
+
+            };         
+
+            SECTION("normal{1,0}"){
+                
+                Vector<2> normal{1,0};
+                auto t = test_kernel(extents<2>{2,2}, extents<2>{1,1}, normal);
+                
+                std::vector<scalar> correct = 
+                {
+                    0,0,0,0,
+                    0,0,0,0,
+                    0,1,2,0,
+                    0,0,0,0
+                };
+                CHECK(t == correct);
+            }
+            SECTION("normal{1,1}"){
+                
+                Vector<2> normal{1,1};
+                auto t = test_kernel(extents<2>{2,2}, extents<2>{1,1}, normal);
+                
+                std::vector<scalar> correct = 
+                {
+                    0,0,0,0,
+                    0,0,0,0,
+                    0,0,1,0,
+                    0,0,0,0
+                };
+                CHECK(t == correct);
+            }
+            
+            SECTION("normal{-1,0}"){
+                
+                Vector<2> normal{-1, 0};
+                auto t = test_kernel(extents<2>{2,2}, extents<2>{1,1}, normal);
+                
+                std::vector<scalar> correct = 
+                {
+                    0,0,0,0,
+                    0,1,2,0,
+                    0,0,0,0,
+                    0,0,0,0
+                };
+                CHECK(t == correct);
+            }
+            SECTION("normal{0, -1}"){
+                
+                Vector<2> normal{0, -1};
+                auto t = test_kernel(extents<2>{2,2}, extents<2>{1,1}, normal);
+                
+                std::vector<scalar> correct = 
+                {
+                    0,0,0,0,
+                    0,1,0,0,
+                    0,2,0,0,
+                    0,0,0,0
+                };
+                CHECK(t == correct);
+            }
+
+            
+            SECTION("changed dimensions"){
+                
+                Vector<2> normal{0,1};
+                auto t = test_kernel(extents<2>{3,2}, extents<2>{1,2}, normal);
+                
+                std::vector<scalar> correct = 
+                {
+                    0,0,0,0,0,0,
+                    0,0,1,2,0,0,
+                    0,0,3,4,0,0,
+                    0,0,5,6,0,0,
+                    0,0,0,0,0,0
+                };
+                CHECK(t == correct);
+
+            }
+
+
+        }
+        
 
 
     }
-    
+
 
 
     
@@ -382,6 +519,7 @@ TEST_CASE("Test euler_flux"){
 
     }
 
+    /*
     
     SECTION("Solve 1D shock tube CD2"){
 
@@ -420,7 +558,7 @@ TEST_CASE("Test euler_flux"){
         }
     }
     
-
+    */
 
     /*
     SECTION("Solve 1D shock tube weno"){
