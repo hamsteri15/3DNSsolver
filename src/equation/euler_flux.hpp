@@ -3,6 +3,85 @@
 #include "equation/euler.hpp"
 #include "differentiation/upwind.hpp"
 #include "differentiation/downwind.hpp"
+#include "equation/flux.hpp"
+
+
+
+inline auto enthalpy(const auto& rho, const auto& p, const auto& U, auto eos){
+
+    auto gamma = eos.gamma();
+    auto c = sqrt(gamma * p / rho);
+    auto H = (c * c) / (gamma - scalar(1)) * 0.5 * dot(U, U);
+    return H;
+}
+
+template<size_t N>
+struct RegularFlux : public Flux<Vector<N+2>, N>{
+
+    using base_type = Flux<Vector<N+2>, N>;
+
+    RegularFlux() = default;
+    
+    RegularFlux(const Euler<N>& eq, Vector<N> normal) : 
+    base_type(eq.grid(), eq.padding())
+    {
+        auto eos = eq.eos();
+
+        auto op = [eos, normal](auto tpl){
+            auto rho = topaz::get<0>(tpl);
+            auto p = topaz::get<1>(tpl);
+            auto U = topaz::get<2>(tpl);
+            
+            auto H = enthalpy(rho, p, U, eos);
+            auto phi = dot(U, normal) * rho;        
+
+            auto cont = phi;
+            auto ene = phi * H;
+            auto mom = phi * U + p * normal;
+
+            Vector<N+2> ret{};
+            ret[0] = phi;
+            ret[1] = phi * H;
+            for(size_t i = 0; i < N; ++i){
+                ret[i +2] = mom[i];
+            }
+
+            return ret;
+        };
+
+        this->value( ) = topaz::transform(eq.primitive_variables(), op); 
+
+    }
+
+};
+
+/*
+template<size_t N>
+struct LaxFriedrichsFlux : public SplitFlux<Vector<N+2>, N>
+{
+    LaxFriedrichsFlux(const Euler<N>& eq, Vector<N> normal):
+    base_type(eq.grid(), eq.padding())
+    {
+
+    }
+
+
+}
+*/
+
+/*
+auto make_flux(auto eq, auto method){
+
+    using return_type = decltype(method)::flux_type;
+
+    auto variables = eq.variables();
+
+    auto f = make_flux(method);
+
+    std::transform(variables, f, method);
+
+}
+*/
 
 
 template<size_t N> struct ConvectionFlux{
@@ -53,13 +132,6 @@ volVectorField<N, N+2> combine_fields(const ConvectionFlux<N>& flux){
 
 }
 
-inline auto enthalpy(const auto& rho, const auto& p, const auto& U, auto eos){
-
-    auto gamma = eos.gamma();
-    auto c = sqrt(gamma * p / rho);
-    auto H = (c * c) / (gamma - scalar(1)) * 0.5 * dot(U, U);
-    return H;
-}
 
 template<size_t N, class NormalField>
 ConvectionFlux<N> compute_flux(const Euler<N>& eq, const NormalField& normal){

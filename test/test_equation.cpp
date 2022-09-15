@@ -6,6 +6,7 @@
 #include "equation/euler_flux.hpp"
 #include "equation/volumetric_field.hpp"
 #include "equation/boundary_condition.hpp"
+#include "equation/flux.hpp"
 
 #include "differentiation/cd-n.hpp"
 #include "differentiation/evaluate_tiled.hpp"
@@ -457,6 +458,24 @@ TEST_CASE("Test Euler equation"){
 
 }
 
+TEST_CASE("Test flux"){
+
+    SECTION("Constructors"){
+
+        auto eq = make_euler_equation<1>(extents<1>{1}, extents<1>{0});
+        assign_shocktube<0>(eq);
+        RegularFlux<1> flux(eq, Vector<1>{1});
+
+        std::cout << flux.value()[0] << std::endl;
+
+
+
+    }
+
+
+}
+
+
 TEST_CASE("Test euler_flux"){
 
 
@@ -567,7 +586,6 @@ TEST_CASE("Test euler_flux"){
 
         CHECK(fr.phiU[0][0] == Approx(0.5)); //Left side domain
         CHECK(fr.phiU[1][0] == Approx(0.05));  //Right side domain
-
     }
 
     SECTION("Flux differentiation"){
@@ -589,17 +607,21 @@ TEST_CASE("Test euler_flux"){
         }
         */
         SECTION("split flux"){
-            auto eq = make_euler_equation<1>(extents<1>{5}, extents<1>{2});
+            auto eq = make_euler_equation<1>(extents<1>{3}, extents<1>{2});
             assign_shocktube<0>(eq);
 
             auto F = laxfriedrichs_flux(eq, Vector<1>{1});
-
+            
             volVectorField<1, 3> dF = d_di(F, Weno_left<0>{}, Weno_right<0>{});
 
-            std::cout << "rho: " << std::endl;
-            for (auto f : dF){
-                std::cout << -f[0] << std::endl;
-            }
+            CHECK(dF[2][0] == Approx(1.57639));
+            CHECK(dF[3][0] == Approx(-1.57639));
+
+            CHECK(dF[2][1] == Approx(4.0402));
+            CHECK(dF[3][1] == Approx(-4.0402));
+
+            CHECK(dF[2][2] == Approx(-1.35));
+            CHECK(dF[3][2] == Approx(-1.35));
 
         }
 

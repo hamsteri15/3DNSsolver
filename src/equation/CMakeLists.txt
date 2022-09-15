@@ -7,6 +7,7 @@ set(Headers
     ./volumetric_field.hpp
     ./surface_field.hpp
     ./equation_of_state.hpp
+    ./flux.hpp
 )
 
 set(Sources
@@ -18,6 +19,7 @@ set(Sources
     ./volumetric_field.cpp
     ./surface_field.hpp
     ./equation_of_state.cpp
+    ./flux.cpp
 )
 
 

@@ -36,23 +36,10 @@ auto sweep(const Euler<N>& eq){
 
     Vector<N> normal{};
     normal[I] = 1.0;
-    auto delta = spatial_stepsize(eq.grid())[I];
-    auto [fl, fr] = laxfriedrichs_flux(eq, normal);
+    auto F = laxfriedrichs_flux(eq, normal);
 
-    auto Fl = combine_fields(fl);
-    auto Fr = combine_fields(fr);
-    auto Rl(Fl);
-    auto Rr(Fr);
-    auto dRl(Fl);
-    auto dRr(Fr);
-    evaluate_tiled(Fl, Rl, Weno_left<I>{});
-    evaluate_tiled(Fr, Rr, Weno_right<I>{});
+    return  d_di(F, Weno_left<I>{}, Weno_right<I>{});
 
-    evaluate_tiled(Rl, dRl, Upwind1<I>{});
-    evaluate_tiled(Rr, dRr, Downwind1<I>{});
-
-
-    return (dRl + dRr)/delta;
 
 } 
 

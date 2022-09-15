@@ -16,6 +16,25 @@ template <size_t N> struct PrimitiveVariables {
     volScalarField<N>    rho;
     volScalarField<N>    p;
     volVectorField<N, N> U;
+
+    auto begin(){
+        auto tpl = topaz::adl_make_tuple(rho.begin(), p.begin(), U.begin());
+        return topaz::detail::make_zip_iterator(tpl);
+    }
+    auto begin() const{
+        auto tpl = topaz::adl_make_tuple(rho.begin(), p.begin(), U.begin());
+        return topaz::detail::make_zip_iterator(tpl);
+    }
+
+    auto end(){
+        auto tpl = topaz::adl_make_tuple(rho.end(), p.end(), U.end());
+        return topaz::detail::make_zip_iterator(tpl);
+    }
+    auto end() const{
+        auto tpl = topaz::adl_make_tuple(rho.end(), p.end(), U.end());
+        return topaz::detail::make_zip_iterator(tpl);
+    }
+
 };
 
 template<size_t N> struct ConservedVariables{
@@ -113,6 +132,8 @@ ConservedVariables<N> compute_conserved(const Euler<N>& eq){
 }
 
 
+
+
 template<size_t N>
 PrimitiveVariables<N> conserved_to_primitive(const Euler<N>& eq, const ConservedVariables<N>& cons){
 
@@ -154,7 +175,6 @@ inline auto max_eigenvalue(const Euler<N>& eq, const NormalField& normal){
     const auto eig1 = mag(q - c);
     const auto eig2 = mag(q + c);
     return max(eig1, eig2);
-
 }
 
 template <size_t N> 
@@ -162,6 +182,10 @@ auto max_eigenvalue(const Euler<N>& eq, const Vector<N>& normal) {
 
     return max_eigenvalue(eq, topaz::make_constant_range(normal, eq.primitive_variables().p.size()));
 }
+
+
+
+
 
 
 
