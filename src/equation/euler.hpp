@@ -95,8 +95,6 @@ Vector<N+2> primitive_to_conserved(scalar rho, scalar p, Vector<N> U, const Eos&
 template<size_t N, class Eos>
 auto primitive_to_conserved(const PrimitiveVariables<N>& prim, const Eos& eos){
 
-    //volVectorField<N, N+2> ret(prim.p.grid(), prim.p.padding());
-
     auto op = [eos](auto tpl){
 
         auto rho = topaz::get<0>(tpl);
@@ -104,9 +102,7 @@ auto primitive_to_conserved(const PrimitiveVariables<N>& prim, const Eos& eos){
         auto U = topaz::get<2>(tpl);
         return primitive_to_conserved(rho, p, U, eos);
     };
-
     return topaz::transform(prim, op);
-    //return ret;
 
 }
 
@@ -139,14 +135,6 @@ auto conserved_to_primitive(const Range_t& cons, const Eos& eos){
     };
 
     return topaz::transform(cons, op);
-
-    /*
-    //TODO: call topaz::transform
-    std::transform(
-        cons.begin(), cons.end(), ret.begin(), op
-    );
-    return ret;
-    */
 
 }
 

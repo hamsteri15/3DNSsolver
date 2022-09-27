@@ -1,5 +1,6 @@
 #pragma once
 
+
 #include "equation/euler.hpp"
 #include "differentiation/upwind.hpp"
 #include "differentiation/downwind.hpp"
@@ -42,7 +43,7 @@ inline Vector<N+2> make_physical_flux(scalar rho, scalar p, Vector<N> U, Vector<
 
 
 template<size_t N>
-Flux<Vector<N+2>, N> make_physical_flux(const Euler<N>& eq, Vector<N> normal){
+auto make_physical_flux(const Euler<N>& eq, Vector<N> normal){
 
     Flux<Vector<N+2>, N> F(eq.grid(), eq.padding());
 
@@ -56,6 +57,8 @@ Flux<Vector<N+2>, N> make_physical_flux(const Euler<N>& eq, Vector<N> normal){
         
         return make_physical_flux(rho, p, U, normal, eos);
     };
+
+    //return topaz::transform(eq.primitive_variables(), op);
 
     F.value() = topaz::transform(eq.primitive_variables(), op);
     return F;
@@ -106,3 +109,4 @@ SplitFlux<Vector<N+2>, N> make_laxfriedrichs_flux(const Euler<N>& eq, Vector<N> 
 
 
 }
+

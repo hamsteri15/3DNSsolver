@@ -2,6 +2,8 @@
 
 #include "equation/volumetric_field.hpp"
 
+
+
 template<class ET, size_t N>
 struct Flux{
 
@@ -14,12 +16,10 @@ struct Flux{
     auto begin() {return m_f.begin();}
     auto end() {return m_f.end();}
 
-
     auto& value() {return m_f;}
     const auto& value() const {return m_f;}
 
 private:
-
     VolumetricField<ET, N> m_f;
 
 };
@@ -66,6 +66,9 @@ private:
     VolumetricField<ET, N> m_f_right;
 
 };
+
+
+
 
 template<class ET, size_t N, class Scheme>
 auto d_di(const Flux<ET, N>& F, Scheme scheme){
