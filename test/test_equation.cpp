@@ -460,18 +460,57 @@ TEST_CASE("Test Euler equation"){
 
 TEST_CASE("Test flux"){
 
-    SECTION("Constructors"){
+    SECTION("make_physical_flux"){
 
-        auto eq = make_euler_equation<1>(extents<1>{1}, extents<1>{0});
+        auto eq = make_euler_equation<1>(extents<1>{2}, extents<1>{0});
+
         assign_shocktube<0>(eq);
-        RegularFlux<1> flux(eq, Vector<1>{1});
 
-        std::cout << flux.value()[0] << std::endl;
+        auto F = make_physical_flux(eq, Vector<1>{1});
 
-
+        CHECK(F.value()[0] == Vector<3>{0, 0, 1});
+        CHECK(F.value()[1] == Vector<3>{0, 0, 0.1});
 
     }
 
+    SECTION("make_laxfriedrichs_flux"){
+
+        auto eq = make_euler_equation<1>(extents<1>{2}, extents<1>{0});
+        assign_shocktube<0>(eq);
+
+        auto F = make_laxfriedrichs_flux(eq, Vector<1>{1});
+
+        auto fl = F.left_value();
+        auto fr = F.right_value();
+
+        using enum EulerFluxIdx;
+
+        //Continuity
+
+        CHECK(fl[0][mass] == Approx(0.59160798)); //Left side domain
+        CHECK(fl[1][mass] == Approx(0.0661437)); //Right side domain
+
+        CHECK(fr[0][mass] == Approx(-0.59160798)); //Left side domain
+        CHECK(fr[1][mass] == Approx(-0.0661437));  //Right side domain
+
+        
+        //Energy
+        
+        CHECK(fl[0][ene] == Approx(1.47901995)); //Left side domain
+        CHECK(fl[1][ene] == Approx(0.1322875)); //Right side domain
+
+        CHECK(fr[0][ene] == Approx(-1.47901995)); //Left side domain
+        CHECK(fr[1][ene] == Approx(-0.1322875));  //Right side domain
+        
+        //Momentum
+        
+        CHECK(fl[0][mom_x] == Approx(0.5)); //Left side domain
+        CHECK(fl[1][mom_x] == Approx(0.05)); //Right side domain
+
+        CHECK(fr[0][mom_x] == Approx(0.5)); //Left side domain
+        CHECK(fr[1][mom_x] == Approx(0.05));  //Right side domain
+        
+    }
 
 }
 
@@ -480,113 +519,6 @@ TEST_CASE("Test euler_flux"){
 
 
 
-    SECTION("combine_fields"){
-        
-        auto eq = make_euler_equation<1>(extents<1>{1}, extents<1>{0});
-        ConvectionFlux<1> flux(eq.grid(), eq.padding());
-
-        flux.phi = scalarField({1});
-        flux.phiH = scalarField({2});
-        flux.phiU = vectorField<1>{Vector<1>{3}};
-
-
-        auto combined = combine_fields(flux);
-        CHECK(combined[0] == Vector<3>({1, 2, 3}));
-
-
-    }
-
-
-
-
-    SECTION("1D compute_flux"){
-
-        auto eq = make_euler_equation<1>(extents<1>{3}, extents<1>{0});
-
-        auto& p = eq.primitive_variables();
-
-        p.rho = scalarField({0.5, 1.0, 1.0});
-        p.p = scalarField({1.0, 1.0, 1.0});
-        p.U = vectorField<1>{Vector<1>{1.0}, Vector<1>{1.0}, Vector<1>{1.0}};
-
-
-        auto flux = compute_flux(eq, Vector<1>{1});
-
-
-        auto phi = flux.phi;
-        auto phiU = flux.phiU;
-
-        CHECK(phi == scalarField({0.5, 1.0, 1.0}));
-
-
-
-        CHECK(phiU == 
-            vectorField<1>
-            {
-                Vector<1>{1.5},
-                Vector<1>{2.0},
-                Vector<1>{2.0}
-            });
-
-        p.rho = scalarField({1.4, 1.4, 1.4});
-
-        auto flux2 = compute_flux(eq, Vector<1>{1});
-
-        CHECK(flux2.phiH[0] == Approx(1.75));        
-        CHECK(flux2.phiH[1] == Approx(1.75));        
-        CHECK(flux2.phiH[2] == Approx(1.75));        
-    
-    }
-
-    SECTION("Shocktube physical flux"){
-
-        auto eq = make_euler_equation<1>(extents<1>{2}, extents<1>{0});
-        assign_shocktube<0>(eq);
-
-        auto flux = compute_flux(eq, Vector<1>{1});
-
-        CHECK(flux.phi[0] == 0);
-        CHECK(flux.phi[1] == 0);
-        CHECK(flux.phiH[0] == 0);
-        CHECK(flux.phiH[1] == 0);
-        CHECK(flux.phiU[0] == Vector<1>{1});
-        CHECK(flux.phiU[1] == Vector<1>{0.1});
-
-    }
-
-
-    SECTION("laxfriedrichs_flux"){
-
-        auto eq = make_euler_equation<1>(extents<1>{2}, extents<1>{0});
-        assign_shocktube<0>(eq);
-
-        auto [fl, fr] = laxfriedrichs_flux(eq, Vector<1>{1});
-
-
-        //Continuity
-
-        CHECK(fl.phi[0] == Approx(0.59160798)); //Left side domain
-        CHECK(fl.phi[1] == Approx(0.0661437)); //Right side domain
-
-        CHECK(fr.phi[0] == Approx(-0.59160798)); //Left side domain
-        CHECK(fr.phi[1] == Approx(-0.0661437));  //Right side domain
-
-        //Energy
-        
-        CHECK(fl.phiH[0] == Approx(1.47901995)); //Left side domain
-        CHECK(fl.phiH[1] == Approx(0.1322875)); //Right side domain
-
-        CHECK(fr.phiH[0] == Approx(-1.47901995)); //Left side domain
-        CHECK(fr.phiH[1] == Approx(-0.1322875));  //Right side domain
-
-        //Momentum
-        
-        CHECK(fl.phiU[0][0] == Approx(0.5)); //Left side domain
-        CHECK(fl.phiU[1][0] == Approx(0.05)); //Right side domain
-
-        CHECK(fr.phiU[0][0] == Approx(0.5)); //Left side domain
-        CHECK(fr.phiU[1][0] == Approx(0.05));  //Right side domain
-    }
 
     SECTION("Flux differentiation"){
 
@@ -610,18 +542,20 @@ TEST_CASE("Test euler_flux"){
             auto eq = make_euler_equation<1>(extents<1>{3}, extents<1>{2});
             assign_shocktube<0>(eq);
 
-            auto F = laxfriedrichs_flux(eq, Vector<1>{1});
+            auto F = make_laxfriedrichs_flux(eq, Vector<1>{1});
             
-            volVectorField<1, 3> dF = d_di(F, Weno_left<0>{}, Weno_right<0>{});
+            auto dF = d_di(F, Weno_left<0>{}, Weno_right<0>{});
+            
+            using enum EulerFluxIdx;
 
-            CHECK(dF[2][0] == Approx(1.57639));
-            CHECK(dF[3][0] == Approx(-1.57639));
+            CHECK(dF[2][mass] == Approx(1.57639));
+            CHECK(dF[3][mass] == Approx(-1.57639));
 
-            CHECK(dF[2][1] == Approx(4.0402));
-            CHECK(dF[3][1] == Approx(-4.0402));
+            CHECK(dF[2][ene] == Approx(4.0402));
+            CHECK(dF[3][ene] == Approx(-4.0402));
 
-            CHECK(dF[2][2] == Approx(-1.35));
-            CHECK(dF[3][2] == Approx(-1.35));
+            CHECK(dF[2][mom_x] == Approx(-1.35));
+            CHECK(dF[3][mom_x] == Approx(-1.35));
 
         }
 

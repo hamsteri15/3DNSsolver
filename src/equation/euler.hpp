@@ -6,6 +6,8 @@
 #include "equation/volumetric_field.hpp"
 
 
+
+
 template <size_t N> struct PrimitiveVariables {
 
     PrimitiveVariables(const CartesianGrid<N>& grid, extents<N> padding)
@@ -111,6 +113,21 @@ private:
     EquationOfState       m_eos;
 };
 
+
+template<size_t N, class Eos>
+Vector<N+2> primitive_to_conserved(scalar rho, scalar p, Vector<N> U, const Eos& eos){
+
+    auto kin = 0.5 * rho * dot(U, U);
+    auto rhoE = p /(eos.gamma() - 1.0) + kin;
+    auto rhoU = rho * U;
+    Vector<N+2> ret{};
+    ret[0] = rho;
+    ret[1] = rhoE;
+    for (size_t i = 0; i < N; ++i){
+        ret[i + 2] = rhoU[i];
+    }
+    return ret;
+}
 
 template<size_t N>
 ConservedVariables<N> compute_conserved(const Euler<N>& eq){
