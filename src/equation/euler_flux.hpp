@@ -1,5 +1,6 @@
 #pragma once
 
+#include <variant>
 
 #include "equation/euler.hpp"
 #include "differentiation/upwind.hpp"
