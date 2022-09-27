@@ -7,6 +7,7 @@ set(SerialTestSources
     test_common.cpp;
     test_differentiation.cpp;
     test_equation.cpp;
+    test_euler.cpp;
 )
 
 add_executable(SerialTest.bin ${SerialTestSources})
