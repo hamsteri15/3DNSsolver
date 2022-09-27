@@ -16,6 +16,7 @@ struct Flux{
 
 
     auto& value() {return m_f;}
+    const auto& value() const {return m_f;}
 
 private:
 
@@ -66,6 +67,18 @@ private:
 
 };
 
+template<class ET, size_t N, class Scheme>
+auto d_di(const Flux<ET, N>& F, Scheme scheme){
+
+    auto dF(F.value());
+    auto delta = spatial_stepsize(F.value().grid())[Scheme::direction];
+    evaluate_tiled(F.value(), dF, scheme);
+
+    auto ret(dF);
+    ret = dF / delta;
+    return ret;
+
+}
 
 
 template<class ET, size_t N, class Scheme1, class Scheme2>

@@ -522,22 +522,26 @@ TEST_CASE("Test euler_flux"){
 
     SECTION("Flux differentiation"){
 
-        /*
+        
         SECTION("unsplit flux"){
-            auto eq = make_euler_equation<1>(extents<1>{5}, extents<1>{2});
+            auto eq = make_euler_equation<1>(extents<1>{3}, extents<1>{2});
             assign_shocktube<0>(eq);
 
-            auto F = compute_flux(eq, Vector<1>{1});
+            auto F = make_physical_flux(eq, Vector<1>{1});
 
-            volVectorField<1, 3> dF = d_di(F, d_CD2<0>{});
+            auto dF = d_di(F, d_CD2<0>{});
+            
+            CHECK(dF[2][mass] == Approx(0));
+            CHECK(dF[3][mass] == Approx(0));
 
+            CHECK(dF[2][ene] == Approx(0));
+            CHECK(dF[3][ene] == Approx(0));
 
-            for (auto f : dF){
-                std::cout << f << std::endl;
-            }
+            CHECK(dF[2][mom_x] == Approx(-1.35));
+            CHECK(dF[3][mom_x] == Approx(-1.35));
 
         }
-        */
+        
         SECTION("split flux"){
             auto eq = make_euler_equation<1>(extents<1>{3}, extents<1>{2});
             assign_shocktube<0>(eq);
