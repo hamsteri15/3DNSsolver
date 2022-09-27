@@ -32,18 +32,21 @@ TEST_CASE("Test Euler equation"){
 
     }
 
+    
+
     SECTION("primitive <-> conservative"){
         auto eq = make_euler_equation<1>(extents<1>{2}, extents<1>{0});
 
         assign_shocktube<0>(eq);
 
-        auto p = eq.primitive_variables();
+        PrimitiveVariables<1> p1 = eq.primitive_variables();
+        PrimitiveVariables<1> p2 = eq.primitive_variables();
 
-        auto cons = primitive_to_conserved(p, eq.eos());
+        auto cons = primitive_to_conserved(p1, eq.eos());
+        p2 = conserved_to_primitive(cons, eq.eos());
 
-        auto p2 = conserved_to_primitive(cons, eq.eos());
 
-        CHECK(p == p2);
+        CHECK(p1 == p2);
     }
 
     

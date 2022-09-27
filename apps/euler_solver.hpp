@@ -9,7 +9,7 @@
 #include "differentiation/evaluate_tiled.hpp"
 
 
-/*
+
 template<size_t N>
 void mirror_all(Euler<N>& eq){
 
@@ -37,10 +37,8 @@ auto sweep(const Euler<N>& eq){
 
     Vector<N> normal{};
     normal[I] = 1.0;
-    auto F = laxfriedrichs_flux(eq, normal);
-
+    auto F = make_laxfriedrichs_flux(eq, normal);
     return  d_di(F, Weno_left<I>{}, Weno_right<I>{});
-
 } 
 
 struct EulerSolver1D{
@@ -51,12 +49,11 @@ struct EulerSolver1D{
 
         mirror_all(eq);
 
-        auto U = compute_conserved(eq);
+        auto U = primitive_to_conserved(eq.primitive_variables(), eq.eos());
         auto dU = sweep<0>(eq);
-
         auto new_U = U - dt*dU;
 
-        eq.primitive_variables() = conserved_to_primitive(eq, new_U);
+        eq.primitive_variables() = conserved_to_primitive(new_U, eq.eos());
 
     }
 
@@ -76,7 +73,7 @@ auto make_euler_equation(extents<N> dims, extents<N> padding){
 }
 
 
-*/
+
 
 
 

@@ -28,8 +28,6 @@ inline Vector<N+2> make_physical_flux(scalar rho, scalar p, Vector<N> U, Vector<
     auto H = enthalpy(rho, p, U, eos);
     auto phi = dot(U, normal) * rho;        
 
-    auto cont = phi;
-    auto ene = phi * H;
     auto mom = phi * U + p * normal;
 
     Vector<N+2> ret{};

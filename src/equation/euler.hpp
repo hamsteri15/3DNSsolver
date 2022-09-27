@@ -15,9 +15,11 @@ template <size_t N> struct PrimitiveVariables {
         , p(grid, padding)
         , U(grid, padding) {}
 
-    volScalarField<N>    rho;
-    volScalarField<N>    p;
-    volVectorField<N, N> U;
+    template<class Range_t>
+    PrimitiveVariables& operator=(const Range_t& rng) {
+        topaz::copy(rng, *this);
+        return *this;
+    }
 
     auto begin(){
         auto tpl = topaz::adl_make_tuple(rho.begin(), p.begin(), U.begin());
@@ -38,6 +40,12 @@ template <size_t N> struct PrimitiveVariables {
     }
 
     bool operator==(const PrimitiveVariables<N>& rhs) const = default;
+    
+    
+    volScalarField<N>    rho;
+    volScalarField<N>    p;
+    volVectorField<N, N> U;
+
 
 };
 
@@ -85,9 +93,9 @@ Vector<N+2> primitive_to_conserved(scalar rho, scalar p, Vector<N> U, const Eos&
 
 
 template<size_t N, class Eos>
-volVectorField<N, N+2> primitive_to_conserved(const PrimitiveVariables<N>& prim, const Eos& eos){
+auto primitive_to_conserved(const PrimitiveVariables<N>& prim, const Eos& eos){
 
-    volVectorField<N, N+2> ret(prim.p.grid(), prim.p.padding());
+    //volVectorField<N, N+2> ret(prim.p.grid(), prim.p.padding());
 
     auto op = [eos](auto tpl){
 
@@ -97,8 +105,8 @@ volVectorField<N, N+2> primitive_to_conserved(const PrimitiveVariables<N>& prim,
         return primitive_to_conserved(rho, p, U, eos);
     };
 
-    ret = topaz::transform(prim, op);
-    return ret;
+    return topaz::transform(prim, op);
+    //return ret;
 
 }
 
@@ -123,20 +131,22 @@ auto conserved_to_primitive(Vector<L> cons, const Eos& eos){
 
 }
 
-template<size_t N, class Eos>
-auto conserved_to_primitive(const volVectorField<N, N+2>& cons, const Eos& eos){
-
-    PrimitiveVariables<N> ret(cons.grid(), cons.padding());
+template<class Range_t, class Eos>
+auto conserved_to_primitive(const Range_t& cons, const Eos& eos){
 
     auto op = [eos](auto v){
         return conserved_to_primitive(v, eos);
     };
 
+    return topaz::transform(cons, op);
+
+    /*
     //TODO: call topaz::transform
     std::transform(
         cons.begin(), cons.end(), ret.begin(), op
     );
     return ret;
+    */
 
 }
 
