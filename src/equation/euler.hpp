@@ -39,54 +39,6 @@ template <size_t N> struct PrimitiveVariables {
 
 };
 
-template<size_t N> struct ConservedVariables{
-
-    ConservedVariables(const CartesianGrid<N>& grid, extents<N> padding)
-        : rho(grid, padding)
-        , rhoE(grid, padding)
-        , rhoU(grid, padding) {}
-
-    volScalarField<N> rho;
-    volScalarField<N> rhoE;
-    volVectorField<N, N> rhoU;
-
-};
-
-template<size_t N, class Range>
-auto operator+(const ConservedVariables<N>& lhs, const Range& rhs){
-
-    ConservedVariables<N> ret(lhs);
-
-    for (size_t i = 0; i < rhs.size(); ++i){
-
-        ret.rho[i] += rhs[i][0];
-        ret.rhoE[i] += rhs[i][1];
-
-        for (size_t j = 0; j < N; ++j){
-            ret.rhoU[i][j] += rhs[i][j+2];
-        }
-    }
-
-    return ret;
-}
-template<size_t N, class Range>
-auto operator-(const ConservedVariables<N>& lhs, const Range& rhs){
-
-    ConservedVariables<N> ret(lhs);
-
-    for (size_t i = 0; i < size_t(rhs.size()); ++i){
-
-        ret.rho[i] -= rhs[i][0];
-        ret.rhoE[i] -= rhs[i][1];
-
-        for (size_t j = 0; j < N; ++j){
-            ret.rhoU[i][j] -= rhs[i][j+2];
-        }
-    }
-
-    return ret;
-}
-
 
 
 template <size_t N> struct Euler {
@@ -129,27 +81,7 @@ Vector<N+2> primitive_to_conserved(scalar rho, scalar p, Vector<N> U, const Eos&
     return ret;
 }
 
-template<size_t N>
-ConservedVariables<N> compute_conserved(const Euler<N>& eq){
-
-    const auto& prim = eq.primitive_variables();
-    const auto& rho = prim.rho;
-    const auto& p = prim.p;
-    const auto& U = prim.U;
-
-    ConservedVariables<N> ret(eq.grid(), eq.padding());
-    const auto kin = 0.5 * rho * dot(U,U);
-
-    ret.rho  = rho;
-    ret.rhoE = p /(eq.eos().gamma() - 1.0) + kin;
-    ret.rhoU = rho * U;
-
-    return ret;
-
-}
-
-
-
+/*
 
 template<size_t N>
 PrimitiveVariables<N> conserved_to_primitive(const Euler<N>& eq, const ConservedVariables<N>& cons){
@@ -173,7 +105,7 @@ PrimitiveVariables<N> conserved_to_primitive(const Euler<N>& eq, const Conserved
     return ret;
 
 }
-
+*/
 
 
 
