@@ -37,6 +37,8 @@ template <size_t N> struct PrimitiveVariables {
         return topaz::detail::make_zip_iterator(tpl);
     }
 
+    bool operator==(const PrimitiveVariables<N>& rhs) const = default;
+
 };
 
 
@@ -81,33 +83,62 @@ Vector<N+2> primitive_to_conserved(scalar rho, scalar p, Vector<N> U, const Eos&
     return ret;
 }
 
-/*
 
-template<size_t N>
-PrimitiveVariables<N> conserved_to_primitive(const Euler<N>& eq, const ConservedVariables<N>& cons){
+template<size_t N, class Eos>
+volVectorField<N, N+2> primitive_to_conserved(const PrimitiveVariables<N>& prim, const Eos& eos){
 
-    PrimitiveVariables<N> ret(eq.grid(), eq.padding());
+    volVectorField<N, N+2> ret(prim.p.grid(), prim.p.padding());
 
+    auto op = [eos](auto tpl){
 
-    auto rho = cons.rho;
-    auto E = cons.rhoE / cons.rho;
-    auto U = cons.rhoU / cons.rho;
+        auto rho = topaz::get<0>(tpl);
+        auto p = topaz::get<1>(tpl);
+        auto U = topaz::get<2>(tpl);
+        return primitive_to_conserved(rho, p, U, eos);
+    };
 
-
-    auto p = (eq.eos().gamma() - 1.0) * rho * (E - 0.5 * dot(U, U));
-
-
-    ret.rho = cons.rho;
-    ret.p = p;
-    ret.U = U;
-
-
+    ret = topaz::transform(prim, op);
     return ret;
 
 }
-*/
 
 
+
+template<size_t L, class Eos>
+auto conserved_to_primitive(Vector<L> cons, const Eos& eos){
+
+    static constexpr size_t N = L - 2;
+
+    auto rho = cons[0];
+    auto E = cons[1] / rho;
+    
+    Vector<N> U{};
+    for (size_t i = 0; i < N; ++i){
+        U[i] = cons[i+2];
+    }
+
+    auto p = (eos.gamma() - 1.0) * rho * (E - 0.5 * dot(U, U));
+
+    return topaz::adl_make_tuple(rho, p, U);
+
+}
+
+template<size_t N, class Eos>
+auto conserved_to_primitive(const volVectorField<N, N+2>& cons, const Eos& eos){
+
+    PrimitiveVariables<N> ret(cons.grid(), cons.padding());
+
+    auto op = [eos](auto v){
+        return conserved_to_primitive(v, eos);
+    };
+
+    //TODO: call topaz::transform
+    std::transform(
+        cons.begin(), cons.end(), ret.begin(), op
+    );
+    return ret;
+
+}
 
 template <size_t N, class NormalField>
 inline auto max_eigenvalue(const Euler<N>& eq, const NormalField& normal){
