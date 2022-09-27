@@ -123,26 +123,6 @@ TEST_CASE("Test VolumetricField"){
         CHECK(f2.dimensions() == extents<2>{2,3});
         CHECK(f2.padding() == extents<2>{1,2});
 
-
-        SECTION("Bug 1, 8.9.2022 missing constructor in ConvectionFlux causing slicing and missing grid"){
-
-            extents<1> dims{1};
-            extents<1> padding{0};
-
-            CartesianGrid<1> grid(dims, Vector<1>{0}, Vector<1>{1});
-
-            Euler<1> eq(grid, padding, EquationOfState{});
-
-            auto flux = compute_flux(eq, Vector<1>{1});
-
-            REQUIRE_NOTHROW(
-
-                volVectorField<1, 1+2>(flux.phi.grid(), flux.phi.padding())
-            );
-
-        }
-
-
     }
 
     SECTION("make_full_span"){

@@ -13,7 +13,6 @@
 template<size_t N>
 void mirror_all(Euler<N>& eq){
 
-
     auto& p = eq.primitive_variables();
 
     for (size_t i = 0; i < N; ++i){
@@ -41,7 +40,6 @@ auto sweep(const Euler<N>& eq){
     auto F = laxfriedrichs_flux(eq, normal);
 
     return  d_di(F, Weno_left<I>{}, Weno_right<I>{});
-
 
 } 
 
