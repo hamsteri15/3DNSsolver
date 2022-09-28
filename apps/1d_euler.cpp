@@ -10,7 +10,7 @@ int main(){
     EulerSolver1D solver;
 
     scalar dt = 0.0005;
-    scalar T = 0.1;
+    scalar T = 0.3;
     auto eq = make_euler_equation<1>(extents<1>{40}, extents<1>{2});
     assign_shocktube<0>(eq);
 
