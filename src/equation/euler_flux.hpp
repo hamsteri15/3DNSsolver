@@ -59,17 +59,17 @@ auto make_physical_flux(const Euler<N>& eq, Vector<N> normal){
         return make_physical_flux(rho, p, U, normal, eos);
     };
 
-    //return topaz::transform(eq.primitive_variables(), op);
+    return topaz::transform(eq.primitive_variables(), op);
 
-    F.value() = topaz::transform(eq.primitive_variables(), op);
-    return F;
+    //F.value() = topaz::transform(eq.primitive_variables(), op);
+    //return F;
 }
 
 
 
 
 template<size_t N>
-SplitFlux<Vector<N+2>, N> make_laxfriedrichs_flux(const Euler<N>& eq, Vector<N> normal){
+auto make_laxfriedrichs_flux(const Euler<N>& eq, Vector<N> normal){
 
     auto eos = eq.eos();
 
@@ -94,20 +94,7 @@ SplitFlux<Vector<N+2>, N> make_laxfriedrichs_flux(const Euler<N>& eq, Vector<N> 
         return topaz::adl_make_tuple(fl ,fr);
     };
 
-    SplitFlux<Vector<N+2>, N> ret(eq.grid(), eq.padding());
-    /*
-    auto rng = topaz::transform(eq.primitive_variables(), op);
-
-    topaz::copy(rng, topaz::make_range(ret.begin(), ret.end()));
-    */    
-    //TODO: call from topaz instead
-    std::transform(
-        eq.primitive_variables().begin(), eq.primitive_variables().end(), 
-        ret.begin(), op
-    );
-    
-    return ret;
-
+    return topaz::transform( eq.primitive_variables(), op);
 
 }
 

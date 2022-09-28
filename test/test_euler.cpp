@@ -61,8 +61,8 @@ TEST_CASE("Test flux"){
         auto eq = make_euler_equation<1>(extents<1>{2}, extents<1>{0});
 
         assign_shocktube<0>(eq);
-
-        auto F = make_physical_flux(eq, Vector<1>{1});
+        Flux<Vector<3>, 1> F(eq.grid(), eq.padding());
+        F = make_physical_flux(eq, Vector<1>{1});
 
         CHECK(F.value()[0] == Vector<3>{0, 0, 1});
         CHECK(F.value()[1] == Vector<3>{0, 0, 0.1});
@@ -74,7 +74,9 @@ TEST_CASE("Test flux"){
         auto eq = make_euler_equation<1>(extents<1>{2}, extents<1>{0});
         assign_shocktube<0>(eq);
 
-        auto F = make_laxfriedrichs_flux(eq, Vector<1>{1});
+        SplitFlux<Vector<3>, 1> F(eq.grid(), eq.padding());
+
+        F = make_laxfriedrichs_flux(eq, Vector<1>{1});
 
         auto fl = F.left_value();
         auto fr = F.right_value();
@@ -120,10 +122,12 @@ TEST_CASE("Test euler_flux"){
 
         
         SECTION("unsplit flux"){
+            
             auto eq = make_euler_equation<1>(extents<1>{3}, extents<1>{2});
             assign_shocktube<0>(eq);
 
-            auto F = make_physical_flux(eq, Vector<1>{1});
+            Flux<Vector<3>, 1> F(eq.grid(), eq.padding());
+            F = make_physical_flux(eq, Vector<1>{1});
 
             auto dF = d_di(F, d_CD2<0>{});
             
@@ -135,14 +139,16 @@ TEST_CASE("Test euler_flux"){
 
             CHECK(dF[2][mom_x] == Approx(-1.35));
             CHECK(dF[3][mom_x] == Approx(-1.35));
-
+            
         }
         
         SECTION("split flux"){
+            
             auto eq = make_euler_equation<1>(extents<1>{3}, extents<1>{2});
             assign_shocktube<0>(eq);
 
-            auto F = make_laxfriedrichs_flux(eq, Vector<1>{1});
+            SplitFlux<Vector<3>, 1> F(eq.grid(), eq.padding());
+            F = make_laxfriedrichs_flux(eq, Vector<1>{1});
             
             auto dF = d_di(F, Weno_left<0>{}, Weno_right<0>{});
             
@@ -156,7 +162,7 @@ TEST_CASE("Test euler_flux"){
 
             CHECK(dF[2][mom_x] == Approx(-1.35));
             CHECK(dF[3][mom_x] == Approx(-1.35));
-
+            
         }
 
     }

@@ -12,6 +12,12 @@ struct Flux{
     Flux(const CartesianGrid<N>& grid, extents<N> padding)
         : m_f(grid, padding) {}
 
+    //TODO: use concepts
+    template<class Range_t>
+    Flux& operator=(const Range_t& rng) {
+        topaz::copy(rng, *this);
+        return *this;
+    }
 
     auto begin() {return m_f.begin();}
     auto end() {return m_f.end();}
@@ -32,6 +38,14 @@ struct SplitFlux{
 
     SplitFlux(const CartesianGrid<N>& grid, extents<N> padding)
         : m_f_left(grid, padding), m_f_right(grid, padding) {}
+
+
+    //TODO: use concepts
+    template<class Range_t>
+    SplitFlux& operator=(const Range_t& rng) {
+        topaz::copy(rng, *this);
+        return *this;
+    }
 
 
     auto& left_value() {return m_f_left;}

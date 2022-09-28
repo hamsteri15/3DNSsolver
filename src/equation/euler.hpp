@@ -15,6 +15,7 @@ template <size_t N> struct PrimitiveVariables {
         , p(grid, padding)
         , U(grid, padding) {}
 
+    //TODO: use concepts
     template<class Range_t>
     PrimitiveVariables& operator=(const Range_t& rng) {
         topaz::copy(rng, *this);

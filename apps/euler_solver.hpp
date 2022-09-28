@@ -9,7 +9,7 @@
 #include "differentiation/evaluate_tiled.hpp"
 
 
-
+/*
 template<size_t N>
 void mirror_all(Euler<N>& eq){
 
@@ -72,7 +72,7 @@ auto make_euler_equation(extents<N> dims, extents<N> padding){
     return Euler(grid, padding, EquationOfState{});
 }
 
-
+*/
 
 
 
