@@ -9,7 +9,7 @@
 #include "differentiation/evaluate_tiled.hpp"
 
 
-/*
+
 template<size_t N>
 void mirror_all(Euler<N>& eq){
 
@@ -37,7 +37,8 @@ auto sweep(const Euler<N>& eq){
 
     Vector<N> normal{};
     normal[I] = 1.0;
-    auto F = make_laxfriedrichs_flux(eq, normal);
+    SplitFlux<Vector<N+2>, N> F(eq.grid(), eq.padding());
+    F = make_laxfriedrichs_flux(eq, normal);
     return  d_di(F, Weno_left<I>{}, Weno_right<I>{});
 } 
 
@@ -72,7 +73,7 @@ auto make_euler_equation(extents<N> dims, extents<N> padding){
     return Euler(grid, padding, EquationOfState{});
 }
 
-*/
+
 
 
 
