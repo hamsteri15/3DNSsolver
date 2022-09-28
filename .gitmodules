@@ -1,3 +1,6 @@
 [submodule "external/topaz"]
 	path = external/topaz
 	url = git@github.com:hamsteri15/topaz.git
+[submodule "external/H5Wrapper"]
+	path = external/H5Wrapper
+	url = git@github.com:hamsteri15/H5Wrapper.git

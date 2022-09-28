@@ -36,17 +36,17 @@ include(cmake/StaticAnalyzers.cmake)
 
 
 #Configure MPI
-#FIND_PACKAGE(MPI REQUIRED)
-#MESSAGE("STATUS MPI FOUND: ${MPI_CXX_FOUND}")
+find_package(MPI REQUIRED)
+message("STATUS MPI FOUND: ${MPI_CXX_FOUND}")
 
 
 #Configure HDF5
-#SET(HDF5_FIND_DEBUG true)
-#SET(HDF5_PREFER_PARALLEL true)
-#FIND_PACKAGE(HDF5 REQUIRED)
-#MESSAGE(STATUS "Found HDF5: ${HDF5_FOUND}")
-#MESSAGE(STATUS "HDF5 is parallel: ${HDF5_IS_PARALLEL}")
-#MESSAGE(STATUS "Prefer parallel: ${HDF5_PREFER_PARALLEL}")
+set(HDF5_FIND_DEBUG true)
+set(HDF5_PREFER_PARALLEL true)
+find_package(HDF5 REQUIRED)
+message(STATUS "Found HDF5: ${HDF5_FOUND}")
+message(STATUS "HDF5 is parallel: ${HDF5_IS_PARALLEL}")
+message(STATUS "Prefer parallel: ${HDF5_PREFER_PARALLEL}")
 
 
 option(ENABLE_TESTING "Enable Test Builds" ON)

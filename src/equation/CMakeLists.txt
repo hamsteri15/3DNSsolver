@@ -33,7 +33,6 @@ target_include_directories(equation PUBLIC
                           )
 
 target_link_libraries(equation PUBLIC
-                        convection
                         #containers
                         project_options
                         #OpenMP::OpenMP_CXX 
