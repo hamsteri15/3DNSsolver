@@ -76,3 +76,30 @@ template <size_t N> auto make_laxfriedrichs_flux(const Euler<N>& eq, Vector<N> n
 
     return topaz::transform(eq.primitive_variables(), op);
 }
+
+template <class VectorField, class Eos, size_t N>auto make_laxfriedrichs_flux(const VectorField& cons, Eos eos, Vector<N> normal) {
+
+
+    auto op = [eos, normal](auto v) {
+
+        auto tpl = conserved_to_primitive(v, eos);
+
+        auto rho = topaz::get<0>(tpl);
+        auto p = topaz::get<1>(tpl);
+        auto U = topaz::get<2>(tpl);
+
+        auto q = dot(U, normal);
+
+        auto c     = sqrt(eos.gamma() * p / rho);
+        auto alpha = std::max(mag(q - c), mag(q + c));
+
+        auto F    = make_physical_flux(rho, p, U, normal, eos);
+
+        auto fl = 0.5 * (F + alpha * v);
+        auto fr = 0.5 * (F - alpha * v);
+
+        return topaz::adl_make_tuple(fl, fr);
+    };
+
+    return topaz::transform(cons, op);
+}

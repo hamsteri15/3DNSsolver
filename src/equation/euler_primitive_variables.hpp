@@ -80,6 +80,7 @@ template <size_t L, class Eos> auto conserved_to_primitive(Vector<L> cons, const
     auto p = (eos.gamma() - 1.0) * rho * (E - 0.5 * dot(U, U));
 
     return topaz::adl_make_tuple(rho, p, U);
+    //return std::tuple(rho, p, U);
 }
 
 template <class Range_t, class Eos>

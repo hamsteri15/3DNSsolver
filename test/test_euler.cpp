@@ -35,18 +35,37 @@ TEST_CASE("Test Euler equation"){
     
 
     SECTION("primitive <-> conservative"){
-        auto eq = make_euler_equation<1>(extents<1>{2}, extents<1>{0});
 
-        assign_shocktube<0>(eq);
+        SECTION("Test 1"){
+            auto eq = make_euler_equation<1>(extents<1>{2}, extents<1>{0});
 
-        PrimitiveVariables<1> p1 = eq.primitive_variables();
-        PrimitiveVariables<1> p2 = eq.primitive_variables();
+            assign_shocktube<0>(eq);
 
-        auto cons = primitive_to_conserved(p1, eq.eos());
-        p2 = conserved_to_primitive(cons, eq.eos());
+            PrimitiveVariables<1> p1 = eq.primitive_variables();
+            PrimitiveVariables<1> p2 = eq.primitive_variables();
+
+            auto cons = primitive_to_conserved(p1, eq.eos());
+            p2 = conserved_to_primitive(cons, eq.eos());
 
 
-        CHECK(p1 == p2);
+            CHECK(p1 == p2);
+
+        }
+        /*
+        SECTION("Test 2"){
+
+            Vector<3> cons{1.0, 1.0, 1.0};
+            EquationOfState eos{};
+            auto tpl = conserved_to_primitive(cons, eos);
+
+
+            CHECK(topaz::get<0>(tpl) == 0);
+            CHECK(topaz::get<1>(tpl) == 0);
+            CHECK(topaz::get<2>(tpl) == Vector<1>{0});
+
+
+        }
+        */
     }
 
     

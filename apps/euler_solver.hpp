@@ -7,55 +7,38 @@
 #include "differentiation/upwind.hpp"
 #include "differentiation/downwind.hpp"
 #include "differentiation/evaluate_tiled.hpp"
+#include "time_integration/rk1.hpp"
+#include "time_integration/rk3.hpp"
 
 
-
-template<size_t N>
-void mirror_all(Euler<N>& eq){
-
-    auto& p = eq.primitive_variables();
-
-    for (size_t i = 0; i < N; ++i){
-
-        Vector<N> normal{};
-        normal[i] = 1;
-        mirror(p.rho, normal);
-        mirror(p.p, normal);
-        mirror(p.U, normal);
-
-        normal[i] = -1;
-        mirror(p.rho, normal);
-        mirror(p.p, normal);
-        mirror(p.U, normal);
-
-    }
-
-}
-
-template<size_t I, size_t N>
-auto sweep(const Euler<N>& eq){
-
-    Vector<N> normal{};
-    normal[I] = 1.0;
-    SplitFlux<Vector<N+2>, N> F(eq.grid(), eq.padding());
-    F = make_laxfriedrichs_flux(eq, normal);
-    return  d_di(F, Weno_left<I>{}, Weno_right<I>{});
-} 
 
 struct EulerSolver1D{
 
+    void take_step(Euler<1>& eq, scalar dt){
+        
+        volVectorField<1, 3> U(eq.grid(), eq.padding());
+
+        auto eos = eq.eos();
+        auto prim = eq.primitive_variables();
+        U = primitive_to_conserved(prim, eos);
 
 
-    void takes_step(Euler<1>& eq, scalar dt){
+        auto df = [=](auto f){
+            volVectorField<1, 3> Utemp(eq.grid(), eq.padding());
+            SplitFlux<Vector<3>, 1> F(eq.grid(), eq.padding());
+            Utemp = f;
+            mirror_all(Utemp);
+            F = make_laxfriedrichs_flux(Utemp, eq.eos(), Vector<1>{1});
+            return  d_di(F, Weno_left<0>{}, Weno_right<0>{});
 
-        mirror_all(eq);
 
-        auto U = primitive_to_conserved(eq.primitive_variables(), eq.eos());
-        auto dU = sweep<0>(eq);
-        auto new_U = U - dt*dU;
-
-        eq.primitive_variables() = conserved_to_primitive(new_U, eq.eos());
-
+        };
+        auto d_dt = Rk3();
+        
+        U = U - d_dt(U, df, dt);
+        
+        eq.primitive_variables() = conserved_to_primitive(U, eq.eos());
+        
     }
 
 };

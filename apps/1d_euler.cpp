@@ -16,7 +16,7 @@ int main(){
 
     scalar time = 0.;
     while (time < T){
-        solver.takes_step(eq, dt);
+        solver.take_step(eq, dt);
         time += dt;
     }
 
