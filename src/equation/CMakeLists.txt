@@ -1,5 +1,6 @@
 set(Headers
     ./equation.hpp
+    ./euler_primitive_variables.hpp
     ./euler.hpp
     ./euler_flux.hpp
     ./grid.hpp
@@ -12,6 +13,7 @@ set(Headers
 
 set(Sources
     ./equation.cpp
+    ./euler_primitive_variables.cpp
     ./euler.cpp
     ./euler_flux.cpp
     ./grid.cpp
