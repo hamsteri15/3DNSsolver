@@ -10,38 +10,73 @@
 #include "time_integration/rk1.hpp"
 #include "time_integration/rk3.hpp"
 
+template<size_t N>
+struct EulerSolver{
 
-
-struct EulerSolver1D{
-
-    void take_step(Euler<1>& eq, scalar dt){
-        
-        volVectorField<1, 3> U(eq.grid(), eq.padding());
+    template<class Df>
+    void solve(Euler<N>& eq, scalar dt, Df df){
 
         auto eos = eq.eos();
         auto prim = eq.primitive_variables();
-        U = primitive_to_conserved(prim, eos);
-
-
-        auto df = [=](auto f){
-            volVectorField<1, 3> Utemp(eq.grid(), eq.padding());
-            SplitFlux<Vector<3>, 1> F(eq.grid(), eq.padding());
-            Utemp = f;
-            mirror_all(Utemp);
-            F = make_laxfriedrichs_flux(Utemp, eq.eos(), Vector<1>{1});
-            return  d_di(F, Weno_left<0>{}, Weno_right<0>{});
-
-
-        };
+        auto U = primitive_to_conserved(prim, eos);
+        
         auto d_dt = Rk3();
-        
-        U = U - d_dt(U, df, dt);
-        
-        eq.primitive_variables() = conserved_to_primitive(U, eq.eos());
-        
+        auto newU = U - d_dt(U, df, dt);
+        eq.primitive_variables() = conserved_to_primitive(newU, eq.eos());
+
     }
 
+
 };
+
+struct EulerSolver1D : EulerSolver<1>{
+
+    static constexpr size_t N = 1;
+
+    void take_step(Euler<N>& eq, scalar dt){
+        
+        auto df = [&](auto f){
+            volVectorField<N, N+2> Utemp(eq.grid(), eq.padding());
+            Utemp = f;
+            mirror_all(Utemp);
+            
+            SplitFlux<Vector<N+2>, N> F(eq.grid(), eq.padding());
+            F = make_laxfriedrichs_flux(Utemp, eq.eos(), Vector<N>{1});
+            
+            return  d_di(F, Weno_left<0>{}, Weno_right<0>{});
+        };
+        this->solve(eq, dt, df);
+    }
+
+};    
+
+struct EulerSolver2D : EulerSolver<2>{
+
+    static constexpr size_t N = 2;
+
+    void take_step(Euler<N>& eq, scalar dt){
+        
+        auto df = [&](auto f){
+            volVectorField<N, N+2> Utemp(eq.grid(), eq.padding());
+            Utemp = f;
+            mirror_all(Utemp);
+            
+            SplitFlux<Vector<N+2>, N> Fx(eq.grid(), eq.padding());
+            Vector<2> normal_x{0, 1};
+            Fx = make_laxfriedrichs_flux(Utemp, eq.eos(), normal_x);
+            auto Rx =  d_di(Fx, Weno_left<1>{}, Weno_right<1>{});
+
+            SplitFlux<Vector<N+2>, N> Fy(eq.grid(), eq.padding());
+            Vector<2> normal_y{1, 0};
+            Fy = make_laxfriedrichs_flux(Utemp, eq.eos(), normal_y);
+            auto Ry =  d_di(Fy, Weno_left<0>{}, Weno_right<0>{});
+
+            return Rx + Ry;
+        };
+        this->solve(eq, dt, df);
+    }
+
+};    
 
 
 
