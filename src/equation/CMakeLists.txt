@@ -9,6 +9,7 @@ set(Headers
     ./surface_field.hpp
     ./equation_of_state.hpp
     ./flux.hpp
+    ./coordinate_system.hpp
 )
 
 set(Sources
@@ -22,6 +23,7 @@ set(Sources
     ./surface_field.hpp
     ./equation_of_state.cpp
     ./flux.cpp
+    ./coordinate_system.cpp
 )
 
 

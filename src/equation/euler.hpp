@@ -18,8 +18,8 @@ template <size_t N> struct Euler {
     const auto& primitive_variables() const { return m_variables; }
     auto&       primitive_variables() { return m_variables; }
 
-    const auto& grid() const { return m_grid; }
-    auto&       grid() { return m_grid; }
+    constexpr const auto& grid() const { return m_grid; }
+    constexpr auto&       grid() { return m_grid; }
 
     auto padding() const { return primitive_variables().rho.padding(); }
 

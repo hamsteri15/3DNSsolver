@@ -1,5 +1,6 @@
 #include "catch.hpp"
 
+#include "equation/coordinate_system.hpp"
 #include "equation/cartesian_grid.hpp"
 #include "equation/surface_field.hpp"
 #include "equation/euler.hpp"
@@ -15,6 +16,27 @@
 #include "differentiation/downwind.hpp"
 
 #include "test_helpers.hpp"
+
+TEST_CASE("Test AxisIndex"){
+
+    AxisIndex i(3);
+
+    CHECK(i == size_t(3));
+
+}
+
+TEST_CASE("Test CoordinateSystem"){
+
+
+
+
+    Cartesian<3> cs{};
+
+    CHECK(cs.unit_normal(CartesianAxis::X) == Vector<3>{1, 0, 0});
+
+
+
+};
 
 
 TEST_CASE("Test CartesianGrid"){

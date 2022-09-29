@@ -70,7 +70,7 @@ template<size_t Dir>
 struct Weno_left : public TiledStencil<Weno_left<Dir>>{
 
     static constexpr size_t padding = 2;
-    static constexpr size_t direction = Dir;
+    static constexpr AxisIndex direction = Dir;
 
     auto operator()(auto span, auto idx) const {
 
@@ -90,7 +90,7 @@ template<size_t Dir>
 struct Weno_right : public TiledStencil<Weno_right<Dir>>{
 
     static constexpr size_t padding = 2;
-    static constexpr size_t direction = Dir;
+    static constexpr AxisIndex direction = Dir;
 
     auto operator()(auto span, auto idx) const {
 

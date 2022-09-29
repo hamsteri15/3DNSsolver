@@ -7,7 +7,7 @@
 template <size_t Dir> struct d_CD2 : public TiledStencil<d_CD2<Dir>> {
 
     static constexpr size_t padding   = 1;
-    static constexpr size_t direction = Dir;
+    static constexpr AxisIndex direction = Dir;
 
     auto operator()(auto span, auto idx) const {
         return 0.5*(span(shift<Dir, 1>(idx)) - span(shift<Dir, -1>(idx)));
@@ -19,7 +19,7 @@ struct dd_CD2 : public TiledStencil<dd_CD2<Dir>>{
 
 
     static constexpr size_t padding = 1;
-    static constexpr size_t direction = Dir;
+    static constexpr AxisIndex direction = Dir;
 
     auto operator()(auto span, auto idx) const{
         return
