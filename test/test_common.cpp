@@ -329,4 +329,29 @@ TEST_CASE("subspan tests"){
 
     }
 
+    /*
+    SECTION("rank reduction subspan"){
+
+        std::vector<int> a = 
+        {
+            1,  2,  3,  4,
+            5,  6,  7,  8,
+            9,  10, 11, 12,
+            13, 14, 15, 16
+        };
+        auto s = make_span(a, extents<2>{4,4});
+        auto ss = make_reduced_subspan(s, std::array<size_t,2>{0,0}, std::array<size_t,2>{0, 3});
+
+        CHECK(ss(0) == 1);
+        CHECK(ss(1) == 2);
+        CHECK(ss(2) == 3);
+
+
+
+
+    }
+    */
+
+
+
 }
