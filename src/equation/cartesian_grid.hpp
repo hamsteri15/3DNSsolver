@@ -64,7 +64,7 @@ template <size_t N> vectorField<N> points(const CartesianGrid<N>& grid) {
 
         Vector<N> p;
         for (size_t i = 0; i < N; ++i) { p[i] = 0.5 * delta[i] + delta[i] * arr[i]; }
-        s(indices) = p;
+        s(arr) = p;
     }
 
     return ret;

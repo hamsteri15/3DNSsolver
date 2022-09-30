@@ -148,6 +148,19 @@ TEST_CASE("md_indices tests"){
 
 TEST_CASE("mdspan tests"){
 
+    
+    SECTION("Indexing a span"){
+     
+
+
+
+        /*
+        auto s1 = make_span(a, extents<2>{2,5});
+
+        CHECK(s1(std::array<size_t, 3>{1,1,1}) == 1);
+        */
+    }
+    
     SECTION("extents"){
 
         REQUIRE_NOTHROW(extents<3>{3,3,3});
@@ -242,11 +255,13 @@ TEST_CASE("mdspan tests"){
         auto span = make_span(f, extents<2>{2,5});
 
         for (auto t : all_indices(span)){
-            span(t) = 43;
+            auto tt = get_array_from_tuple(t);
+            span(tt) = 43;
         }
 
         for (auto t : all_indices(span)){
-            CHECK(span(t) == 43);
+            auto tt = get_array_from_tuple(t);
+            CHECK(span(tt) == 43);
         }
 
 
@@ -313,32 +328,5 @@ TEST_CASE("subspan tests"){
 
 
     }
-
-
-    SECTION("Indexing with ranges::common_tuple"){
-
-        std::vector<int> a = 
-        {
-            0,0,0,0,
-            0,1,1,0,
-            0,1,1,0,
-            0,0,0,0
-        };
-        auto s = make_span(a, extents<2>{4,4});
-        auto ss = make_subspan(s, std::array<size_t,2>{1,1}, std::array<size_t,2>{3,3});
-
-        auto e1 = s(ranges::common_tuple<index_type, index_type>{1,1});
-        CHECK(e1 == 1);
-        
-        //TODO: fix this so that subspans can also be indexed with ranges::common_tuple
-        //auto e2 = ss(ranges::common_tuple<index_type, index_type>{1,1});
-        //CHECK(e2 == 1);
-
-
-        (void) ss;
-
-
-    }
-
 
 }

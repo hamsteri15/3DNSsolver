@@ -6,13 +6,15 @@
 #include "equation/boundary_condition.hpp"
 
 
-template<size_t Dir, size_t N, class T>
-void set_linear(span<T, N> s){
+template<size_t Dir, class Span>
+void set_linear(Span s){
+
+    using T = typename Span::value_type;
 
     auto indices = all_indices(s);
     for (auto idx : indices){
         auto ii = std::get<Dir>(idx);
-        s(idx) = T(ii);
+        s(get_array_from_tuple(idx)) = T(ii);
     }
 
 }
@@ -40,16 +42,18 @@ void assign_shocktube(Euler<N>& eq){
 
     for (auto idx : all_indices(rho)){
 
+        auto ii = get_array_from_tuple(idx);
+
         if (std::get<Dir>(idx) < size_t(0.5*dims.extent(Dir))){
 
-            rho(idx) = 1.0;
-            p(idx) = 1.0;
-            U(idx) = Vector<N>{};
+            rho(ii) = 1.0;
+            p(ii) = 1.0;
+            U(ii) = Vector<N>{};
         }
         else{
-            rho(idx) = 0.125;
-            p(idx) = 0.1;
-            U(idx) = Vector<N>{};
+            rho(ii) = 0.125;
+            p(ii) = 0.1;
+            U(ii) = Vector<N>{};
         }
 
     }

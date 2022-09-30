@@ -6,9 +6,13 @@
 #include "equation/volumetric_field.hpp"
 
 
-template<size_t N, class ET1, class ET2, class Op>
-void evaluate_tiled(span<ET1, N> in, span<ET2, N> out, Op op)
+template<class Span1, class Span2, class Op>
+void evaluate_tiled(Span1 in, Span2 out, Op op)
 {
+    static_assert(Span1::rank() == Span2::rank(), "Rank mismatch in evaluate tiled.");
+
+    static constexpr auto N = Span1::rank();
+
     runtime_assert(in.extents() == out.extents(), "Dimension mismatch");
     auto padding = get_padding<N>(op);
 
@@ -25,7 +29,8 @@ void evaluate_tiled(span<ET1, N> in, span<ET2, N> out, Op op)
         std::begin(indices),
         std::end(indices),
         [=](auto idx){
-            out(idx) = op(in, idx);
+            auto ii = get_array_from_tuple(idx); 
+            out(ii) = op(in, ii);
         }
     );
 

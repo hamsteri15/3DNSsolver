@@ -15,16 +15,18 @@ void assign_shocktube(Euler<N>& eq){
 
     for (auto idx : all_indices(rho)){
 
-        if (std::get<Dir>(idx) < size_t(0.5*dims.extent(Dir))){
-
-            rho(idx) = 1.0;
-            p(idx) = 1.0;
-            U(idx) = Vector<N>{};
+        auto ii = get_array_from_tuple(idx);
+        
+        if (std::get<Dir>(ii) < size_t(0.5*dims.extent(Dir))){
+            
+            rho(ii) = 1.0;
+            p(ii) = 1.0;
+            U(ii) = Vector<N>{};
         }
         else{
-            rho(idx) = 0.125;
-            p(idx) = 0.1;
-            U(idx) = Vector<N>{};
+            rho(ii) = 0.125;
+            p(ii) = 0.1;
+            U(ii) = Vector<N>{};
         }
 
     }
