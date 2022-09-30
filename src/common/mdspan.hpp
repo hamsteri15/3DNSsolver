@@ -18,25 +18,6 @@ template<class ElementType, size_t N>
 using span = span_base<ElementType, N, stdex::layout_right>;
 
 
-/*
-template <class ElementType, size_t N, class Layout = stdex::layout_right>
-struct span : public span_base<ElementType, N, Layout> {
-    using parent = span_base<ElementType, N, Layout>;
-    using parent::mdspan; // Inherit all constructors
-    using parent::operator();
-
-    template <class... Is> ElementType& operator()(ranges::common_tuple<Is...> tpl) {
-        return parent::operator()(get_array_from_tuple(tpl));
-    }
-
-    template <class... Is> ElementType& operator()(ranges::common_tuple<Is...> tpl) const {
-        return parent::operator()(get_array_from_tuple(tpl));
-    }
-};
-*/
-
-
-
 
 template <class Field, class Extents> static inline auto make_span(Field& field, Extents dims) {
     using value_type          = typename Field::value_type;
