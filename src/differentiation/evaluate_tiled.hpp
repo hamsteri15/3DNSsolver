@@ -29,7 +29,7 @@ void evaluate_tiled(Span1 in, Span2 out, Op op)
         std::begin(indices),
         std::end(indices),
         [=](auto idx){
-            auto ii = get_array_from_tuple(idx); 
+            auto ii = tuple_to_array(idx); 
             out(ii) = op(in, ii);
         }
     );
@@ -48,7 +48,7 @@ void evaluate_tiled(const VolumetricField<ET, N>& in, VolumetricField<ET, N>& ou
         std::end(indices),
         [=](auto idx){
             //TODO: This is bullshit but subspans currently dont support ranges:common_tuple indexing
-            auto ii = get_array_from_tuple(idx); 
+            auto ii = tuple_to_array(idx); 
             s_out(ii) = op(s_in, ii);
         }
     );

@@ -3,7 +3,7 @@
 #include <array>
 #include <tuple>
 
-template <typename tuple_t> constexpr auto get_array_from_tuple(tuple_t&& tuple) {
+template <typename tuple_t> constexpr auto tuple_to_array(tuple_t&& tuple) {
     constexpr auto get_array = [](auto&&... x) {
         return std::array{std::forward<decltype(x)>(x)...};
     };

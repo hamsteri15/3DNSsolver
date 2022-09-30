@@ -255,12 +255,12 @@ TEST_CASE("mdspan tests"){
         auto span = make_span(f, extents<2>{2,5});
 
         for (auto t : all_indices(span)){
-            auto tt = get_array_from_tuple(t);
+            auto tt = tuple_to_array(t);
             span(tt) = 43;
         }
 
         for (auto t : all_indices(span)){
-            auto tt = get_array_from_tuple(t);
+            auto tt = tuple_to_array(t);
             CHECK(span(tt) == 43);
         }
 

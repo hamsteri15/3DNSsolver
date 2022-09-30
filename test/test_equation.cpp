@@ -211,7 +211,7 @@ TEST_CASE("Test VolumetricField"){
         auto s = make_internal_span(f);
 
         for (auto i : all_indices(s)){
-            auto ii = get_array_from_tuple(i);
+            auto ii = tuple_to_array(i);
             s(ii) = 43;
 
         }
@@ -270,7 +270,7 @@ TEST_CASE("Test VolumetricField"){
             auto assign_linear = [](auto s){
                 scalar first = 1;
                 for (auto idx : all_indices(s)){
-                    auto ii = get_array_from_tuple(idx);
+                    auto ii = tuple_to_array(idx);
                     s(ii) = first;
                     first = first + 1;
                 }

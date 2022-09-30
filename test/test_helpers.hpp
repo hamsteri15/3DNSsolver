@@ -14,7 +14,7 @@ void set_linear(Span s){
     auto indices = all_indices(s);
     for (auto idx : indices){
         auto ii = std::get<Dir>(idx);
-        s(get_array_from_tuple(idx)) = T(ii);
+        s(tuple_to_array(idx)) = T(ii);
     }
 
 }
@@ -42,7 +42,7 @@ void assign_shocktube(Euler<N>& eq){
 
     for (auto idx : all_indices(rho)){
 
-        auto ii = get_array_from_tuple(idx);
+        auto ii = tuple_to_array(idx);
 
         if (std::get<Dir>(idx) < size_t(0.5*dims.extent(Dir))){
 

@@ -15,7 +15,7 @@ void assign_shocktube(Euler<N>& eq){
 
     for (auto idx : all_indices(rho)){
 
-        auto ii = get_array_from_tuple(idx);
+        auto ii = tuple_to_array(idx);
         
         if (std::get<Dir>(ii) < size_t(0.5*dims.extent(Dir))){
             

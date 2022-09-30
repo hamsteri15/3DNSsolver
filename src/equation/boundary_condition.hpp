@@ -20,7 +20,7 @@ auto compute_shift(auto padding, auto normal){
 auto shift(auto idx, auto padding, auto normal){
 
 
-    auto new_idx = get_array_from_tuple(idx);
+    auto new_idx = tuple_to_array(idx);
     auto shift_amount = compute_shift(padding, normal);
 
     for (size_t i = 0; i < rank(padding); ++i){
@@ -39,7 +39,7 @@ void mirror(Span b_span, extents<N> padding, Vector<N> normal){
     for (auto idx : all_indices(b_span)){
 
         b_span(shift(idx, padding, normal)) 
-        = b_span(get_array_from_tuple(idx));
+        = b_span(tuple_to_array(idx));
     }
 
 }
