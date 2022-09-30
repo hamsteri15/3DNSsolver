@@ -15,10 +15,17 @@ struct TiledStencil{
 
 };
 
+template<class T>
+static constexpr auto get_direction(const TiledStencil<T>& stencil){
+    return stencil.direction;
+}
+
+
+
 template<size_t N, class T>
 std::array<size_t, N> get_padding(const TiledStencil<T>& stencil){
     std::array<size_t, N> ret{};
-    ret[stencil.direction] = stencil.padding;
+    ret[get_direction(stencil)] = stencil.padding;
     return ret;
 }
 

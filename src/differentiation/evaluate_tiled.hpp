@@ -6,6 +6,20 @@
 #include "equation/volumetric_field.hpp"
 
 
+template<class Span1, class Span2, class Op, class Indices>
+void evaluate(Span1 in, Span2 out, Op op, Indices indices){
+
+    std::for_each(
+        std::begin(indices),
+        std::end(indices),
+        [=](auto idx){
+            auto ii = tuple_to_array(idx); 
+            out(ii) = op(in, ii);
+        }
+    );
+}
+
+
 template<class Span1, class Span2, class Op>
 void evaluate_tiled(Span1 in, Span2 out, Op op)
 {
@@ -25,15 +39,8 @@ void evaluate_tiled(Span1 in, Span2 out, Op op)
 
     auto indices = md_indices(begin, end);
 
-    std::for_each(
-        std::begin(indices),
-        std::end(indices),
-        [=](auto idx){
-            auto ii = tuple_to_array(idx); 
-            out(ii) = op(in, ii);
-        }
-    );
-
+    evaluate(in, out, op, indices);
+   
 }
 
 template<size_t N, class ET, class Op>
@@ -41,18 +48,12 @@ void evaluate_tiled(const VolumetricField<ET, N>& in, VolumetricField<ET, N>& ou
     
     auto s_in = make_internal_span(in);
     auto s_out = make_internal_span(out);
-    auto indices = all_indices(s_in);
-
-    std::for_each(
-        std::begin(indices),
-        std::end(indices),
-        [=](auto idx){
-            //TODO: This is bullshit but subspans currently dont support ranges:common_tuple indexing
-            auto ii = tuple_to_array(idx); 
-            s_out(ii) = op(s_in, ii);
-        }
+    evaluate
+    (
+        s_in,
+        s_out,
+        op,
+        all_indices(s_in)
     );
 
-
 }
-

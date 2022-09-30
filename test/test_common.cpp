@@ -4,7 +4,7 @@
 #include "common/mdspan.hpp"
 #include "common/extents.hpp"
 #include "common/loop.hpp"
-
+#include "common/subspan.hpp"
 
 TEST_CASE("scalar"){
 

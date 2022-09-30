@@ -28,4 +28,5 @@ struct dd_CD2 : public TiledStencil<dd_CD2<Dir>>{
         +span(shift<Dir, -1>(idx));
     }
 
+
 };
