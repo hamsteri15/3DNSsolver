@@ -328,7 +328,7 @@ TEST_CASE("subspan tests"){
 
 
     }
-
+    
     SECTION("rank reduction subspan"){
 
         std::vector<int> a = 
@@ -350,10 +350,39 @@ TEST_CASE("subspan tests"){
         CHECK(ss(1) == 2);
         CHECK(ss(2) == 3);
 
+    }
 
 
+
+    SECTION("make_tiled_subspan"){
+        
+        std::vector<int> a = 
+        {
+            1,  2,  3,  4,
+            5,  6,  7,  8,
+            9,  10, 11, 12,
+            13, 14, 15, 16
+        };
+        auto s = make_span(a, extents<2>{4,4});
+
+        std::array<size_t, 2> center = {2,2};
+
+        auto ss = make_tiled_subspan<1>(s, center, 1);
+
+        CHECK(ss(0) == 10);
+        CHECK(ss(1) == 11);
+        CHECK(ss(2) == 12);
+
+
+        auto ss2 = make_tiled_subspan<0>(s, center, 1);
+
+        CHECK(ss2(0) == 7);
+        CHECK(ss2(1) == 11);
+        CHECK(ss2(2) == 15);
 
     }
+
+
 
 
 
