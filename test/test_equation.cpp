@@ -9,8 +9,8 @@
 #include "equation/boundary_condition.hpp"
 #include "equation/flux.hpp"
 
-#include "differentiation/cd-n.hpp"
 #include "differentiation/evaluate_tiled.hpp"
+#include "differentiation/cd-n.hpp"
 #include "differentiation/weno.hpp"
 #include "differentiation/upwind.hpp"
 #include "differentiation/downwind.hpp"

@@ -72,13 +72,13 @@ struct Weno_left : public TiledStencil<Weno_left<Dir>>{
     static constexpr size_t padding = 2;
     static constexpr AxisIndex direction = Dir;
 
-    auto operator()(auto span, auto idx) const {
+    auto operator()(auto f) const {
 
-        auto m2 = span(shift<Dir, -2>(idx));
-        auto m1 = span(shift<Dir, -1>(idx));
-        auto m0 = span(idx);
-        auto p1 = span(shift<Dir,  1>(idx));
-        auto p2 = span(shift<Dir,  2>(idx));
+        auto m2 = f(-2);
+        auto m1 = f(-1);
+        auto m0 = f(0);
+        auto p1 = f(1);
+        auto p2 = f(2);
 
         return weno_left(m2, m1, m0, p1, p2);
 
@@ -92,13 +92,13 @@ struct Weno_right : public TiledStencil<Weno_right<Dir>>{
     static constexpr size_t padding = 2;
     static constexpr AxisIndex direction = Dir;
 
-    auto operator()(auto span, auto idx) const {
+    auto operator()(auto f) const {
 
-        auto m2 = span(shift<Dir, -2>(idx));
-        auto m1 = span(shift<Dir, -1>(idx));
-        auto m0 = span(idx);
-        auto p1 = span(shift<Dir,  1>(idx));
-        auto p2 = span(shift<Dir,  2>(idx));
+        auto m2 = f(-2);
+        auto m1 = f(-1);
+        auto m0 = f(0);
+        auto p1 = f(1);
+        auto p2 = f(2);
 
         return weno_right(m2, m1, m0, p1, p2);
     }

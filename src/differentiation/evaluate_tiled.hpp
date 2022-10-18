@@ -2,8 +2,27 @@
 
 #include "common/mdspan.hpp"
 #include "common/loop.hpp"
+#include "common/subspan.hpp"
 #include "differentiation/tiled_stencil.hpp"
 #include "equation/volumetric_field.hpp"
+
+
+template<size_t N, class Span, class Op>
+static inline auto make_stencil_indices(Span s, std::array<size_t, N> center, Op op){
+
+    static constexpr auto half_width = Op::padding;
+    static constexpr size_t dir = get_direction(op);
+
+    //TODO: fixme
+    center[dir] += half_width;
+
+    return make_tiled_subspan<dir>(
+        s,
+        center,
+        half_width
+    );
+
+}
 
 
 template<class Span1, class Span2, class Op, class Indices>
@@ -14,7 +33,8 @@ void evaluate(Span1 in, Span2 out, Op op, Indices indices){
         std::end(indices),
         [=](auto idx){
             auto ii = tuple_to_array(idx); 
-            out(ii) = op(in, ii);
+            auto stencil = make_stencil_indices(in, ii, op);
+            out(ii) = op(stencil);
         }
     );
 }

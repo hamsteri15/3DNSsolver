@@ -50,7 +50,7 @@ auto make_tiled_subspan_params(std::array<size_t, N> a, std::array<size_t, N> b)
 
 template <size_t Dir, size_t N, class T>
 static inline auto
-make_tiled_subspan(span<T, N> s, std::array<size_t, N> center, size_t half_width) {
+make_tiled_subspan(T s, std::array<size_t, N> center, size_t half_width) {
     std::array<size_t, N> begin(center);
     std::array<size_t, N> end(center);
     begin[Dir] -= half_width;
