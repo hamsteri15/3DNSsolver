@@ -111,38 +111,6 @@ TEST_CASE("md_indices tests"){
     }
 
 
-    SECTION("shift"){
-
-        auto t = md_indices(std::array{0,0,0}, std::array{3,3,2});
-
-        auto [i1, j1, k1] = t[0];
-        CHECK(i1 == 0);
-        CHECK(j1 == 0);
-        CHECK(k1 == 0);
-
-
-        auto [i2, j2, k2] = shift<0,1>(t[0]);
-        CHECK(i2 == 1);
-        CHECK(j2 == 0);
-        CHECK(k2 == 0);
-
-        auto [i3, j3, k3] = shift<0,2>(t[0]);
-        CHECK(i3 == 2);
-        CHECK(j3 == 0);
-        CHECK(k3 == 0);
-
-
-        auto [i4, j4, k4] = shift<1, -1>(*(t.end() - 1));
-        CHECK(i4 == 2);
-        CHECK(j4 == 1);
-        CHECK(k4 == 1);
-
-
-
-    }
-
-
-
 }
 
 

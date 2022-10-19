@@ -37,11 +37,6 @@ static inline auto make_span(const Field& field, Extents dims) {
 
 template <class Span> static constexpr size_t rank(const Span& span) { return span.rank(); }
 
-template <size_t dir, index_type amount> auto shift(auto idx) {
-
-    std::get<dir>(idx) += amount;
-    return idx;
-}
 
 template <class Span> void print(Span span) {
 
