@@ -7,20 +7,6 @@
 #include "equation/volumetric_field.hpp"
 
 
-template<size_t N, class Span, class Op>
-static inline auto make_stencil_indices(Span s, std::array<size_t, N> center, Op op){
-
-    static constexpr size_t dir = get_direction(op);
-    //Note! It is ok to access spans out of bounds, so this just makes a 
-    //a subspan centered at the input index which can be called like
-    // f(-1), f(0), f(+1) etc.
-    return make_tiled_subspan<dir>(
-        s,
-        center,
-        center
-    );
-
-}
 
 
 template<class Span1, class Span2, class Op, class Indices>
@@ -30,8 +16,8 @@ void evaluate(Span1 in, Span2 out, Op op, Indices indices){
         std::begin(indices),
         std::end(indices),
         [=](auto idx){
-            auto ii = tuple_to_array(idx); 
-            auto stencil = make_stencil_indices(in, ii, op);
+            auto ii = tuple_to_array(idx); //TODO: get rid of this!
+            auto stencil = make_tiled_subspan<get_direction(op)>(in, ii);
             out(ii) = op(stencil);
         }
     );
