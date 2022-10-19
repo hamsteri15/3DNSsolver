@@ -10,16 +10,14 @@
 template<size_t N, class Span, class Op>
 static inline auto make_stencil_indices(Span s, std::array<size_t, N> center, Op op){
 
-    static constexpr auto half_width = Op::padding;
     static constexpr size_t dir = get_direction(op);
-
-    //TODO: fixme
-    center[dir] += half_width;
-
+    //Note! It is ok to access spans out of bounds, so this just makes a 
+    //a subspan centered at the input index which can be called like
+    // f(-1), f(0), f(+1) etc.
     return make_tiled_subspan<dir>(
         s,
         center,
-        half_width
+        center
     );
 
 }
