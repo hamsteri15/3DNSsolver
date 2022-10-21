@@ -4,7 +4,6 @@ CMAKE_MINIMUM_REQUIRED(VERSION 3.12)
 PROJECT(FlowSolver)
 
 message("COMPILER ID " ${CMAKE_CXX_COMPILER_ID})
-INCLUDE(cmake/StandardProjectSettings.cmake)
 
 
 message("BINARY DIR" ${CMAKE_BINARY_DIR})
@@ -16,13 +15,7 @@ add_library(project_options INTERFACE)
 target_compile_features(project_options INTERFACE cxx_std_20)
 #target_compile_features(project_options INTERFACE cxx_std_20)
 
-
-
-
-
-
-
-
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # Link this 'library' to use the warnings specified in CompilerWarnings.cmake
 add_library(project_warnings INTERFACE)
@@ -60,7 +53,6 @@ FIND_PACKAGE(OpenMP)
 SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-
 
 
 

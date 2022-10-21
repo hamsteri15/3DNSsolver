@@ -22,7 +22,7 @@ target_link_libraries(OnedEuler PUBLIC
                         )
 
 
-                        set(Headers
+set(Headers
 )
 
 set(Sources
@@ -31,7 +31,7 @@ set(Sources
 
 
 add_executable(TwodEuler ${Sources} ${Headers})
-
+#set_target_properties(TwodEuler PROPERTIES DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})
 
 target_include_directories(TwodEuler PUBLIC
                             ${CMAKE_SOURCE_DIR}/external/

@@ -58,6 +58,7 @@ struct EulerSolver2D : EulerSolver<2>{
         
         auto df = [&](auto f){
             volVectorField<N, N+2> Utemp(eq.grid(), eq.padding());
+            
             Utemp = f;
             mirror_all(Utemp);
             
@@ -69,6 +70,7 @@ struct EulerSolver2D : EulerSolver<2>{
             Fy = make_laxfriedrichs_flux(Utemp, eq.eos(), eq.grid().unit_normal(CartesianAxis::Y));
             auto Ry =  d_di(Fy, Weno_left<0>{}, Weno_right<0>{});
 
+            
             return Rx + Ry;
         };
         this->solve(eq, dt, df);
