@@ -3,6 +3,7 @@ set(Headers
     ./make_file.hpp
     ./make_datatype.hpp
     ./make_dataset.hpp
+    ./writer.hpp
 )
 
 set(Sources
@@ -10,6 +11,7 @@ set(Sources
     ./make_file.cpp
     ./make_datatype.cpp
     ./make_dataset.cpp
+    ./writer.cpp
 )
 
 
