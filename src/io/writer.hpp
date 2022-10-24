@@ -26,24 +26,12 @@ struct Writer{
     template<size_t N>
     void write(const CartesianGrid<N>& grid){
 
-        using namespace H5Wrapper;
-
-        auto file = file_open();
-
-        using element_type = Vector<N>;
-        auto dt = H5DatatypeCreator<element_type>::create();
-        auto dims = extent_to_array(grid.dimensions());
-
         std::string group_name = "grid";
         std::string dataset_name = "coords";
-        auto location = H5Group::create(file, group_name);
-        auto file_dataspace = H5Dataspace::create(dims);
-        auto dataset = H5Dataset::create(location, dataset_name, dt, file_dataspace);
-        auto data = points(grid);
-        dataset.write(data.data());
 
-        file.close();
-        
+        auto dims = grid.dimensions();
+        const auto data = points(grid);
+        write<N, Vector<N>>(data, dims, group_name, dataset_name);
 
     }
 
@@ -55,11 +43,29 @@ struct Writer{
 private:
     std::string m_file_path;
 
+    template<size_t N, class ET>
+    void write(const Field<ET>& field, extents<N> dims, std::string group_name, std::string field_name) const{
+        
+        using namespace H5Wrapper;
+
+        auto dt = H5DatatypeCreator<ET>::create();
+        auto dims_arr = extent_to_array(dims);
+
+        auto file = file_open();
+        auto location = H5Group::create(file, group_name);
+        auto file_dataspace = H5Dataspace::create(dims_arr);
+        auto dataset = H5Dataset::create(location, field_name, dt, file_dataspace);
+
+        dataset.write(field.data());
+
+        file.close();
+    }
 
     auto file_open() const{
         using namespace H5Wrapper;
         return H5File::open(m_file_path, H5File::AccessFlag::READANDWRITE);
     }
+
 
 
 };

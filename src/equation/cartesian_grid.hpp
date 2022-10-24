@@ -7,6 +7,7 @@
 #include "equation/grid.hpp"
 #include "equation/coordinate_system.hpp"
 
+
 template <size_t N> struct CartesianGrid : public Grid {
 
     static constexpr Cartesian<N> coordinate_system{};
@@ -69,6 +70,8 @@ template <size_t N> vectorField<N> points(const CartesianGrid<N>& grid) {
 
     return ret;
 }
+
+
 
 template <size_t N> auto surface_field_dims(size_t dir, const CartesianGrid<N>& grid) {
 
