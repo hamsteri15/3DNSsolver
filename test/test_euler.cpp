@@ -2,6 +2,9 @@
 
 #include "equation/euler.hpp"
 #include "equation/euler_flux.hpp"
+#include "equation/euler_primitive_variables.hpp"
+#include "time_integration/rk1.hpp"
+#include "time_integration/rk3.hpp"
 
 #include "differentiation/cd-n.hpp"
 #include "differentiation/evaluate_tiled.hpp"
@@ -186,3 +189,4 @@ TEST_CASE("Test euler_flux"){
 
     }
 }
+

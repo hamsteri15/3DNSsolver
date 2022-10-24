@@ -101,7 +101,6 @@ auto d_di(const SplitFlux<ET, N>& F, Scheme1 scheme1, Scheme2 scheme2) {
     evaluate_tiled(Fr_int, dFr, Downwind1<dir>{});
 
     auto delta = spatial_stepsize(Fl.grid())[dir];
-
     ret = (dFl + dFr) / delta;
 
     return ret;

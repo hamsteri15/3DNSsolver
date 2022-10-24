@@ -18,7 +18,8 @@ struct EulerSolver{
 
         auto eos = eq.eos();
         auto prim = eq.primitive_variables();
-        auto U = primitive_to_conserved(prim, eos);
+        volVectorField<N, N+2> U(eq.grid(), eq.padding());
+        U = primitive_to_conserved(prim, eos);
         
         auto d_dt = Rk3();
         auto newU = U - d_dt(U, df, dt);
@@ -42,8 +43,8 @@ struct EulerSolver1D : EulerSolver<1>{
             
             SplitFlux<Vector<N+2>, N> F(eq.grid(), eq.padding());
             F = make_laxfriedrichs_flux(Utemp, eq.eos(), eq.grid().unit_normal(CartesianAxis::X));
-            
-            return  d_di(F, Weno_left<0>{}, Weno_right<0>{});
+            Utemp = d_di(F, Weno_left<0>{}, Weno_right<0>{});
+            return Utemp;
         };
         this->solve(eq, dt, df);
     }
@@ -70,8 +71,8 @@ struct EulerSolver2D : EulerSolver<2>{
             Fy = make_laxfriedrichs_flux(Utemp, eq.eos(), eq.grid().unit_normal(CartesianAxis::Y));
             auto Ry =  d_di(Fy, Weno_left<0>{}, Weno_right<0>{});
 
-            
-            return Rx + Ry;
+            Utemp = Rx + Ry;
+            return Utemp;
         };
         this->solve(eq, dt, df);
     }

@@ -88,7 +88,27 @@ TEST_CASE("1D cd-2"){
         
         evaluate_tiled(s_in, s_out, op);
         CHECK(out == std::vector<int>{0, 1, 1, 1, 1, 1, 0});
+    }
+    
+    SECTION("evaluate_tiled 2"){
 
+        d_CD2<0> op;
+        size_t N = 3000;
+        extents<1> interior{N};
+        extents<1> padded = make_padded_extent(interior, op);
+
+        std::vector<int> in(flat_size(padded));
+        std::vector<int> out(flat_size(padded));
+        auto s_in = make_span(in, padded);
+        auto s_out = make_span(out, padded);
+        
+        set_linear<0>(s_in);
+        
+        evaluate_tiled(s_in, s_out, op);
+
+        for (size_t i = 1; i < N-1; ++i){
+            REQUIRE(out[i] == 1);
+        }
 
     }
 

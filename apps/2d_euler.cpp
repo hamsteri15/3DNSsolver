@@ -11,7 +11,9 @@ int main(){
 
     scalar dt = 0.0001;
     scalar T = 0.3;
-    auto eq = make_euler_equation<2>(extents<2>{21, 20}, extents<2>{2, 2});
+    size_t nx = 50;
+    size_t ny = 51;
+    auto eq = make_euler_equation<2>(extents<2>{ny, nx}, extents<2>{2, 2});
     assign_shocktube<0>(eq);
 
     scalar time = 0.;
