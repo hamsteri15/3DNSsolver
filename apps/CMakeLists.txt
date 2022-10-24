@@ -19,6 +19,7 @@ target_link_libraries(OnedEuler PUBLIC
                         project_options
                         #OpenMP::OpenMP_CXX 
                         project_warnings
+                        io
                         )
 
 
@@ -43,4 +44,5 @@ target_link_libraries(TwodEuler PUBLIC
                         project_options
                         #OpenMP::OpenMP_CXX 
                         project_warnings
+                        io
                         )

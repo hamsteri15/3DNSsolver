@@ -10,17 +10,28 @@
 #include "H5Wrapper/include/h5_file.hpp"
 #include "H5Wrapper/include/h5_dataset.hpp"
 
-/*
 template<size_t N>
-template<class ET, size_t N>
 void write(H5Wrapper::H5File hf, const CartesianGrid<N>& grid){
 
-    std::string dataset_name = "coords";
+    using namespace H5Wrapper;
 
+    using element_type = Vector<N>;
+    auto dt = H5DatatypeCreator<element_type>::create();
     auto dims = extent_to_array(grid.dimensions());
 
+    std::string dataset_name = "grid";
+    auto file_dataspace = H5Dataspace::create(dims);
+    auto dataset = H5Dataset::create(hf, dataset_name, dt, file_dataspace);
+
+
+    auto data = points(grid);
+
+
+    dataset.write(data.data());
+
+
+
 }
-*/
 
 template<class ET, size_t N>
 void write(H5Wrapper::H5File hf, const VolumetricField<ET, N>& f){
