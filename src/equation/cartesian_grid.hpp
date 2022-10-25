@@ -59,17 +59,64 @@ template <size_t N> vectorField<N> points(const CartesianGrid<N>& grid) {
 
     auto s = make_span(ret, grid.dimensions());
 
+    auto p0 = grid.p0();
+
     for (auto indices : all_indices(s)) {
 
         auto arr = tuple_to_array(indices);
 
         Vector<N> p;
-        for (size_t i = 0; i < N; ++i) { p[i] = 0.5 * delta[i] + delta[i] * arr[i]; }
+        for (size_t i = 0; i < N; ++i) { p[i] = p0[i] + 0.5 * delta[i] + delta[i] * arr[i]; }
         s(arr) = p;
     }
 
     return ret;
 }
+
+template <size_t N> auto points2(const CartesianGrid<N>& grid) {
+
+    auto delta = spatial_stepsize(grid);
+    auto dims  = extent_to_array(grid.dimensions());
+
+    std::vector<scalarField> ret(N);
+
+    auto p0 = grid.p0();
+
+    for (size_t i = 0; i < N; ++i) {
+
+        size_t n = dims[i];
+
+        scalarField f(n);
+
+        for (size_t j = 0; j < n; ++j) { f[j] = p0[i] + 0.5 * delta[i] + delta[i] * scalar(j); }
+        ret[i] = f;
+    }
+
+    return ret;
+}
+
+template <size_t N> auto edges(const CartesianGrid<N>& grid) {
+
+    auto delta = spatial_stepsize(grid);
+    auto dims  = extent_to_array(grid.dimensions());
+
+    std::vector<scalarField> ret(N);
+
+    auto p0 = grid.p0();
+
+    for (size_t i = 0; i < N; ++i) {
+
+        size_t n = dims[i] + 1;
+
+        scalarField f(n);
+
+        for (size_t j = 0; j < n; ++j) { f[j] = p0[i] + delta[i] * scalar(j); }
+        ret[i] = f;
+    }
+
+    return ret;
+}
+
 
 
 

@@ -1,0 +1,23 @@
+<?xml version="1.0" ?>
+<!DOCTYPE Xdmf SYSTEM "Xdmf.dtd" []>
+<Xdmf xmlns:xi="http://www.w3.org/2003/XInclude" Version="2.2">
+  <Domain>
+    <Grid Name="rectilinear_scalar" GridType="Uniform">
+      <Topology TopologyType="2DRECTMesh" NumberOfElements="52 51" />
+      <Geometry GeometryType="VXVY">
+        <DataItem Name="ycoords" Dimensions="51" NumberType="Float" Precision="4" Format="HDF">
+            output.h5:/grid/c0
+        </DataItem>
+        <DataItem Name="xcoords" Dimensions="50" NumberType="Float" Precision="4" Format="HDF">
+            output.h5:/grid/c1
+        </DataItem>
+      </Geometry>
+
+        <Attribute Name="rho" AttributeType="Scalar" Center="Node">
+        <DataItem Dimensions="51 50" NumberType="Float" Precision="4" Format="HDF">
+          output.h5:/data_0/rho
+        </DataItem>
+      </Attribute>
+    </Grid>
+  </Domain>
+</Xdmf>

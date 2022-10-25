@@ -39,14 +39,29 @@ struct Writer{
 
     template<size_t N>
     void write(const CartesianGrid<N>& grid){
-
+        /*
         std::string group_name = "grid";
-        std::string dataset_name = "coords";
-
+        std::string dataset_name = "XY";
+        
         auto dims = grid.dimensions();
         const auto data = points(grid);
         write<N, Vector<N>>(data, dims, group_name, dataset_name);
+        */
+        
+        std::string group_name = "grid";
+        auto data = edges(grid);
 
+        for (size_t i = 0; i < N; ++i){
+            std::array<size_t, 1> write_dims{data[i].size()};
+            std::string field_name = "c" + std::to_string(i);
+            write<1, scalar>(data[i], write_dims, group_name, field_name);
+        }
+
+        /*
+        const auto data = points(grid);
+        auto write_dims = std::array<size_t, 1>{data.size()};
+        write<1, Vector<N>>(data, write_dims, group_name, dataset_name);
+        */
     }
 
     template <size_t N, class ET>
@@ -74,7 +89,15 @@ private:
         auto dims_arr = extent_to_array(dims);
 
         auto file = file_open();
-        auto location = H5Group::create(file, group_name);
+        
+        H5Group location;
+
+        if (H5Group::exists(file, group_name)){
+            location = H5Group::open(file, group_name);
+        }
+        else{
+            location = H5Group::create(file, group_name);
+        }
         auto file_dataspace = H5Dataspace::create(dims_arr);
         auto dataset = H5Dataset::create(location, field_name, dt, file_dataspace);
 
@@ -103,8 +126,6 @@ private:
         }
 
         auto file = file_open();
-
-        std::cout << group_name << " " << field_name << std::endl;
 
         H5Group location;
 
