@@ -7,9 +7,26 @@
 #include "equation/volumetric_field.hpp"
 #include "io/make_datatype.hpp"
 #include "H5Wrapper/include/h5_dataspace.hpp"
+#include "H5Wrapper/include/h5_dataspace_hyperslab.hpp"
 #include "H5Wrapper/include/h5_file.hpp"
 #include "H5Wrapper/include/h5_dataset.hpp"
 #include "H5Wrapper/include/h5_group.hpp"
+
+/*
+template<class... Fields, class... Names>
+struct Checkpoint{
+
+    size_t n_dumps;
+    std::string                  name;
+    const double& time;
+    std::tuple<const Fields&...> fields;
+    std::tuple<const Names&....> field_names;
+
+};
+*/
+
+
+
 
 struct Writer{
 
@@ -18,9 +35,6 @@ struct Writer{
         auto f = make_file(m_file_path);
         f.close();
     }
-
-
-
 
 
     template<size_t N>
@@ -35,13 +49,21 @@ struct Writer{
 
     }
 
+    template <size_t N, class ET>
+    void write(const VolumetricField<ET, N>& field, std::string field_name, size_t checkpoint_i) {
 
+        std::string group_name   = std::string("data_") + std::to_string(checkpoint_i);
+        std::string dataset_name = field_name;
 
-
-
+        write<N, ET>(field, field.dimensions(), field.padding(), group_name, dataset_name);
+    }
 
 private:
     std::string m_file_path;
+
+
+
+
 
     template<size_t N, class ET>
     void write(const Field<ET>& field, extents<N> dims, std::string group_name, std::string field_name) const{
@@ -58,6 +80,49 @@ private:
 
         dataset.write(field.data());
 
+        file.close();
+    }
+
+    template <size_t N, class ET>
+    void write(const Field<ET>& field,
+               extents<N>       dims,
+               extents<N>       padding,
+               std::string      group_name,
+               std::string      field_name) const {
+
+        using namespace H5Wrapper;
+
+        auto                  dt       = H5DatatypeCreator<ET>::create();
+        auto                  dims_arr = extent_to_array(dims);
+        auto                  padd_arr = extent_to_array(padding);
+        std::array<size_t, N> total_dims{};
+
+        //total = dims + 2*padding
+        for (size_t i = 0; i < N; ++i){
+            total_dims[i] = dims_arr[i] + 2*padd_arr[i];
+        }
+
+        auto file = file_open();
+
+        std::cout << group_name << " " << field_name << std::endl;
+
+        H5Group location;
+
+        if (H5Group::exists(file, group_name)){
+            location = H5Group::open(file, group_name);
+        }
+        else{
+            location = H5Group::create(file, group_name);
+        }
+
+        auto memory_parent_dataspace = H5Dataspace::create(total_dims);
+        auto memory_dataspace = H5Hyperslab::select(memory_parent_dataspace, padd_arr, dims_arr);
+
+        auto file_dataspace = H5Dataspace::create(dims_arr);
+        auto dataset        = H5Dataset::create(location, field_name, dt, file_dataspace);
+
+        dataset.write(field.data(), memory_dataspace);
+        location.close();
         file.close();
     }
 

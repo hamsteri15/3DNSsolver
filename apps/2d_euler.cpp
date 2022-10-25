@@ -26,15 +26,24 @@ int main(){
     writer.write(eq.grid());
 
     scalar time = 0.;
+    size_t n_checks = 0;
+    size_t nt = 0;
     while (time < T){
         std::cout << "Time: " << time << std::endl;
         solver.take_step(eq, dt);
+        if ((nt % 100) == 0){
+            writer.write(eq.primitive_variables().rho, "rho", n_checks);
+            writer.write(eq.primitive_variables().p, "p", n_checks);
+            writer.write(eq.primitive_variables().U, "U", n_checks);
+            n_checks++;
+        }
         time += dt;
+        nt++;
     }
 
     std::cout << "Done" << std::endl;
 
-    print(make_internal_span(eq.primitive_variables().rho));
+    //print(make_internal_span(eq.primitive_variables().rho));
 
     
 
