@@ -72,6 +72,25 @@ TEST_CASE("VectorField"){
 
     }
 
+    SECTION("serialize"){
+
+        vectorField<2> f(3);
+        for (size_t i = 0; i < f.size(); ++i){
+            f[i] = Vector<2>{scalar(i), scalar(i)};
+        }
+        auto v = serialize(f);
+        std::vector<scalar> correct = 
+        {
+            0,0,
+            1,1,
+            2,2
+        };
+
+        CHECK(std::vector<scalar>(v.begin(), v.end()) == correct);
+
+
+    }
+
 }
 
 TEST_CASE("extents"){
