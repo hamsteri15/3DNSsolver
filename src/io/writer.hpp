@@ -10,6 +10,7 @@
 #include "equation/volumetric_field.hpp"
 #include "io/make_datatype.hpp"
 #include "io/make_file.hpp"
+#include "io/constants.hpp"
 #include <string>
 
 /*
@@ -124,17 +125,24 @@ struct Writer {
             write<1, scalar>(data[i], write_dims, group_name, field_name);
         }
 
-        /*
-        const auto data = points(grid);
-        auto write_dims = std::array<size_t, 1>{data.size()};
-        write<1, Vector<N>>(data, write_dims, group_name, dataset_name);
-        */
+        if (N == 2){
+            write("VXVY", group_name, "xdmf_geometry");
+            write("2DRectMesh", group_name, "xdmf_topology");
+        }
+        
+        if (N == 3){
+            write("VXVYVZ", group_name, "xdmf_geometry");
+            write("2DRectMesh", group_name, "xdmf_topology");
+        }
+
+
+
     }
 
     template <size_t N, class ET>
     void write(const VolumetricField<ET, N>& field, std::string field_name, size_t checkpoint_i) {
 
-        std::string group_name   = std::string("data_") + std::to_string(checkpoint_i);
+        std::string group_name   = std::string("checkpoints/") + Constants::checkpoint_extension + std::to_string(checkpoint_i);
         std::string dataset_name = field_name;
 
         write<N, ET>(field, field.dimensions(), field.padding(), group_name, dataset_name);
@@ -142,6 +150,30 @@ struct Writer {
 
 private:
     std::string m_file_path;
+
+    
+    void write(std::string str, std::string group_name, std::string field_name){
+        using namespace H5Wrapper;
+
+
+        std::vector<size_t> dims = {1};
+
+        auto dt1 = H5DatatypeCreator<std::string>::create(str.size());
+        auto memory_dataspace = H5Dataspace::create(dims);
+        
+        auto file = file_open();
+        auto location = create_or_open(file, group_name);
+
+        
+        auto file_dataspace = H5Dataspace::create(dims);
+        auto dataset = H5Dataset::create(location, field_name, dt1, file_dataspace);
+        dataset.write(str.c_str());
+    
+        file.close();
+        
+
+    }
+    
 
     template <size_t N, class ET>
     void write(const Field<ET>& field,
@@ -156,13 +188,8 @@ private:
 
         auto file = file_open();
 
-        H5Group location;
-
-        if (H5Group::exists(file, group_name)) {
-            location = H5Group::open(file, group_name);
-        } else {
-            location = H5Group::create(file, group_name);
-        }
+        auto location = create_or_open(file, group_name);
+        
         auto file_dataspace = H5Dataspace::create(dims_arr);
         auto dataset        = H5Dataset::create(location, field_name, dt, file_dataspace);
 
@@ -182,13 +209,7 @@ private:
 
         auto file = file_open();
 
-        H5Group location;
-
-        if (H5Group::exists(file, group_name)) {
-            location = H5Group::open(file, group_name);
-        } else {
-            location = H5Group::create(file, group_name);
-        }
+        auto location = create_or_open(file, group_name);
 
         auto writeable = make_writeable<N>(field, dims, padding);
         auto dataset = H5Dataset::create(location, field_name, writeable.datatype, writeable.file_dataspace);
@@ -211,8 +232,21 @@ private:
         return memory_dataspace;
     }
 
-    auto file_open() const {
+    H5Wrapper::H5File file_open() const {
         using namespace H5Wrapper;
         return H5File::open(m_file_path, H5File::AccessFlag::READANDWRITE);
     }
+
+    H5Wrapper::H5Group create_or_open(H5Wrapper::H5File file, std::string group_name) const{
+        using namespace H5Wrapper;
+        H5Group location;
+        if (H5Group::exists(file, group_name)) {
+            location = H5Group::open(file, group_name);
+        } else {
+            location = H5Group::create(file, group_name);
+        }
+        return location;
+    }
+
+
 };

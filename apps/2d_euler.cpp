@@ -5,18 +5,19 @@
 #include "io/write.hpp"
 #include "io/make_file.hpp"
 #include "io/writer.hpp"
+#include "io/reader.hpp"
 
 int main(){
 
      
     EulerSolver2D solver;
 
-
-    Writer writer("output.h5");
+    std::string o_path = "output.h5";
+    Writer writer(o_path);
 
 
     scalar dt = 0.0001;
-    scalar T = 0.3;
+    scalar T = 0.005;
     size_t nx = 50;
     size_t ny = 51;
     auto eq = make_euler_equation<2>(extents<2>{ny, nx}, extents<2>{2, 2});
@@ -31,7 +32,7 @@ int main(){
     while (time < T){
         std::cout << "Time: " << time << std::endl;
         solver.take_step(eq, dt);
-        if ((nt % 100) == 0){
+        if ((nt % 10) == 0){
             writer.write(eq.primitive_variables().rho, "rho", n_checks);
             writer.write(eq.primitive_variables().p, "p", n_checks);
             writer.write(eq.primitive_variables().U, "U", n_checks);
@@ -41,8 +42,12 @@ int main(){
         nt++;
     }
 
-    std::cout << "Done" << std::endl;
 
+    Reader reader(o_path);
+    auto n = reader.checkpoint_count();
+    std::cout << "Done, wrote: " << std::to_string(n) << " checkpoints.";
+
+    write_xdmf(o_path);
     //print(make_internal_span(eq.primitive_variables().rho));
 
     

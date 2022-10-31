@@ -39,7 +39,7 @@ private:
 
 template<class ET, size_t N>
 std::array<size_t, N> full_begin(const VolumetricField<ET, N>& f){
-
+    (void) f;
     return std::array<size_t, N>{};
 }
 

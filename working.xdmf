@@ -1,0 +1,56 @@
+<?xml version="1.0" ?>
+<!DOCTYPE Xdmf SYSTEM "Xdmf.dtd" []>
+<Xdmf xmlns:xi="http://www.w3.org/2003/XInclude" Version="2.2">
+  <Domain>
+
+    <Grid Name="CellTime" GridType="Collection" CollectionType="Temporal">
+
+      <Grid Name="rectilinear_scalar" GridType="Uniform">
+        <Time Value="0.00" />
+        <Topology TopologyName="Main Topology" TopologyType="2DRECTMesh" NumberOfElements="52 51" />
+        <Geometry GeometryName="Main Geometry" GeometryType="VXVY">
+          <DataItem Name="ycoords" Dimensions="51" NumberType="Float" Precision="4" Format="HDF">
+              output.h5:/grid/c0
+          </DataItem>
+          <DataItem Name="xcoords" Dimensions="50" NumberType="Float" Precision="4" Format="HDF">
+              output.h5:/grid/c1
+          </DataItem>
+        </Geometry>
+          <Attribute Name="rho" AttributeType="Scalar" Center="Cell">
+          <DataItem Dimensions="51 50" NumberType="Float" Precision="4" Format="HDF">
+            output.h5:/checkpoints/checkpoint_0/rho
+          </DataItem>
+          </Attribute>
+          <Attribute Name="U" AttributeType="Vector" Center="Cell">
+          <DataItem Dimensions="51 50 2" NumberType="Float" Precision="4" Format="HDF">
+            output.h5:/checkpoints/checkpoint_0/U
+          </DataItem>
+          </Attribute>
+      </Grid>
+
+      <Grid Name="rectilinear_scalar" GridType="Uniform">
+        <Time Value="1.00" />
+        <Topology TopologyName="Main Topology" TopologyType="2DRECTMesh" NumberOfElements="52 51" />
+        <Geometry GeometryName="Main Geometry" GeometryType="VXVY">
+          <DataItem Name="ycoords" Dimensions="51" NumberType="Float" Precision="4" Format="HDF">
+              output.h5:/grid/c0
+          </DataItem>
+          <DataItem Name="xcoords" Dimensions="50" NumberType="Float" Precision="4" Format="HDF">
+              output.h5:/grid/c1
+          </DataItem>
+        </Geometry>
+          <Attribute Name="rho" AttributeType="Scalar" Center="Cell">
+          <DataItem Dimensions="51 50" NumberType="Float" Precision="4" Format="HDF">
+            output.h5:/checkpoints/checkpoint_1/rho
+          </DataItem>
+          </Attribute>
+          <Attribute Name="U" AttributeType="Vector" Center="Cell">
+          <DataItem Dimensions="51 50 2" NumberType="Float" Precision="4" Format="HDF">
+            output.h5:/checkpoints/checkpoint_1/U
+          </DataItem>
+          </Attribute>
+      </Grid>
+      
+    </Grid>
+  </Domain>
+</Xdmf>
