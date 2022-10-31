@@ -107,14 +107,6 @@ struct Writer {
     }
 
     template <size_t N> void write(const CartesianGrid<N>& grid) {
-        /*
-        std::string group_name = "grid";
-        std::string dataset_name = "XY";
-
-        auto dims = grid.dimensions();
-        const auto data = points(grid);
-        write<N, Vector<N>>(data, dims, group_name, dataset_name);
-        */
 
         std::string group_name = "grid";
         auto        data       = edges(grid);
