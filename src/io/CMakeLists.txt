@@ -1,17 +1,15 @@
 set(Headers
-    ./write.hpp
-    ./make_file.hpp
     ./make_datatype.hpp
-    ./make_dataset.hpp
     ./writer.hpp
+    ./reader.hpp
+    ./write_xdmf.hpp
 )
 
 set(Sources
-    ./write.cpp
-    ./make_file.cpp
     ./make_datatype.cpp
-    ./make_dataset.cpp
     ./writer.cpp
+    ./reader.cpp
+    ./write_xdmf.cpp
 )
 
 

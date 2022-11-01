@@ -2,10 +2,9 @@
 
 #include "euler_solver.hpp"
 #include "initial_condition.hpp"
-#include "io/write.hpp"
-#include "io/make_file.hpp"
 #include "io/writer.hpp"
 #include "io/reader.hpp"
+#include "io/write_xdmf.hpp"
 
 int main(){
 
@@ -47,7 +46,7 @@ int main(){
     auto n = reader.checkpoint_count();
     std::cout << "Done, wrote: " << std::to_string(n) << " checkpoints.";
 
-    write_xdmf(o_path);
+    write_xdmf(o_path, "output.xdmf");
     //print(make_internal_span(eq.primitive_variables().rho));
 
     

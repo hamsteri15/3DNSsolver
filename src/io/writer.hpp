@@ -9,7 +9,6 @@
 #include "equation/grid.hpp"
 #include "equation/volumetric_field.hpp"
 #include "io/make_datatype.hpp"
-#include "io/make_file.hpp"
 #include "io/constants.hpp"
 #include <string>
 
@@ -36,7 +35,7 @@ struct Writeable{
 };
 
 template<size_t N>
-auto make_writeable(const Field<scalar>& f, extents<N> dims, extents<N> padding){
+static inline auto make_writeable(const Field<scalar>& f, extents<N> dims, extents<N> padding){
     using namespace H5Wrapper;
     auto                  dims_arr = extent_to_array(dims);
     auto                  padd_arr = extent_to_array(padding);
@@ -57,7 +56,7 @@ auto make_writeable(const Field<scalar>& f, extents<N> dims, extents<N> padding)
 }
 
 template<size_t N, size_t L>
-auto make_writeable(const Field<Vector<L>>& f, extents<N> dims, extents<N> padding){
+static inline auto make_writeable(const Field<Vector<L>>& f, extents<N> dims, extents<N> padding){
 
     using namespace H5Wrapper;
     auto                  dims_arr = extent_to_array(dims);
@@ -102,29 +101,28 @@ struct Writer {
 
     Writer(std::string path)
         : m_file_path(path) {
-        auto f = make_file(m_file_path);
-        f.close();
+            H5Wrapper::H5File::create(path, H5Wrapper::H5File::CreationFlag::TRUNCATE);
     }
 
     template <size_t N> void write(const CartesianGrid<N>& grid) {
 
-        std::string group_name = "grid";
         auto        data       = edges(grid);
 
         for (size_t i = 0; i < N; ++i) {
+            
             std::array<size_t, 1> write_dims{data[i].size()};
             std::string           field_name = "c" + std::to_string(i);
-            write<1, scalar>(data[i], write_dims, group_name, field_name);
+            write<1, scalar>(data[i], write_dims, Constants::grid_edge_path, field_name);
         }
 
         if (N == 2){
-            write("VXVY", group_name, "xdmf_geometry");
-            write("2DRectMesh", group_name, "xdmf_topology");
+            write("VXVY", Constants::grid_xdmf_info_path, "geometry");
+            write("2DRectMesh", Constants::grid_xdmf_info_path, "topology");
         }
         
         if (N == 3){
-            write("VXVYVZ", group_name, "xdmf_geometry");
-            write("2DRectMesh", group_name, "xdmf_topology");
+            write("VXVYVZ", Constants::grid_xdmf_info_path, "geometry");
+            write("2DRectMesh", Constants::grid_xdmf_info_path, "topology");
         }
 
 
