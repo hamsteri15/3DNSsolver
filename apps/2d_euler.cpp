@@ -16,9 +16,9 @@ int main(){
 
 
     scalar dt = 0.0001;
-    scalar T = 0.005;
-    size_t nx = 50;
-    size_t ny = 51;
+    scalar T = 0.001;
+    size_t nx = 5;
+    size_t ny = 6;
     auto eq = make_euler_equation<2>(extents<2>{ny, nx}, extents<2>{2, 2});
     assign_shocktube<0>(eq);
 

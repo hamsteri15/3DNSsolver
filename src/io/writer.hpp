@@ -2,6 +2,7 @@
 
 #include "H5Wrapper/include/h5_dataset.hpp"
 #include "H5Wrapper/include/h5_dataspace.hpp"
+#include "H5Wrapper/include/h5_dataspace_scalar.hpp"
 #include "H5Wrapper/include/h5_dataspace_hyperslab.hpp"
 #include "H5Wrapper/include/h5_file.hpp"
 #include "H5Wrapper/include/h5_group.hpp"
@@ -106,25 +107,24 @@ struct Writer {
 
     template <size_t N> void write(const CartesianGrid<N>& grid) {
 
-        auto        data       = edges(grid);
+        auto        data       = vertices(grid);
 
         for (size_t i = 0; i < N; ++i) {
             
-            std::array<size_t, 1> write_dims{data[i].size()};
-            std::string           field_name = "c" + std::to_string(i);
-            write<1, scalar>(data[i], write_dims, Constants::grid_edge_path, field_name);
+            //std::array<size_t, 1> write_dims{data[i].size()};
+            std::string           field_name = Constants::vertex_extension + std::to_string(i);
+            write<1, scalar>(data[i], std::array<size_t, 1>{data[i].size()}, Constants::grid_vertex_path, field_name);
         }
 
         if (N == 2){
-            write("VXVY", Constants::grid_xdmf_info_path, "geometry");
-            write("2DRectMesh", Constants::grid_xdmf_info_path, "topology");
+            write("VXVY", Constants::grid_xdmf_info_path, Constants::xdmf_geometry_name);
+            write("2DRectMesh", Constants::grid_xdmf_info_path, Constants::xdmf_topology_name);
         }
         
         if (N == 3){
-            write("VXVYVZ", Constants::grid_xdmf_info_path, "geometry");
-            write("2DRectMesh", Constants::grid_xdmf_info_path, "topology");
+            write("VXVYVZ", Constants::grid_xdmf_info_path, Constants::xdmf_geometry_name);
+            write("2DRectMesh", Constants::grid_xdmf_info_path, Constants::xdmf_geometry_name);
         }
-
 
 
     }
@@ -132,7 +132,7 @@ struct Writer {
     template <size_t N, class ET>
     void write(const VolumetricField<ET, N>& field, std::string field_name, size_t checkpoint_i) {
 
-        std::string group_name   = std::string("checkpoints/") + Constants::checkpoint_extension + std::to_string(checkpoint_i);
+        std::string group_name   = Constants::checkpoint_path + Constants::checkpoint_extension + std::to_string(checkpoint_i);
         std::string dataset_name = field_name;
 
         write<N, ET>(field, field.dimensions(), field.padding(), group_name, dataset_name);
@@ -141,7 +141,34 @@ struct Writer {
 private:
     std::string m_file_path;
 
+
+    template<size_t N, class ET>
+    void write(std::array<ET, N> field, std::string group_name, std::string field_name){
+        using namespace H5Wrapper;
+
+        auto dt = H5DatatypeCreator<ET>::create();
+        auto memory_dataspace = H5Dataspace::create({N});
+        auto file = file_open();
+        auto location = create_or_open(file, group_name);
+        auto file_dataspace = H5Dataspace::create({N});
+        auto dataset = H5Dataset::create(location, field_name, dt, file_dataspace);
+        dataset.write(field.data());
+
+    }
     
+    void write(size_t field, std::string group_name, std::string field_name){
+        using namespace H5Wrapper;
+
+        auto dt = H5DatatypeCreator<size_t>::create();
+        auto memory_dataspace = H5Dataspace::create({1});
+        auto file = file_open();
+        auto location = create_or_open(file, group_name);
+        auto file_dataspace = H5Dataspace::create({1});
+        auto dataset = H5Dataset::create(location, field_name, dt, file_dataspace);
+        dataset.write(&field);
+
+    }
+
     void write(std::string str, std::string group_name, std::string field_name){
         using namespace H5Wrapper;
 

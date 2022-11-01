@@ -49,31 +49,35 @@ TEST_CASE("Test CartesianGrid"){
 
     }
 
-    SECTION("points"){
+    SECTION("cell_centers"){
 
         SECTION("1D"){
 
             CartesianGrid g(extents<1>{2}, Vector<1>{0}, Vector<1>{1});
+            auto centers = cell_centers(g);
+            scalarField x = centers[0];
 
-            vectorField<1> correct{Vector<1>{0.25}, Vector<1>{0.75}};
 
-            CHECK(points(g) == correct);
+            scalarField correct{0.25, 0.75};
+
+            CHECK(x == correct);
 
         }
         
         SECTION("2D"){
 
-            CartesianGrid g(extents<2>{2,2}, Vector<2>{0, 0}, Vector<2>{1, 1});
+            CartesianGrid g(extents<2>{2,2}, Vector<2>{0, 0}, Vector<2>{1, 2});
+            auto centers = cell_centers(g);
+            auto y = centers[0];
+            auto x = centers[1];
 
-            vectorField<2> correct
-            {
-                Vector<2>{0.25, 0.25}, Vector<2>{0.25, 0.75}, 
-                Vector<2>{0.75, 0.25}, Vector<2>{0.75, 0.75}
-            };
+            scalarField correct_x{0.5, 1.5};
+            scalarField correct_y{0.25, 0.75};
 
-            CHECK(points(g) == correct);
+            CHECK(x == correct_x);
+            CHECK(y == correct_y);
         }
-
+        
 
     }
 
