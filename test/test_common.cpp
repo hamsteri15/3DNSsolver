@@ -117,6 +117,7 @@ TEST_CASE("md_indices tests"){
         CHECK(j1 == 0);
         CHECK(k1 == 0);
 
+        
         auto [i2, j2, k2] = *(t.begin() + 1);
         CHECK(i2 == 0);
         CHECK(j2 == 0);
@@ -126,7 +127,7 @@ TEST_CASE("md_indices tests"){
         CHECK(i3 == 2);
         CHECK(j3 == 2);
         CHECK(k3 == 1);
-
+        
     }
 
 

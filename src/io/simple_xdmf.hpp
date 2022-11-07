@@ -45,7 +45,7 @@ class SimpleXdmf {
 
         // indent management
         std::string m_indent;
-        unsigned int currentIndentation = -1;
+        int currentIndentation = -1;
         void addIndent() {
             ++currentIndentation;
         }
@@ -55,7 +55,7 @@ class SimpleXdmf {
         }
 
         void insertIndent() {
-            for(unsigned int i = 0; i < currentIndentation; ++i) {
+            for(int i = 0; i < currentIndentation; ++i) {
                 m_buffer += m_indent;
             }
         }
@@ -118,7 +118,7 @@ class SimpleXdmf {
         }
 
         void regressCurrentXpath() {
-            auto last_split_index = m_currentXpath.rfind("/");
+            auto last_split_index = std::ptrdiff_t(m_currentXpath.rfind("/"));
             m_currentXpath.erase(m_currentXpath.begin() + last_split_index, m_currentXpath.end());
         }
 
@@ -218,7 +218,7 @@ class SimpleXdmf {
         std::array<std::string, numberTypeLength> NumberType {{"Float", "Int", "UInt", "Char", "UChar"}};
         std::array<std::string, precisionTypeLength> PrecisionType {{"1", "2", "4", "8"}};
 
-        template<int N>
+        template<size_t N>
         bool checkIsValidType(const std::array<std::string, N>& valid_types, const std::string& specified_type) {
             bool is_valid = false;
 

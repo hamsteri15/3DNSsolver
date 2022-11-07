@@ -2,13 +2,9 @@
 
 #include <array>
 
-#include <range/v3/view/indices.hpp>
-#include <range/v3/view/cartesian_product.hpp>
-
-#include "cartesian_product.hpp"
+#include "common/indices.hpp"
+#include "common/cartesian_product.hpp"
 #include "common/mdspan.hpp"
-
-
 
 
 auto md_indices(auto begin, auto end){
@@ -18,11 +14,12 @@ auto md_indices(auto begin, auto end){
 
     return [&]<Idx... Is>(std::integer_sequence<Idx, Is...>) {
         return cartesian_product(
-            ranges::views::indices(begin[Is], end[Is])...
+            indices(begin[Is], end[Is])...
         );
     }(std::make_integer_sequence<Idx, Idx(N)>{});
 
 }
+
 
 
 auto all_indices(auto span){
