@@ -16,9 +16,12 @@ void write_xdmf_checkpoint(const Reader& reader, SimpleXdmf& gen, size_t checkpo
 
     gen.beginGeometry("Main Geometry", info.geometry_type);
 
-    std::string edge_path = reader.h5_file_path() + std::string(":") + Constants::grid_vertex_path;
+    std::string edge_path 
+        = reader.h5_file_path() 
+        + std::string(":") 
+        + Constants::grid_vertex_path;
 
-    for (int i = dims.size() - 1; i != -1; --i) {
+    for (int i = dims.size() ; i-- > 0 ; ){
 
         std::string name = Constants::vertex_extension + std::to_string(i);
         gen.beginDataItem(name);
@@ -30,9 +33,41 @@ void write_xdmf_checkpoint(const Reader& reader, SimpleXdmf& gen, size_t checkpo
         gen.endDataItem();
     }
 
-    // For all fields write attribute...
-
     gen.endGeometry();
+
+    auto chk = reader.read_xdmf_checkpoint(checkpoint_i);
+
+    auto n_fields = chk.field_names.size();
+
+    std::string checkpoint_path 
+        = reader.h5_file_path() 
+        + std::string(":")
+        + Constants::checkpoint_path
+        + Constants::checkpoint_extension
+        + std::to_string(checkpoint_i)
+        + std::string("/");
+
+    for (size_t i = 0; i < n_fields; ++i){
+
+        gen.beginAttribute(chk.field_names.at(i), chk.field_types.at(i));
+        gen.setCenter("Cell");
+
+            gen.beginDataItem();
+            gen.setNumberType("Float");
+            gen.setPrecision("4");
+            gen.setFormat("HDF");
+            gen.setDimensions(chk.field_dims.at(i));
+
+            gen.addItem(checkpoint_path + chk.field_names.at(i));
+            //gen.setDimensions()
+            gen.endDataItem();
+
+
+        gen.endAttribute();
+
+    }
+
+
     gen.end2DStructuredGrid();
 
     gen.setNewLineCodeLF();
@@ -50,9 +85,9 @@ void write_xdmf(std::string h5_file_path, std::string o_path) {
     gen.beginDomain("Domain");
     gen.beginGridCollection("Grid", "Collection", "Temporal");
 
-    write_xdmf_checkpoint(reader, gen, 0);
-    write_xdmf_checkpoint(reader, gen, 1);
-    write_xdmf_checkpoint(reader, gen, 2);
+    for (size_t i = 0; i < reader.checkpoint_count(); ++i){
+        write_xdmf_checkpoint(reader, gen, i);
+    }
 
     gen.endGrid();
     gen.endDomain();

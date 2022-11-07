@@ -21,3 +21,14 @@ struct Constants {
     inline static const std::string xdmf_geometry_name = "geometry";
     
 };
+
+
+static inline std::string field_name_to_xdmf_type(const std::string& name){
+
+    if (name == "U"){
+        return "Vector";
+    }
+    return "Scalar";
+
+
+}

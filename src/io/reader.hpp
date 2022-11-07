@@ -27,6 +27,7 @@ struct XdmfCheckpoint{
 
     std::vector<std::string> field_names;
     std::vector<std::vector<size_t>> field_dims;
+    std::vector<std::string> field_types;
     scalar time;
 };
 
@@ -46,7 +47,6 @@ struct Reader {
         return XdmfGridInfo{topo, geom, vertex_dims};
     }
 
-    /*
     XdmfCheckpoint read_xdmf_checkpoint(size_t index) const{
         using namespace H5Wrapper;
         std::string group_name = Constants::checkpoint_path + Constants::checkpoint_extension + std::to_string(index);
@@ -54,10 +54,23 @@ struct Reader {
         auto dataset_names = group.dataset_names();
 
 
-        //...
+        XdmfCheckpoint ret;
+
+        for (auto name : dataset_names){
+        
+            auto dataset = H5Dataset::open(group, name);
+            auto dims = dataset.get_dataspace().get_dimensions();
+
+            ret.field_names.push_back(name);
+            ret.field_dims.push_back(dims);
+            ret.field_types.push_back(field_name_to_xdmf_type(name));
+        }
+
+        ret.time = scalar(index); //TODO: fix
+
+        return ret;
 
     }
-    */
 
     std::vector<H5Wrapper::H5Group> checkpoints() const {
         using namespace H5Wrapper;

@@ -15,6 +15,21 @@
 #include <boost/multi_array.hpp>
 #endif
 
+template <bool E, typename T=void>
+using enable_if_t = typename std::enable_if<E, T>::type;
+
+
+template <template <class> class F, typename ...Args>
+struct if_all : std::false_type {};
+
+template <template <class> class F, typename T, typename ...Args>
+struct if_all<F, T, Args...> : enable_if_t<F<T>::type::value, if_all<F, Args...>> {};
+
+template <template <class> class F, typename T>
+struct if_all<F, T> : enable_if_t<F<T>::type::value, std::true_type> {};
+
+
+
 class SimpleXdmf {
     private:
         const std::string header = R"(<?xml version="1.0" ?>
@@ -807,12 +822,27 @@ class SimpleXdmf {
             }
             
         }
-
-        template<typename... Args>
-        void setDimensions(Args&&... args) {
+        
+        template<typename... Args
+                ,typename = enable_if_t< if_all<std::is_integral, Args...>::value >
+                >
+        void setDimensions(Args... args) {
             std::string dimString = convertFromVariadicArgsToString(std::forward<Args>(args)...);
             m_buffer += " Dimensions=\"" + dimString + "\"";
         }
+
+        void setDimensions(std::vector<size_t> dims) {
+
+            std::string dims_string = " Dimensions=\"";
+            for (auto d : dims){
+                dims_string += std::to_string(d) + " ";
+            }
+            dims_string += "\"";
+            m_buffer += dims_string;
+            
+        }
+        
+        
 
         template<typename... Args>
         void setNumberOfElements(Args&&... args) {

@@ -1,56 +1,64 @@
 <?xml version="1.0" ?>
 <!DOCTYPE Xdmf SYSTEM "Xdmf.dtd" []>
-<Xdmf xmlns:xi="http://www.w3.org/2003/XInclude" Version="2.2">
-  <Domain>
-
-    <Grid Name="CellTime" GridType="Collection" CollectionType="Temporal">
-
-      <Grid Name="rectilinear_scalar" GridType="Uniform">
-        <Time Value="0.00" />
-        <Topology TopologyName="Main Topology" TopologyType="2DRECTMesh" NumberOfElements="52 51" />
-        <Geometry GeometryName="Main Geometry" GeometryType="VXVY">
-          <DataItem Name="ycoords" Dimensions="51" NumberType="Float" Precision="4" Format="HDF">
-              output.h5:/grid/c0
+<Xdmf>
+  <Domain Name="Domain">
+    <Grid GridType="Collection" CollectionType="Temporal" Name="Grid">
+      <Grid GridType="Uniform" Name="Main Topology">
+        <Topology TopologyType="2DRectMesh" NumberOfElements="52 51"/>
+        <Time TimeType="Single" Value="0">
+        </Time>
+        <Geometry GeometryType="VXVY" Name="Main Geometry">
+          <DataItem ItemType="Uniform" Name="vertices_1" Dimensions="51" NumberType="Float" Precision="4" Format="HDF">
+            output.h5:grid/vertices/vertices_1
           </DataItem>
-          <DataItem Name="xcoords" Dimensions="50" NumberType="Float" Precision="4" Format="HDF">
-              output.h5:/grid/c1
-          </DataItem>
-        </Geometry>
-          <Attribute Name="rho" AttributeType="Scalar" Center="Cell">
-          <DataItem Dimensions="51 50" NumberType="Float" Precision="4" Format="HDF">
-            output.h5:/checkpoints/checkpoint_0/rho
-          </DataItem>
-          </Attribute>
-          <Attribute Name="U" AttributeType="Vector" Center="Cell">
-          <DataItem Dimensions="51 50 2" NumberType="Float" Precision="4" Format="HDF">
-            output.h5:/checkpoints/checkpoint_0/U
-          </DataItem>
-          </Attribute>
-      </Grid>
-
-      <Grid Name="rectilinear_scalar" GridType="Uniform">
-        <Time Value="1.00" />
-        <Topology TopologyName="Main Topology" TopologyType="2DRECTMesh" NumberOfElements="52 51" />
-        <Geometry GeometryName="Main Geometry" GeometryType="VXVY">
-          <DataItem Name="ycoords" Dimensions="51" NumberType="Float" Precision="4" Format="HDF">
-              output.h5:/grid/c0
-          </DataItem>
-          <DataItem Name="xcoords" Dimensions="50" NumberType="Float" Precision="4" Format="HDF">
-              output.h5:/grid/c1
+          <DataItem ItemType="Uniform" Name="vertices_0" Dimensions="52" NumberType="Float" Precision="4" Format="HDF">
+            output.h5:grid/vertices/vertices_0
           </DataItem>
         </Geometry>
-          <Attribute Name="rho" AttributeType="Scalar" Center="Cell">
-          <DataItem Dimensions="51 50" NumberType="Float" Precision="4" Format="HDF">
-            output.h5:/checkpoints/checkpoint_1/rho
+        <Attribute AttributeType="Vector" Name="U" Center="Cell">
+          <DataItem ItemType="Uniform" NumberType="Float" Precision="4" Format="HDF" Dimensions="51 50 2 ">
+            output.h5:checkpoints/checkpoint_0/U
           </DataItem>
-          </Attribute>
-          <Attribute Name="U" AttributeType="Vector" Center="Cell">
-          <DataItem Dimensions="51 50 2" NumberType="Float" Precision="4" Format="HDF">
-            output.h5:/checkpoints/checkpoint_1/U
+        </Attribute>
+        <Attribute AttributeType="Scalar" Name="p" Center="Cell">
+          <DataItem ItemType="Uniform" NumberType="Float" Precision="4" Format="HDF" Dimensions="51 50 ">
+            output.h5:checkpoints/checkpoint_0/p
           </DataItem>
-          </Attribute>
+        </Attribute>
+        <Attribute AttributeType="Scalar" Name="rho" Center="Cell">
+          <DataItem ItemType="Uniform" NumberType="Float" Precision="4" Format="HDF" Dimensions="51 50 ">
+            output.h5:checkpoints/checkpoint_0/rho
+          </DataItem>
+        </Attribute>
       </Grid>
-      
+      <Grid GridType="Uniform" Name="Main Topology">
+        <Topology TopologyType="2DRectMesh" NumberOfElements="52 51"/>
+        <Time TimeType="Single" Value="1">
+        </Time>
+        <Geometry GeometryType="VXVY" Name="Main Geometry">
+          <DataItem ItemType="Uniform" Name="vertices_1" Dimensions="51" NumberType="Float" Precision="4" Format="HDF">
+            output.h5:grid/vertices/vertices_1
+          </DataItem>
+          <DataItem ItemType="Uniform" Name="vertices_0" Dimensions="52" NumberType="Float" Precision="4" Format="HDF">
+            output.h5:grid/vertices/vertices_0
+          </DataItem>
+        </Geometry>
+        <Attribute AttributeType="Vector" Name="U" Center="Cell">
+          <DataItem ItemType="Uniform" NumberType="Float" Precision="4" Format="HDF" Dimensions="51 50 2 ">
+            output.h5:checkpoints/checkpoint_1/U
+          </DataItem>
+        </Attribute>
+        <Attribute AttributeType="Scalar" Name="p" Center="Cell">
+          <DataItem ItemType="Uniform" NumberType="Float" Precision="4" Format="HDF" Dimensions="51 50 ">
+            output.h5:checkpoints/checkpoint_1/p
+          </DataItem>
+        </Attribute>
+        <Attribute AttributeType="Scalar" Name="rho" Center="Cell">
+          <DataItem ItemType="Uniform" NumberType="Float" Precision="4" Format="HDF" Dimensions="51 50 ">
+            output.h5:checkpoints/checkpoint_1/rho
+          </DataItem>
+        </Attribute>
+      </Grid>
     </Grid>
   </Domain>
 </Xdmf>
