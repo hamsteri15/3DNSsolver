@@ -3,38 +3,8 @@
 #include "io/reader.hpp"
 #include "io/simple_xdmf.hpp"
 
-void write_xdmf_checkpoint(const Reader& reader, SimpleXdmf& gen, size_t checkpoint_i) {
-
-    auto info = reader.read_xdmf_info();
-    auto dims = info.vertex_dimensions;
-
-    gen.begin2DStructuredGrid("Main Topology", info.topology_type, dims[1], dims[0]);
-
-    gen.beginTime();
-    gen.setValue(std::to_string(checkpoint_i)); //!
-    gen.endTime();
-
-    gen.beginGeometry("Main Geometry", info.geometry_type);
-
-    std::string edge_path 
-        = reader.h5_file_path() 
-        + std::string(":") 
-        + Constants::grid_vertex_path;
-
-    for (int i = dims.size() ; i-- > 0 ; ){
-
-        std::string name = Constants::vertex_extension + std::to_string(i);
-        gen.beginDataItem(name);
-        gen.setDimensions(dims[i]);
-        gen.setNumberType("Float");
-        gen.setPrecision("4");
-        gen.setFormat("HDF");
-        gen.addItem(edge_path + name);
-        gen.endDataItem();
-    }
-
-    gen.endGeometry();
-
+void write_xdmf_checkpoint_attributes(const Reader& reader, SimpleXdmf& gen, size_t checkpoint_i){
+    
     auto chk = reader.read_xdmf_checkpoint(checkpoint_i);
 
     auto n_fields = chk.field_names.size();
@@ -67,6 +37,41 @@ void write_xdmf_checkpoint(const Reader& reader, SimpleXdmf& gen, size_t checkpo
 
     }
 
+}
+
+void write_xdmf_checkpoint(const Reader& reader, SimpleXdmf& gen, size_t checkpoint_i) {
+
+    auto info = reader.read_xdmf_info();
+    auto dims = info.vertex_dimensions;
+
+    gen.begin2DStructuredGrid("Main Topology", info.topology_type, dims[1], dims[0]);
+
+    gen.beginTime();
+    gen.setValue(std::to_string(checkpoint_i)); //!
+    gen.endTime();
+
+    gen.beginGeometry("Main Geometry", info.geometry_type);
+
+    std::string edge_path 
+        = reader.h5_file_path() 
+        + std::string(":") 
+        + Constants::grid_vertex_path;
+
+    for (int i = dims.size() ; i-- > 0 ; ){
+
+        std::string name = Constants::vertex_extension + std::to_string(i);
+        gen.beginDataItem(name);
+        gen.setDimensions(dims[i]);
+        gen.setNumberType("Float");
+        gen.setPrecision("4");
+        gen.setFormat("HDF");
+        gen.addItem(edge_path + name);
+        gen.endDataItem();
+    }
+
+    gen.endGeometry();
+
+    write_xdmf_checkpoint_attributes(reader, gen, checkpoint_i);
 
     gen.end2DStructuredGrid();
 
