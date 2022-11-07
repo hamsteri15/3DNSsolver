@@ -51,13 +51,33 @@ template <size_t N> Vector<N> spatial_stepsize(const CartesianGrid<N>& grid) {
     return deltas;
 }
 
+template<size_t N> Vector<N> index_to_cell_center(const CartesianGrid<N>& grid, auto indices){
+
+    runtime_assert(indices_in_bounds(indices, grid.dimensions()), "Index out of bounds");
+
+    const auto delta = spatial_stepsize(grid);
+    const auto p0 = grid.p0();
+
+    const auto idx = tuple_to_array(indices);
+
+
+    Vector<N> c{};
+    for (size_t i = 0; i < N; ++i){
+        c[i] = p0[i] + 0.5 * delta[i] + delta[i] * scalar(idx[i]);
+    }
+    return c;
+    
+}
+
+
+
+
 template <size_t N> auto cell_centers(const CartesianGrid<N>& grid) {
 
     auto delta = spatial_stepsize(grid);
     auto dims  = extent_to_array(grid.dimensions());
 
     std::vector<scalarField> ret(N);
-
     auto p0 = grid.p0();
 
     for (size_t i = 0; i < N; ++i) {
