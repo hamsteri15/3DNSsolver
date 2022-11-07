@@ -9,6 +9,7 @@
 #include "equation/cartesian_grid.hpp"
 #include "equation/grid.hpp"
 #include "equation/volumetric_field.hpp"
+#include "equation/euler_primitive_variables.hpp"
 #include "io/make_datatype.hpp"
 #include "io/constants.hpp"
 #include <string>
@@ -125,9 +126,19 @@ struct Writer {
             write("VXVYVZ", Constants::grid_xdmf_info_path, Constants::xdmf_geometry_name);
             write("2DRectMesh", Constants::grid_xdmf_info_path, Constants::xdmf_geometry_name);
         }
-
-
     }
+
+    template<size_t N>
+    void write_checkpoint(const PrimitiveVariables<N>& prim, scalar time){
+
+        (void) time; //TODO: use
+
+        size_t idx = next_checkpoint_index();
+        write(prim.rho, "rho", idx);
+        write(prim.p, "p", idx);
+        write(prim.U, "U", idx);
+    }
+
 
     template <size_t N, class ET>
     void write(const VolumetricField<ET, N>& field, std::string field_name, size_t checkpoint_i) {
@@ -140,6 +151,22 @@ struct Writer {
 
 private:
     std::string m_file_path;
+
+    size_t checkpoint_count() const {
+        using namespace H5Wrapper;
+        auto file = file_open();
+        if (!H5Group::exists(file, Constants::checkpoint_path)){
+            return 0;
+        }
+        auto group = H5Group::open(file, Constants::checkpoint_path);
+        size_t count = group.nlinks();
+        file.close();
+        return count;
+    }
+
+    size_t next_checkpoint_index() const {
+        return checkpoint_count();
+    }
 
 
     template<size_t N, class ET>
