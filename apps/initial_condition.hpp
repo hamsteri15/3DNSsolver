@@ -4,16 +4,6 @@
 
 
 
-template<class ET, size_t N, class Op>
-void for_all_coordinates(VolumetricField<ET, N>& f, Op op){
-
-    auto span = make_internal_span(f);
-
-    for (auto idx : all_indices(span)){
-        span(tuple_to_array(idx)) = op(index_to_cell_center(f.grid(), idx));
-    }
-
-}
 
 template<size_t Dir, size_t N>
 void assign_shocktube(Euler<N>& eq){

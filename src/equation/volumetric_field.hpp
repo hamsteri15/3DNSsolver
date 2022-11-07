@@ -157,6 +157,16 @@ template <class ET, size_t N> auto boundary_subspan(const VolumetricField<ET, N>
 }
 
 
+template<class ET, size_t N, class Op>
+void for_all_coordinates(VolumetricField<ET, N>& f, Op op){
+
+    auto span = make_internal_span(f);
+
+    for (auto idx : all_indices(span)){
+        span(tuple_to_array(idx)) = op(index_to_cell_center(f.grid(), idx));
+    }
+
+}
 
 
 
