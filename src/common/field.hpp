@@ -13,8 +13,6 @@ using Field = topaz::NumericArray<ET, allocator_t<ET>>;
 template<class T>
 concept field_c = topaz::IsRangeOrNumericArray_v<T>;
 
-
-
 static auto serialize(const Field<scalar>& f){
     
     return std::vector<scalar>(f.begin(), f.end());

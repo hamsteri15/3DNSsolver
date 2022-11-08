@@ -229,16 +229,16 @@ TEST_CASE("mdspan tests"){
         auto span = make_span(f, extents<2>{2,5});
 
 
-        std::vector<index_type> is;
-        std::vector<index_type> js;
+        std::vector<int> is;
+        std::vector<int> js;
 
         for (auto [i, j] : all_indices(span)){
             is.push_back(i);
             js.push_back(j);
         }
 
-        CHECK(is == std::vector<index_type>{0,0,0,0,0,1,1,1,1,1});
-        CHECK(js == std::vector<index_type>{0,1,2,3,4,0,1,2,3,4});
+        CHECK(is == std::vector<int>{0,0,0,0,0,1,1,1,1,1});
+        CHECK(js == std::vector<int>{0,1,2,3,4,0,1,2,3,4});
 
     }
 

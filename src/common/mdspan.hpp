@@ -1,7 +1,6 @@
 #pragma once
 
 #include "common/extents.hpp"
-#include "common/index_type.hpp"
 #include "common/math.hpp"
 #include "common/runtime_assert.hpp"
 #include "common/utils.hpp"
