@@ -43,7 +43,7 @@ struct EulerSolver1D : EulerSolver<1>{
             
             SplitFlux<Vector<N+2>, N> F(eq.grid(), eq.padding());
             F = make_laxfriedrichs_flux(Utemp, eq.eos(), eq.grid().unit_normal(CartesianAxis::X));
-            Utemp = d_di(F, Weno_left<0>{}, Weno_right<0>{});
+            Utemp = d_di<0>(F, Weno_left{}, Weno_right{});
             return Utemp;
         };
         this->solve(eq, dt, df);
@@ -65,11 +65,11 @@ struct EulerSolver2D : EulerSolver<2>{
             
             SplitFlux<Vector<N+2>, N> Fx(eq.grid(), eq.padding());
             Fx = make_laxfriedrichs_flux(Utemp, eq.eos(), eq.grid().unit_normal(CartesianAxis::X));
-            auto Rx =  d_di(Fx, Weno_left<1>{}, Weno_right<1>{});
+            auto Rx =  d_di<1>(Fx, Weno_left{}, Weno_right{});
 
             SplitFlux<Vector<N+2>, N> Fy(eq.grid(), eq.padding());
             Fy = make_laxfriedrichs_flux(Utemp, eq.eos(), eq.grid().unit_normal(CartesianAxis::Y));
-            auto Ry =  d_di(Fy, Weno_left<0>{}, Weno_right<0>{});
+            auto Ry =  d_di<0>(Fy, Weno_left{}, Weno_right{});
 
             Utemp = Rx + Ry;
             return Utemp;

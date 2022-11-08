@@ -66,11 +66,9 @@ auto weno_right(auto m2, auto m1, auto m0, auto p1, auto p2){
     return w[0] * f0 + w[1] * f1 + w[2] * f2;
 }
 
-template<size_t Dir>
-struct Weno_left : public TiledStencil<Weno_left<Dir>>{
+struct Weno_left : public TiledStencil<Weno_left>{
 
     static constexpr size_t padding = 2;
-    static constexpr size_t direction = Dir;
 
     auto operator()(auto f) const {
 
@@ -86,11 +84,9 @@ struct Weno_left : public TiledStencil<Weno_left<Dir>>{
 
 };
 
-template<size_t Dir>
-struct Weno_right : public TiledStencil<Weno_right<Dir>>{
+struct Weno_right : public TiledStencil<Weno_right>{
 
     static constexpr size_t padding = 2;
-    static constexpr size_t direction = Dir;
 
     auto operator()(auto f) const {
 

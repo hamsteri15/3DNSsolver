@@ -386,7 +386,7 @@ TEST_CASE("Test VolumetricField"){
 
 
         set_linear<0>(make_full_span(in));
-        evaluate_tiled(in, out, d_CD2<0>{});
+        evaluate_tiled<0>(in, out, d_CD2{});
 
         
         std::vector<scalar> correct = 

@@ -69,6 +69,7 @@ TEST_CASE("Test Euler equation"){
 
         }
         */
+        
     }
 
     
@@ -151,7 +152,7 @@ TEST_CASE("Test euler_flux"){
             Flux<Vector<3>, 1> F(eq.grid(), eq.padding());
             F = make_physical_flux(eq, Vector<1>{1});
 
-            auto dF = d_di(F, d_CD2<0>{});
+            auto dF = d_di<0>(F, d_CD2{});
             
             CHECK(dF[2][mass] == Approx(0));
             CHECK(dF[3][mass] == Approx(0));
@@ -172,7 +173,7 @@ TEST_CASE("Test euler_flux"){
             SplitFlux<Vector<3>, 1> F(eq.grid(), eq.padding());
             F = make_laxfriedrichs_flux(eq, Vector<1>{1});
             
-            auto dF = d_di(F, Weno_left<0>{}, Weno_right<0>{});
+            auto dF = d_di<0>(F, Weno_left{}, Weno_right{});
             
             using enum EulerFluxIdx;
 

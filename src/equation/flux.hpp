@@ -67,22 +67,20 @@ private:
     VolumetricField<ET, N> m_f_right;
 };
 
-template <class ET, size_t N, class Scheme> auto d_di(const Flux<ET, N>& F, Scheme scheme) {
+template <size_t Dir, class ET, size_t N, class Scheme> auto d_di(const Flux<ET, N>& F, Scheme scheme) {
 
     auto dF(F.value());
-    auto delta = spatial_stepsize(F.value().grid())[Scheme::direction];
-    evaluate_tiled(F.value(), dF, scheme);
+    auto delta = spatial_stepsize(F.value().grid())[Dir];
+    evaluate_tiled<Dir>(F.value(), dF, scheme);
 
     auto ret(dF);
     ret = dF / delta;
     return ret;
 }
 
-template <class ET, size_t N, class Scheme1, class Scheme2>
+template <size_t Dir, class ET, size_t N, class Scheme1, class Scheme2>
 auto d_di(const SplitFlux<ET, N>& F, Scheme1 scheme1, Scheme2 scheme2) {
 
-    static constexpr auto dir = Scheme1::direction;
-    static_assert(dir == Scheme2::direction, "Direction mismatch in flux differentiation");
 
     const auto& Fl = F.left_value();
     const auto& Fr = F.right_value();
@@ -92,15 +90,15 @@ auto d_di(const SplitFlux<ET, N>& F, Scheme1 scheme1, Scheme2 scheme2) {
     auto Fl_int(Fl);
     auto Fr_int(Fr);
 
-    evaluate_tiled(Fl, Fl_int, scheme1);
-    evaluate_tiled(Fr, Fr_int, scheme2);
+    evaluate_tiled<Dir>(Fl, Fl_int, scheme1);
+    evaluate_tiled<Dir>(Fr, Fr_int, scheme2);
 
     auto dFl(Fl);
     auto dFr(Fr);
-    evaluate_tiled(Fl_int, dFl, Upwind1<dir>{});
-    evaluate_tiled(Fr_int, dFr, Downwind1<dir>{});
+    evaluate_tiled<Dir>(Fl_int, dFl, Upwind1{});
+    evaluate_tiled<Dir>(Fr_int, dFr, Downwind1{});
 
-    auto delta = spatial_stepsize(Fl.grid())[dir];
+    auto delta = spatial_stepsize(Fl.grid())[Dir];
     ret = (dFl + dFr) / delta;
 
     return ret;
