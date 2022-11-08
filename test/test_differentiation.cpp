@@ -83,7 +83,7 @@ TEST_CASE("1D cd-2"){
         
         set_linear<0>(s_in);
         
-        evaluate_tiled(s_in, s_out, op);
+        evaluate_tiled_new<0>(s_in, s_out, op);
         CHECK(out == std::vector<int>{0, 1, 1, 1, 1, 1, 0});
     }
     
@@ -100,7 +100,7 @@ TEST_CASE("1D cd-2"){
         
         set_linear<0>(s_in);
         
-        evaluate_tiled(s_in, s_out, op);
+        evaluate_tiled_new<0>(s_in, s_out, op);
 
         for (size_t i = 1; i < N-2; ++i){
             REQUIRE(out.at(i) == 1);
@@ -128,7 +128,7 @@ TEST_CASE("2D cd-2"){
 
         set_linear<0>(make_span(in, dims));
 
-        evaluate_tiled(
+        evaluate_tiled_new<0>(
             make_span(in, dims),
             make_span(out, dims),
             op
@@ -157,7 +157,7 @@ TEST_CASE("2D cd-2"){
 
         set_linear<1>(make_span(in, dims));
 
-        evaluate_tiled(
+        evaluate_tiled_new<1>(
             make_span(in, dims),
             make_span(out, dims),
             op
@@ -186,7 +186,7 @@ TEST_CASE("2D cd-2"){
 
         set_linear<0>(make_span(in, dims));
 
-        evaluate_tiled(
+        evaluate_tiled_new<0>(
             make_span(in, dims),
             make_span(out, dims),
             op0
@@ -207,7 +207,7 @@ TEST_CASE("2D cd-2"){
 
         set_linear<1>(make_span(in, dims));
 
-        evaluate_tiled(
+        evaluate_tiled_new<1>(
             make_span(in, dims),
             make_span(out, dims),
             op1
