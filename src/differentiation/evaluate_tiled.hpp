@@ -23,29 +23,36 @@ void evaluate(Span1 in, Span2 out, Op op, Indices indices){
     );
 }
 
+template<size_t Dir>
+void evaluate_tiled_new(auto in, auto out, auto op)
+{
+    static_assert(decltype(in)::rank() == decltype(out)::rank(), "Rank mismatch in evaluate tiled.");
+
+    static constexpr auto N = decltype(in)::rank();
+
+    runtime_assert(in.extents() == out.extents(), "Dimension mismatch");
+    size_t padding = op.padding;
+
+    std::array<size_t, N> begin{};
+    std::array<size_t, N> end = extent_to_array(in.extents());
+
+    begin[Dir] += padding;
+    end[Dir] -= padding;
+
+    evaluate(in, out, op, md_indices(begin, end));
+   
+}
 
 template<class Span1, class Span2, class Op>
 void evaluate_tiled(Span1 in, Span2 out, Op op)
 {
-    static_assert(Span1::rank() == Span2::rank(), "Rank mismatch in evaluate tiled.");
-
-    static constexpr auto N = Span1::rank();
-
-    runtime_assert(in.extents() == out.extents(), "Dimension mismatch");
-    auto padding = get_padding<N>(op);
-
-    std::array<size_t, N> begin = padding;
-    std::array<size_t, N> end{};
-
-    for (size_t i = 0; i < N; ++i){
-        end[i] = in.extent(i) - padding[i];
-    }
-
-    auto indices = md_indices(begin, end);
-
-    evaluate(in, out, op, indices);
-   
+    evaluate_tiled_new<Op::direction>(in, out, op);
 }
+
+
+
+
+
 
 template<size_t N, class ET, class Op>
 void evaluate_tiled(const VolumetricField<ET, N>& in, VolumetricField<ET, N>& out, Op op){

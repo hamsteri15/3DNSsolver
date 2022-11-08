@@ -22,7 +22,7 @@ TEST_CASE("weno weights"){
     }
 
 }
-
+/*
 TEST_CASE("get_padding"){
 
     SECTION("Single op"){
@@ -65,7 +65,7 @@ TEST_CASE("make_padded_extent"){
 
 }
 
-
+*/
 
 
 
