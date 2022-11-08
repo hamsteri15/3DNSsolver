@@ -5,7 +5,6 @@
 #include "differentiation/eno.hpp"
 #include "differentiation/weno.hpp"
 #include "common/mdspan.hpp"
-#include "common/make_field.hpp"
 
 #include "test_helpers.hpp"
 
@@ -75,14 +74,12 @@ TEST_CASE("1D cd-2"){
     SECTION("evaluate_tiled 1"){
 
         d_CD2<0> op;
-        extents<1> interior{5};
-        extents<1> padded = make_padded_extent(interior, op);
-        CHECK(padded == extents<1>{7});
+        extents<1> dims{7};
 
-        std::vector<int> in(flat_size(padded));
-        std::vector<int> out(flat_size(padded));
-        auto s_in = make_span(in, padded);
-        auto s_out = make_span(out, padded);
+        std::vector<int> in(flat_size(dims));
+        std::vector<int> out(flat_size(dims));
+        auto s_in = make_span(in, dims);
+        auto s_out = make_span(out, dims);
         
         set_linear<0>(s_in);
         
@@ -94,21 +91,22 @@ TEST_CASE("1D cd-2"){
 
         d_CD2<0> op;
         size_t N = 3000;
-        extents<1> interior{N};
-        extents<1> padded = make_padded_extent(interior, op);
+        extents<1> dims{N};
 
-        std::vector<int> in(flat_size(padded));
-        std::vector<int> out(flat_size(padded));
-        auto s_in = make_span(in, padded);
-        auto s_out = make_span(out, padded);
+        std::vector<int> in(flat_size(dims));
+        std::vector<int> out(flat_size(dims));
+        auto s_in = make_span(in, dims);
+        auto s_out = make_span(out, dims);
         
         set_linear<0>(s_in);
         
         evaluate_tiled(s_in, s_out, op);
 
-        for (size_t i = 1; i < N-1; ++i){
-            REQUIRE(out[i] == 1);
+        for (size_t i = 1; i < N-2; ++i){
+            REQUIRE(out.at(i) == 1);
         }
+        CHECK(out.at(0) == 0);
+        CHECK(out.at(N-1) == 0);
 
     }
 
@@ -123,21 +121,21 @@ TEST_CASE("2D cd-2"){
 
 
         d_CD2<0> op;
-        extents<2> interior{2,3};
+        extents<2> dims{2 + 2*op.padding,3};
 
-        scalarField in = make_scalar_field(interior, op);
-        scalarField out = make_scalar_field(interior, op);
+        std::vector<int> in(flat_size(dims), 0);
+        std::vector<int> out(flat_size(dims), 0);
 
-        set_linear<0>(make_span(in, make_padded_extent(interior, op)));
+        set_linear<0>(make_span(in, dims));
 
         evaluate_tiled(
-            make_span(in, make_padded_extent(interior, op)),
-            make_span(out, make_padded_extent(interior, op)),
+            make_span(in, dims),
+            make_span(out, dims),
             op
         );        
 
         CHECK(
-            out == scalarField
+            out == std::vector<int>
             {
                 0, 0, 0,
                 1, 1, 1,
@@ -152,22 +150,22 @@ TEST_CASE("2D cd-2"){
 
 
         d_CD2<1> op;
-        extents<2> interior{2,3};
+        extents<2> dims{2,3 + 2*op.padding};
 
-        scalarField in = make_scalar_field(interior, op);
-        scalarField out = make_scalar_field(interior, op);
+        std::vector<int> in(flat_size(dims), 0);
+        std::vector<int> out(flat_size(dims), 0);
 
-        set_linear<1>(make_span(in, make_padded_extent(interior, op)));
+        set_linear<1>(make_span(in, dims));
 
         evaluate_tiled(
-            make_span(in, make_padded_extent(interior, op)),
-            make_span(out, make_padded_extent(interior, op)),
+            make_span(in, dims),
+            make_span(out, dims),
             op
         );        
 
 
         CHECK(
-            out == scalarField
+            out == std::vector<int>
             {
                 0, 1, 1, 1, 0,
                 0, 1, 1, 1, 0
@@ -181,22 +179,22 @@ TEST_CASE("2D cd-2"){
 
         d_CD2<0> op0;
         d_CD2<1> op1;
-        extents<2> interior{2,3};
+        extents<2> dims{2 + 2*op0.padding,3 + 2*op1.padding};
 
-        scalarField in = make_scalar_field(interior, op0, op1);
-        scalarField out = make_scalar_field(interior, op0, op1);
+        std::vector<int> in(flat_size(dims), 0);
+        std::vector<int> out(flat_size(dims), 0);
 
-        set_linear<0>(make_span(in, make_padded_extent(interior, op0, op1)));
+        set_linear<0>(make_span(in, dims));
 
         evaluate_tiled(
-            make_span(in, make_padded_extent(interior, op0, op1)),
-            make_span(out, make_padded_extent(interior, op0, op1)),
+            make_span(in, dims),
+            make_span(out, dims),
             op0
         );        
 
 
         CHECK(
-            out == scalarField
+            out == std::vector<int>
             {
                 0, 0, 0, 0, 0,
                 1, 1, 1, 1, 1,
@@ -207,16 +205,16 @@ TEST_CASE("2D cd-2"){
 
         std::transform(out.begin(), out.end(), out.begin(), [](auto a){(void) a; return 0.0;});
 
-        set_linear<1>(make_span(in, make_padded_extent(interior, op0, op1)));
+        set_linear<1>(make_span(in, dims));
 
         evaluate_tiled(
-            make_span(in, make_padded_extent(interior, op0, op1)),
-            make_span(out, make_padded_extent(interior, op0, op1)),
+            make_span(in, dims),
+            make_span(out, dims),
             op1
         );        
         
         CHECK(
-            out == scalarField
+            out == std::vector<int>
             {
                 0, 1, 1, 1, 0,
                 0, 1, 1, 1, 0,
