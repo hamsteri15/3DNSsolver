@@ -123,7 +123,7 @@ struct Writer {
         
         if (N == 3){
             write("VXVYVZ", Constants::grid_xdmf_info_path, Constants::xdmf_geometry_name);
-            write("2DRectMesh", Constants::grid_xdmf_info_path, Constants::xdmf_geometry_name);
+            write("3DRectMesh", Constants::grid_xdmf_info_path, Constants::xdmf_geometry_name);
         }
     }
 
