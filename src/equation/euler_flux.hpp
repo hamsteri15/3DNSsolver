@@ -2,8 +2,8 @@
 
 #include <variant>
 
-#include "differentiation/downwind.hpp"
-#include "differentiation/upwind.hpp"
+#include "spatial_schemes/downwind.hpp"
+#include "spatial_schemes/upwind.hpp"
 #include "equation/euler.hpp"
 #include "equation/flux.hpp"
 

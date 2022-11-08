@@ -1,6 +1,6 @@
 #pragma once
 
-#include "equation/volumetric_field.hpp"
+#include "fields/volumetric_field.hpp"
 
 template <class ET, size_t N> struct Flux {
 
