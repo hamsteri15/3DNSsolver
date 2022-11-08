@@ -11,7 +11,7 @@ namespace stdex = std::experimental;
 template<size_t N>
 using extents = stdex::dextents<size_t, N>;
 
-auto extent_to_array(auto ext){
+static auto extent_to_array(auto ext){
 
     static constexpr size_t N = decltype(ext)::rank();
     using idx_t = typename decltype(ext)::index_type;
@@ -25,7 +25,7 @@ auto extent_to_array(auto ext){
 }
 
 
-size_t flat_size(auto ext){
+static constexpr size_t flat_size(auto ext){
 
     size_t ret(1);
     for (size_t i = 0; i < ext.rank(); ++i){
@@ -35,9 +35,6 @@ size_t flat_size(auto ext){
 
 }
 
-template <class Extents> bool extents_equal_size(size_t size, Extents dims) {
-    return size == flat_size(dims);
-}
 
 bool indices_in_bounds(auto indices, auto extents){
 

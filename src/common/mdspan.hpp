@@ -22,7 +22,7 @@ using span = span_base<ElementType, N, stdex::layout_right>;
 template <class Field, class Extents> static inline auto make_span(Field& field, Extents dims) {
     using value_type          = typename Field::value_type;
     static constexpr size_t N = Extents::rank();
-    runtime_assert(extents_equal_size(field.size(), dims), "Dimension mismatch in make_span");
+    runtime_assert(flat_size(dims) == field.size(), "Dimension mismatch in make_span");
     return span<value_type, N>(field.data(), dims);
 }
 
@@ -30,7 +30,7 @@ template <class Field, class Extents>
 static inline auto make_span(const Field& field, Extents dims) {
     using value_type          = const typename Field::value_type;
     static constexpr size_t N = Extents::rank();
-    runtime_assert(extents_equal_size(field.size(), dims), "Dimension mismatch in make_span");
+    runtime_assert(flat_size(dims) == field.size(), "Dimension mismatch in make_span");
     return span<value_type, N>(field.data(), dims);
 }
 
