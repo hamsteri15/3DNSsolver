@@ -33,7 +33,7 @@ template <size_t N> struct CartesianGrid : public Grid {
 
 
     static constexpr Vector<N> unit_normal(CartesianAxis ax) {return coordinate_system.unit_normal(ax);}
-    static constexpr AxisIndex axis_index(CartesianAxis ax) {return coordinate_system.axis_index(ax);}
+    static constexpr size_t axis_index(CartesianAxis ax) {return coordinate_system.axis_index(ax);}
 
 
 private:

@@ -4,14 +4,13 @@
 #include <cstddef>
 #include "common/mdspan.hpp"
 #include "common/loop.hpp"
-#include "differentiation/axis_index.hpp"
 
 template<class Derived>
 struct TiledStencil{
 
 
     static constexpr size_t padding = Derived::padding;
-    static constexpr AxisIndex direction = Derived::direction;
+    static constexpr size_t direction = Derived::direction;
 
 };
 

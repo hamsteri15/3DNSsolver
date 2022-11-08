@@ -17,9 +17,9 @@
 
 #include "test_helpers.hpp"
 
-TEST_CASE("Test AxisIndex"){
+TEST_CASE("Test size_t"){
 
-    AxisIndex i(3);
+    size_t i(3);
 
     CHECK(i == size_t(3));
 

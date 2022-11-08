@@ -1,7 +1,6 @@
 #pragma once
 
 #include <iostream>
-#include "differentiation/axis_index.hpp"
 #include "common/vector.hpp"
 
 
@@ -46,14 +45,14 @@ struct Cartesian : public CoordinateSystem<N>{
         return v;
     }
 
-    static constexpr AxisIndex axis_index(CartesianAxis ax){
+    static constexpr size_t axis_index(CartesianAxis ax){
         switch(ax){
             case CartesianAxis::X:
-                return AxisIndex(1);
+                return size_t(1);
             case CartesianAxis::Y:
-                return AxisIndex(2);
+                return size_t(2);
             case CartesianAxis::Z:
-                return AxisIndex(3);
+                return size_t(3);
             default:
                 throw std::logic_error("Invalid Cartesian axis.");
         }
