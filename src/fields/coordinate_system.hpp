@@ -1,7 +1,7 @@
 #pragma once
 
 #include <iostream>
-#include "common/vector.hpp"
+#include "math/vector.hpp"
 
 
 template<size_t N>

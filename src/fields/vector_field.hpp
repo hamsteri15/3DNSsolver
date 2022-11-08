@@ -1,8 +1,8 @@
 #pragma once
 
 #include <iostream>
-#include "common/field.hpp"
-#include "common/vector.hpp"
+#include "fields/field.hpp"
+#include "math/vector.hpp"
 #include "topaz/include/all.hpp"
 
 template<size_t L>

@@ -1,15 +1,18 @@
 #include "catch.hpp"
 
-#include "common/math.hpp"
-#include "common/mdspan.hpp"
-#include "common/extents.hpp"
-#include "common/loop.hpp"
-#include "common/subspan.hpp"
+#include "jada/mdspan.hpp"
+#include "jada/extents.hpp"
+#include "jada/loop.hpp"
+#include "jada/subspan.hpp"
+#include "jada/evaluate_tiled.hpp"
 
+#include "spatial_schemes/cd-n.hpp"
+
+#include "test_helpers.hpp"
+
+/*
 TEST_CASE("scalar"){
 
-    CHECK(mag(-3.0) == 3.0);
-    CHECK(mag(2.0) == 2.0);
 
 }
 
@@ -36,14 +39,6 @@ TEST_CASE("scalarField"){
 
 TEST_CASE("Vector"){
 
-    Vector<3> a = {1.0, 2.0, 3.0};
-    Vector<3> b = {1.0, 2.0, 3.0};
-
-    CHECK(a == b);
-    CHECK(a + b == Vector<3>{2.0, 4.0, 6.0});
-    CHECK(dot(a,b) == 1.0 + 2.0*2.0 + 3.0*3.0);
-    CHECK(mag(Vector<3>{1,1,1}) == sqrt(3.0));
-    CHECK(3.0 * a * 1.0 == Vector<3>{3.0, 6.0, 9.0});
 }
 
 
@@ -92,6 +87,7 @@ TEST_CASE("VectorField"){
     }
 
 }
+*/
 
 TEST_CASE("extents"){
 
@@ -145,9 +141,6 @@ TEST_CASE("mdspan tests"){
     
     SECTION("Indexing a span"){
      
-
-
-
         /*
         auto s1 = make_span(a, extents<2>{2,5});
 
@@ -194,7 +187,7 @@ TEST_CASE("mdspan tests"){
 
 
         SECTION("equal size span"){
-            scalarField f(10, 1.0);
+            std::vector<double> f(10, 1.0);
 
             auto span = make_span(f, extents<2>{2,5});
 
@@ -211,7 +204,7 @@ TEST_CASE("mdspan tests"){
         }
 
         SECTION("non-equal size span"){
-            scalarField f(10, 1.0);
+            std::vector<double> f(10, 1.0);
 
             REQUIRE_THROWS(make_span(f, extents<2>{3,5}));
 
@@ -411,12 +404,166 @@ TEST_CASE("subspan tests"){
             CHECK(ss2(1) == 15);
             
         }
+    }
+}
 
+
+TEST_CASE("1D cd-2"){
+
+    SECTION("evaluate_tiled 1"){
+
+        d_CD2 op;
+        extents<1> dims{7};
+
+        std::vector<int> in(flat_size(dims));
+        std::vector<int> out(flat_size(dims));
+        auto s_in = make_span(in, dims);
+        auto s_out = make_span(out, dims);
+        
+        set_linear<0>(s_in);
+        
+        evaluate_tiled<0>(s_in, s_out, op);
+        CHECK(out == std::vector<int>{0, 1, 1, 1, 1, 1, 0});
+    }
+    
+    SECTION("evaluate_tiled 2"){
+
+        d_CD2 op;
+        size_t N = 3000;
+        extents<1> dims{N};
+
+        std::vector<int> in(flat_size(dims));
+        std::vector<int> out(flat_size(dims));
+        auto s_in = make_span(in, dims);
+        auto s_out = make_span(out, dims);
+        
+        set_linear<0>(s_in);
+        
+        evaluate_tiled<0>(s_in, s_out, op);
+
+        for (size_t i = 1; i < N-2; ++i){
+            REQUIRE(out.at(i) == 1);
+        }
+        CHECK(out.at(0) == 0);
+        CHECK(out.at(N-1) == 0);
 
     }
 
+    
+
+}
+
+TEST_CASE("2D cd-2"){
+
+    
+    SECTION("0-dir evaluate_tiled"){
 
 
+        d_CD2 op;
+        extents<2> dims{2 + 2*op.padding,3};
+
+        std::vector<int> in(flat_size(dims), 0);
+        std::vector<int> out(flat_size(dims), 0);
+
+        set_linear<0>(make_span(in, dims));
+
+        evaluate_tiled<0>(
+            make_span(in, dims),
+            make_span(out, dims),
+            op
+        );        
+
+        CHECK(
+            out == std::vector<int>
+            {
+                0, 0, 0,
+                1, 1, 1,
+                1, 1, 1,
+                0, 0, 0
+            }
+        );
+        
+    }    
+    
+    SECTION("1-dir evaluate_tiled"){
+
+
+        d_CD2 op;
+        extents<2> dims{2,3 + 2*op.padding};
+
+        std::vector<int> in(flat_size(dims), 0);
+        std::vector<int> out(flat_size(dims), 0);
+
+        set_linear<1>(make_span(in, dims));
+
+        evaluate_tiled<1>(
+            make_span(in, dims),
+            make_span(out, dims),
+            op
+        );        
+
+
+        CHECK(
+            out == std::vector<int>
+            {
+                0, 1, 1, 1, 0,
+                0, 1, 1, 1, 0
+            }
+        );
+        
+    }    
+    
+    SECTION("Both dirs evaluate_tiled"){
+
+
+        d_CD2 op0;
+        d_CD2 op1;
+        extents<2> dims{2 + 2*op0.padding,3 + 2*op1.padding};
+
+        std::vector<int> in(flat_size(dims), 0);
+        std::vector<int> out(flat_size(dims), 0);
+
+        set_linear<0>(make_span(in, dims));
+
+        evaluate_tiled<0>(
+            make_span(in, dims),
+            make_span(out, dims),
+            op0
+        );        
+
+
+        CHECK(
+            out == std::vector<int>
+            {
+                0, 0, 0, 0, 0,
+                1, 1, 1, 1, 1,
+                1, 1, 1, 1, 1,
+                0, 0, 0, 0, 0
+            }
+        );
+
+        std::transform(out.begin(), out.end(), out.begin(), [](auto a){(void) a; return 0.0;});
+
+        set_linear<1>(make_span(in, dims));
+
+        evaluate_tiled<1>(
+            make_span(in, dims),
+            make_span(out, dims),
+            op1
+        );        
+        
+        CHECK(
+            out == std::vector<int>
+            {
+                0, 1, 1, 1, 0,
+                0, 1, 1, 1, 0,
+                0, 1, 1, 1, 0,
+                0, 1, 1, 1, 0
+            }
+        );
+
+    }
+        
 
 
 }

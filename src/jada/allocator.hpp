@@ -1,8 +1,5 @@
 #pragma once
 
-#include "common/scalar.hpp"
-#include "common/vector.hpp"
-
 #ifdef __CUDACC__
 #include <thrust/device_vector.h>
 #include <thrust/device_malloc_allocator.h>

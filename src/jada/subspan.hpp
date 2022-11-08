@@ -1,6 +1,6 @@
 #pragma once
 
-#include "common/mdspan.hpp"
+#include "jada/mdspan.hpp"
 #include <array>
 
 static inline auto make_subspan(auto span, auto begin, auto end) {

@@ -3,13 +3,8 @@ set(Headers
     ./euler_primitive_variables.hpp
     ./euler.hpp
     ./euler_flux.hpp
-    ./grid.hpp
-    ./cartesian_grid.hpp
-    ./volumetric_field.hpp
-    ./surface_field.hpp
     ./equation_of_state.hpp
     ./flux.hpp
-    ./coordinate_system.hpp
 )
 
 set(Sources
@@ -17,13 +12,7 @@ set(Sources
     ./euler_primitive_variables.cpp
     ./euler.cpp
     ./euler_flux.cpp
-    ./grid.cpp
-    ./cartesian_grid.cpp
-    ./volumetric_field.cpp
-    ./surface_field.hpp
-    ./equation_of_state.cpp
     ./flux.cpp
-    ./coordinate_system.cpp
 )
 
 

@@ -1,7 +1,7 @@
 #pragma once
 #include <cstddef>
 #include <initializer_list>
-#include "common/math_vector_base.hpp"
+#include "math/math_vector_base.hpp"
 
 
 template <class T, size_t L>
@@ -11,7 +11,7 @@ struct MathVector : public MathVectorBase<T, L, MathVector<T, L>> {
 
     using base_type::operator=;
 
-    inline constexpr MathVector() = default;
+    inline constexpr MathVector() : m_storage{0} {}
 
     constexpr MathVector(std::initializer_list<T> list) {
 

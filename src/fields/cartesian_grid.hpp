@@ -1,14 +1,14 @@
 #pragma once
 
-#include "common/extents.hpp"
-#include "common/loop.hpp"
-#include "common/runtime_assert.hpp"
-#include "common/vector_field.hpp"
-#include "equation/grid.hpp"
-#include "equation/coordinate_system.hpp"
+#include "jada/extents.hpp"
+#include "jada/loop.hpp"
+#include "jada/utils.hpp"
+#include "fields/vector_field.hpp"
+#include "fields/scalar_field.hpp"
+#include "fields/coordinate_system.hpp"
 
 
-template <size_t N> struct CartesianGrid : public Grid {
+template <size_t N> struct CartesianGrid {
 
     static constexpr Cartesian<N> coordinate_system{};
 

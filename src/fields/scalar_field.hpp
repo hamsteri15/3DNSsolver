@@ -1,8 +1,8 @@
 #pragma once
 
 #include <iostream>
-#include "common/scalar.hpp"
-#include "common/field.hpp"
+#include "math/scalar.hpp"
+#include "fields/field.hpp"
 
 using scalarField = Field<scalar>;
 

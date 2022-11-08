@@ -1,6 +1,6 @@
 #pragma once
 
-#include "differentiation/tiled_stencil.hpp"
+#include "jada/tiled_stencil.hpp"
 
 struct Upwind1 : public TiledStencil<Upwind1> {
 

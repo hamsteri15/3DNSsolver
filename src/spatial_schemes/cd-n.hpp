@@ -1,7 +1,6 @@
 #pragma once
 
-#include "common/mdspan.hpp"
-#include "differentiation/tiled_stencil.hpp"
+#include "jada/tiled_stencil.hpp"
 
 
 struct d_CD2 : public TiledStencil<d_CD2> {

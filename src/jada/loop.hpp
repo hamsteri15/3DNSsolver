@@ -2,9 +2,9 @@
 
 #include <array>
 
-#include "common/indices.hpp"
-#include "common/cartesian_product.hpp"
-#include "common/mdspan.hpp"
+#include "jada/indices.hpp"
+#include "jada/cartesian_product.hpp"
+#include "jada/mdspan.hpp"
 
 
 auto md_indices(auto begin, auto end){

@@ -4,11 +4,13 @@ add_library(catch_main STATIC catch_main.cpp)
 
 
 set(SerialTestSources
-    test_common.cpp;
-    test_differentiation.cpp;
-    test_equation.cpp;
-    test_euler.cpp;
-    test_io.cpp;
+    test_jada.cpp;
+    test_math.cpp;
+    test_fields.cpp;
+    #test_differentiation.cpp;
+    #test_equation.cpp;
+    #test_euler.cpp;
+    #test_io.cpp;
 )
 
 

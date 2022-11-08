@@ -1,10 +1,10 @@
 #pragma once
 
 #include <concepts>
-#include "common/allocator.hpp"
+#include "jada/allocator.hpp"
 #include "topaz/include/all.hpp"
-#include "common/vector.hpp"
-#include "common/scalar.hpp"
+#include "math/vector.hpp"
+#include "math/scalar.hpp"
 
 template<class ET>
 using Field = topaz::NumericArray<ET, allocator_t<ET>>;

@@ -5,9 +5,18 @@
 #include <algorithm>
 #include <numeric>
 #include <iostream>
+#include <type_traits>
 
 //#include "utils/constexpr_functions.hpp"
 
+template <class T, std::enable_if_t<std::is_arithmetic_v<T>>...>
+constexpr auto constexpr_abs(T const& x) noexcept {
+    return x < 0 ? -x : x;
+}
+
+template <typename T> constexpr T const& constexpr_max(T const& a, T const& b) {
+    return a > b ? a : b;
+}
 
 
 template <class T, size_t L, class S> struct MathVectorBase {

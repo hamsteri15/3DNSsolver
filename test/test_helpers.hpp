@@ -1,8 +1,8 @@
 #pragma once
 
-#include "common/mdspan.hpp"
+#include "jada/mdspan.hpp"
 #include "equation/euler.hpp"
-#include "equation/volumetric_field.hpp"
+#include "fields/volumetric_field.hpp"
 #include "equation/boundary_condition.hpp"
 
 

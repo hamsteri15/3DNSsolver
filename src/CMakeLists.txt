@@ -1,6 +1,6 @@
 #Build libraries
 set(libdirs
-    equation
     io
+    equation
 )
 SUBDIRS(${libdirs} )

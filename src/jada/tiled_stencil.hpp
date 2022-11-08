@@ -1,9 +1,6 @@
 #pragma once
 
-#include <array>
 #include <cstddef>
-#include "common/mdspan.hpp"
-#include "common/loop.hpp"
 
 template<class Derived>
 struct TiledStencil{

@@ -1,8 +1,7 @@
 #pragma once
 
-#include "common/runtime_assert.hpp"
-#include "equation/volumetric_field.hpp"
-#include "common/utils.hpp"
+#include "fields/volumetric_field.hpp"
+#include "jada/utils.hpp"
 
 
 auto compute_shift(auto padding, auto normal){

@@ -1,10 +1,10 @@
 #pragma once
 
-#include "common/mdspan.hpp"
-#include "common/loop.hpp"
-#include "common/subspan.hpp"
-#include "differentiation/tiled_stencil.hpp"
-#include "equation/volumetric_field.hpp"
+#include "jada/mdspan.hpp"
+#include "jada/loop.hpp"
+#include "jada/subspan.hpp"
+#include "jada/tiled_stencil.hpp"
+
 
 
 
@@ -39,20 +39,4 @@ void evaluate_tiled(auto in, auto out, auto op)
 
     evaluate<Dir>(in, out, op, md_indices(begin, end));
    
-}
-
-
-template<size_t Dir, size_t N, class ET, class Op>
-void evaluate_tiled(const VolumetricField<ET, N>& in, VolumetricField<ET, N>& out, Op op){
-    
-    auto s_in = make_internal_span(in);
-    auto s_out = make_internal_span(out);
-    evaluate<Dir>
-    (
-        s_in,
-        s_out,
-        op,
-        all_indices(s_in)
-    );
-
 }

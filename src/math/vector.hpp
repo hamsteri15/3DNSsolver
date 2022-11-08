@@ -2,8 +2,8 @@
 
 #include <concepts>
 
-#include "common/scalar.hpp"
-#include "common/math_vector.hpp"
+#include "math/scalar.hpp"
+#include "math/math_vector.hpp"
 
 
 template<size_t L>

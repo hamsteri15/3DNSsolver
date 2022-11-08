@@ -2,7 +2,7 @@
 
 #include "H5Wrapper/include/h5_datatype_creator.hpp"
 #include "H5Wrapper/include/h5_datatype_array.hpp"
-#include "common/math_vector.hpp"
+#include "math/math_vector.hpp"
 
 
 namespace H5Wrapper{

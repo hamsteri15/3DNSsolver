@@ -1,8 +1,7 @@
 #pragma once
 
-#include "common/field.hpp"
-#include "equation/cartesian_grid.hpp"
-#include "equation/grid.hpp"
+#include "fields/field.hpp"
+#include "fields/cartesian_grid.hpp"
 #include "topaz/include/all.hpp"
 #include <cstddef>
 

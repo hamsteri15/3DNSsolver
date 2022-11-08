@@ -2,7 +2,7 @@
 
 #include <experimental/mdspan>
 #include <array>
-#include "common/utils.hpp"
+#include "jada/utils.hpp"
 
 
 namespace stdex = std::experimental;
