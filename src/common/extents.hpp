@@ -39,11 +39,10 @@ static constexpr size_t flat_size(auto ext){
 bool indices_in_bounds(auto indices, auto extents){
 
     static constexpr size_t N = decltype(extents)::rank();
-    auto dims = extent_to_array(extents);
     auto inds = tuple_to_array(indices);
 
     for (size_t i = 0; i < N; ++i){
-        if (inds[i] >= dims[i]){
+        if (inds[i] >= extents.extent(i)){
             return false;
         }
     }

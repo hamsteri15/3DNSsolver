@@ -103,6 +103,12 @@ TEST_CASE("extents"){
         REQUIRE_NOTHROW(extents<3>{4,4,0});
 
     }
+    /*
+    SECTION("std::get"){
+        extents<2> e{1,2};
+        CHECK(std::get<0>(e) == 1);
+    }
+    */
 
 }
 

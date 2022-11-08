@@ -75,14 +75,14 @@ template<size_t N> Vector<N> index_to_cell_center(const CartesianGrid<N>& grid, 
 template <size_t N> auto cell_centers(const CartesianGrid<N>& grid) {
 
     auto delta = spatial_stepsize(grid);
-    auto dims  = extent_to_array(grid.dimensions());
+    auto dims  = grid.dimensions();
 
     std::vector<scalarField> ret(N);
     auto p0 = grid.p0();
 
     for (size_t i = 0; i < N; ++i) {
 
-        size_t n = dims[i];
+        size_t n = dims.extent(i);
 
         scalarField f(n);
 
@@ -98,13 +98,13 @@ template<size_t N> auto vertex_dimensions(const CartesianGrid<N>& grid){
     for (size_t i = 0; i < N; ++i){
         dims[i] += 1;
     }
-    return extents<N>(dims);
+    return extents<N>{dims};
 }
 
 template <size_t N> auto vertices(const CartesianGrid<N>& grid) {
 
     auto delta = spatial_stepsize(grid);
-    auto e_dims  = extent_to_array(vertex_dimensions(grid));
+    auto e_dims  = vertex_dimensions(grid);
 
     std::vector<scalarField> ret(N);
 
@@ -112,7 +112,7 @@ template <size_t N> auto vertices(const CartesianGrid<N>& grid) {
 
     for (size_t i = 0; i < N; ++i) {
 
-        size_t n = e_dims[i];
+        size_t n = e_dims.extent(i);
 
         scalarField f(n);
 
