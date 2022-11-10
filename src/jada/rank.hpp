@@ -12,3 +12,9 @@ template<size_t N>
 struct Rank<std::array<size_t, N>>{
     static constexpr size_t value = N;
 };
+
+
+template<class T>
+consteval size_t rank(const T&){
+    return Rank<T>::value;
+}

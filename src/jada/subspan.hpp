@@ -6,10 +6,11 @@
 
 static inline auto make_subspan(auto span, auto begin, auto end) {
 
-    static constexpr size_t N = Rank<decltype(begin)>::value;
-    static_assert(N == Rank<decltype(end)>::value, "Dimension mismatch in make_subspan");
-    static_assert(Rank<decltype(span)>::value == N, "Dimension mismatch in make_subspan");
+    static_assert(rank(span) == rank(begin), "Dimension mismatch in make_subspan");
+    static_assert(rank(begin) == rank(end), "Dimension mismatch in make_subspan");
 
+    static constexpr size_t N = rank(span);
+    
     std::array<std::pair<size_t, size_t>, N> idx_pairs;
     for (size_t i = 0; i < N; ++i) { idx_pairs[i] = std::make_pair(begin[i], end[i]); }
 

@@ -26,11 +26,9 @@ auto md_indices(auto begin, auto end){
 auto all_indices(auto span){
 
     //const auto ext = s.extents();
-    static constexpr size_t N = Rank<decltype(span)>::value;
-
     using idx_t = typename decltype(span)::index_type;
 
-    std::array<idx_t, N> begin{};
+    std::array<idx_t, rank(span)> begin{};
     auto end = extent_to_array(span.extents());
     return md_indices(begin, end);
 }

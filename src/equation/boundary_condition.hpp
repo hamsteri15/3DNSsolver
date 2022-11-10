@@ -22,7 +22,7 @@ auto shift(auto idx, auto padding, auto normal){
     auto new_idx = tuple_to_array(idx);
     auto shift_amount = compute_shift(padding, normal);
 
-    for (size_t i = 0; i < Rank<decltype(padding)>::value; ++i){
+    for (size_t i = 0; i < rank(padding); ++i){
         new_idx[i] += shift_amount[i]; 
     }
     return new_idx;

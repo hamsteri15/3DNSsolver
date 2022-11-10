@@ -15,8 +15,7 @@ using extents = stdex::dextents<size_t, N>;
 
 
 static auto make_extent(auto dims){
-    static constexpr size_t N = Rank<decltype(dims)>::value;
-    return extents<N>{dims};
+    return extents<rank(dims)>{dims};
 }
 
 

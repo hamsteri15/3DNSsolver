@@ -26,9 +26,9 @@ void evaluate(Span1 in, Span2 out, Op op, Indices indices){
 template<size_t Dir>
 void evaluate_tiled(auto in, auto out, auto op)
 {
-    static_assert(decltype(in)::rank() == decltype(out)::rank(), "Rank mismatch in evaluate tiled.");
+    static_assert(rank(in) == rank(out), "Rank mismatch in evaluate tiled.");
 
-    static constexpr auto N = decltype(in)::rank();
+    static constexpr auto N = rank(in);
     runtime_assert(in.extents() == out.extents(), "Dimension mismatch");
 
     std::array<size_t, N> begin{};
