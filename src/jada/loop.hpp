@@ -5,6 +5,7 @@
 #include "jada/indices.hpp"
 #include "jada/cartesian_product.hpp"
 #include "jada/mdspan.hpp"
+#include "jada/rank.hpp"
 
 
 auto md_indices(auto begin, auto end){
@@ -25,7 +26,7 @@ auto md_indices(auto begin, auto end){
 auto all_indices(auto span){
 
     //const auto ext = s.extents();
-    static constexpr size_t N = rank(span);
+    static constexpr size_t N = Rank<decltype(span)>::value;
 
     using idx_t = typename decltype(span)::index_type;
 

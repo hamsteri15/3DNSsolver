@@ -113,8 +113,8 @@ TEST_CASE("mdspan tests"){
             span(1,4) = 43.0;
             CHECK(span(1,4) == 43.0);
 
-            static_assert(rank(span) == size_t(2), "rank() not found");
-            CHECK(rank(span) == size_t(2));
+            static_assert(Rank<decltype(span)>::value == size_t(2), "rank() not found");
+            CHECK(Rank<decltype(span)>::value == size_t(2));
 
             CHECK(span(std::array<size_t,2>{1,1}) == 1.0);
 

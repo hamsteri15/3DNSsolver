@@ -2,6 +2,7 @@
 
 #include <experimental/mdspan>
 #include <array>
+#include "jada/rank.hpp"
 #include "jada/utils.hpp"
 
 
@@ -10,6 +11,15 @@ namespace stdex = std::experimental;
 
 template<size_t N>
 using extents = stdex::dextents<size_t, N>;
+
+
+
+static auto make_extent(auto dims){
+    static constexpr size_t N = Rank<decltype(dims)>::value;
+    return extents<N>{dims};
+}
+
+
 
 static auto extent_to_array(auto ext){
 

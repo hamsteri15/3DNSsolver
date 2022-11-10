@@ -14,25 +14,24 @@ using span_base = stdex::mdspan<ElementType, extents<N>, Layout>;
 template<class ElementType, size_t N>
 using span = span_base<ElementType, N, stdex::layout_right>;
 
-
-
-template <class Field, class Extents> static inline auto make_span(Field& field, Extents dims) {
+template<class Field>
+static inline auto make_span(Field& field, auto dims) {
     using value_type          = typename Field::value_type;
-    static constexpr size_t N = Extents::rank();
+    auto ext = make_extent(dims);
+    static constexpr size_t N = decltype(ext)::rank();
     runtime_assert(flat_size(dims) == field.size(), "Dimension mismatch in make_span");
-    return span<value_type, N>(field.data(), dims);
+    return span<value_type, N>(field.data(), ext);
 }
-
-template <class Field, class Extents>
-static inline auto make_span(const Field& field, Extents dims) {
+template<class Field>
+static inline auto make_span(const Field& field, auto dims) {
     using value_type          = const typename Field::value_type;
-    static constexpr size_t N = Extents::rank();
+    auto ext = make_extent(dims);
+    static constexpr size_t N = decltype(ext)::rank();
     runtime_assert(flat_size(dims) == field.size(), "Dimension mismatch in make_span");
-    return span<value_type, N>(field.data(), dims);
+    return span<value_type, N>(field.data(), ext);
 }
 
 
-template <class Span> static constexpr size_t rank(const Span& span) { return span.rank(); }
 
 
 template <class Span> void print(Span span) {
