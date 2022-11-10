@@ -22,6 +22,30 @@ TEST_CASE("extents"){
         REQUIRE_NOTHROW(extents<3>{4,4,0});
 
     }
+
+    SECTION("flat_size"){
+
+        CHECK(flat_size(extents<3>{1,2,3}) == 1*2*3);
+        CHECK(flat_size(extents<3>{1,0,3}) == 0);
+
+    }
+
+    SECTION("indices_in_bounds"){
+
+        auto tpl = std::make_tuple(size_t(1), size_t(2), size_t(3));
+        auto ext1 = make_extent(std::array<size_t, 3>{4,4,4});
+        auto ext2 = make_extent(std::array<size_t, 3>{0,0,0});
+
+        CHECK(indices_in_bounds(tpl, ext1) == true);
+        CHECK(indices_in_bounds(tpl, ext2) == false);
+
+        std::array<size_t, 3> arr{1,2,3};
+
+        CHECK(indices_in_bounds(arr, ext1) == true);
+
+    }
+
+
 }
 
 TEST_CASE("md_indices tests"){
