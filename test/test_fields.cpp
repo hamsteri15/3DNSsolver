@@ -4,7 +4,7 @@
 #include "fields/cartesian_grid.hpp"
 #include "fields/volumetric_field.hpp"
 #include "fields/surface_field.hpp"
-
+#include "fields/scalar_field.hpp"
 #include "spatial_schemes/cd-n.hpp"
 
 #include "test_helpers.hpp"
@@ -15,6 +15,72 @@ TEST_CASE("Test CoordinateSystem"){
     Cartesian<3> cs{};
     CHECK(cs.unit_normal(CartesianAxis::X) == Vector<3>{1, 0, 0});
 };
+
+TEST_CASE("scalarField"){
+
+    SECTION("Constructors"){
+
+        REQUIRE_NOTHROW(scalarField{});
+
+    }
+
+    SECTION("mag"){
+        scalarField f(3, 3.0);
+        f[1] = -2;
+        scalarField r = mag(f);
+
+        CHECK(r[0] == 3.0);
+        CHECK(r[1] == 2.0);
+        CHECK(r[2] == 3.0);
+    }
+}
+
+
+TEST_CASE("VectorField"){
+
+    SECTION("Constructors"){
+
+    }
+
+    SECTION("Mag"){
+        vectorField<2> f(3);
+        f[0] = Vector<2>{2,0};
+        f[1] = Vector<2>{0,3};
+        auto r = mag(f);
+        CHECK(r[0] == 2.0);
+        CHECK(r[1] == 3.0);
+    }
+
+    SECTION("Dot"){
+        vectorField<2> a{Vector<2>{1,0}, Vector<2>{0, 2}};
+        vectorField<2> b{Vector<2>{1,1}, Vector<2>{1, 2}};
+
+        auto r = dot(a, b);
+        CHECK(r[0] == 1.0);
+        CHECK(r[1] == 4.0);
+
+    }
+
+    SECTION("serialize"){
+
+        vectorField<2> f(3);
+        for (size_t i = 0; i < f.size(); ++i){
+            f[i] = Vector<2>{scalar(i), scalar(i)};
+        }
+        auto v = serialize(f);
+        std::vector<scalar> correct = 
+        {
+            0,0,
+            1,1,
+            2,2
+        };
+
+        CHECK(std::vector<scalar>(v.begin(), v.end()) == correct);
+
+
+    }
+
+}
 
 TEST_CASE("Test CartesianGrid"){
 

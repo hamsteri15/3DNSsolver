@@ -10,84 +10,7 @@
 
 #include "test_helpers.hpp"
 
-/*
-TEST_CASE("scalar"){
 
-
-}
-
-TEST_CASE("scalarField"){
-
-    SECTION("Constructors"){
-
-        REQUIRE_NOTHROW(scalarField{});
-
-    }
-
-    SECTION("mag"){
-        scalarField f(3, 3.0);
-        f[1] = -2;
-        scalarField r = mag(f);
-
-        CHECK(r[0] == 3.0);
-        CHECK(r[1] == 2.0);
-        CHECK(r[2] == 3.0);
-    }
-}
-
-
-
-TEST_CASE("Vector"){
-
-}
-
-
-TEST_CASE("VectorField"){
-
-    SECTION("Constructors"){
-
-    }
-
-    SECTION("Mag"){
-        vectorField<2> f(3);
-        f[0] = Vector<2>{2,0};
-        f[1] = Vector<2>{0,3};
-        auto r = mag(f);
-        CHECK(r[0] == 2.0);
-        CHECK(r[1] == 3.0);
-    }
-
-    SECTION("Dot"){
-        vectorField<2> a{Vector<2>{1,0}, Vector<2>{0, 2}};
-        vectorField<2> b{Vector<2>{1,1}, Vector<2>{1, 2}};
-
-        auto r = dot(a, b);
-        CHECK(r[0] == 1.0);
-        CHECK(r[1] == 4.0);
-
-    }
-
-    SECTION("serialize"){
-
-        vectorField<2> f(3);
-        for (size_t i = 0; i < f.size(); ++i){
-            f[i] = Vector<2>{scalar(i), scalar(i)};
-        }
-        auto v = serialize(f);
-        std::vector<scalar> correct = 
-        {
-            0,0,
-            1,1,
-            2,2
-        };
-
-        CHECK(std::vector<scalar>(v.begin(), v.end()) == correct);
-
-
-    }
-
-}
-*/
 
 TEST_CASE("extents"){
 
@@ -99,13 +22,6 @@ TEST_CASE("extents"){
         REQUIRE_NOTHROW(extents<3>{4,4,0});
 
     }
-    /*
-    SECTION("std::get"){
-        extents<2> e{1,2};
-        CHECK(std::get<0>(e) == 1);
-    }
-    */
-
 }
 
 TEST_CASE("md_indices tests"){
@@ -176,15 +92,16 @@ TEST_CASE("mdspan tests"){
 
             auto s1 = make_span(a, extents<2>{2,5});
             auto s2 = make_span(b, extents<2>{2,5});
-
+            //auto s3 = make_span(a, std::array<size_t, 2>{2,5});
 
             CHECK(s1(1,1) == s2(1,1));
 
             s1(1,1) = 43;
             CHECK(s1(1,1) == 43);
-
+            //CHECK(s3(1,1) == 1);
         }
 
+        
 
         SECTION("equal size span"){
             std::vector<double> f(10, 1.0);
