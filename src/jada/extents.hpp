@@ -19,10 +19,12 @@ static constexpr auto make_extent(auto dims) { return extents<rank(dims)>{dims};
 /// @return std::array<size_t, Rank> array with the extents
 static constexpr auto extent_to_array(auto ext) {
 
-    using idx_t = typename decltype(ext)::index_type;
-    std::array<idx_t, rank(ext)> ret{};
-    for (size_t i = 0; i < rank(ext); ++i) { ret[i] = ext.extent(i); }
-    return ret;
+    using Idx = typename decltype(ext)::index_type;
+
+    auto f = [=]<size_t... Is>(std::index_sequence<Is...>) {
+        return std::array<Idx, sizeof...(Is)>{ext.extent(Is)...};
+    };
+    return f(std::make_index_sequence<rank(ext)>{});
 }
 
 /// @brief Computes the total element count spanned by the extents

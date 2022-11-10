@@ -10,7 +10,15 @@
 
 #include "test_helpers.hpp"
 
+TEST_CASE("rank"){
 
+
+    CHECK(rank(std::make_tuple(1,2,3)) == 3);
+    CHECK(rank(std::array<size_t, 2>{}) == 2);
+    CHECK(rank(std::array<int, 2>{}) == 2);
+    //CHECK(rank(std::make_tuple(1,2, 3.43)) == 3);
+
+}
 
 TEST_CASE("extents"){
 
@@ -299,7 +307,7 @@ TEST_CASE("subspan tests"){
             std::array<size_t, 2> end1 = {2,3};
 
 
-            auto ss = make_tiled_subspan<1>(s, begin1, end1);
+            auto ss = detail::make_tiled_subspan<1>(s, begin1, end1);
 
             CHECK(ss(0) == 10);
             CHECK(ss(1) == 11);
@@ -309,7 +317,34 @@ TEST_CASE("subspan tests"){
             std::array<size_t, 2> end2 = {3,2};
 
             
-            auto ss2 = make_tiled_subspan<0>(s, begin2, end2);
+            auto ss2 = detail::make_tiled_subspan<0>(s, begin2, end2);
+
+            CHECK(ss2(0) == 7);
+            CHECK(ss2(1) == 11);
+            CHECK(ss2(2) == 15);
+            
+        }
+        
+        SECTION("with given begin and width"){
+            
+            std::vector<int> a = 
+            {
+                1,  2,  3,  4,
+                5,  6,  7,  8,
+                9,  10, 11, 12,
+                13, 14, 15, 16
+            };
+            auto s = make_span(a, extents<2>{4,4});
+
+
+            auto ss = make_tiled_subspan<1>(s, std::make_tuple(2,1), size_t(2));
+
+            CHECK(ss(0) == 10);
+            CHECK(ss(1) == 11);
+            CHECK(ss(2) == 12);
+            
+            
+            auto ss2 = make_tiled_subspan<0>(s, std::array<size_t, 2>{1,2}, size_t(2));
 
             CHECK(ss2(0) == 7);
             CHECK(ss2(1) == 11);

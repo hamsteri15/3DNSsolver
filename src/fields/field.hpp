@@ -1,7 +1,7 @@
 #pragma once
 
 #include <concepts>
-#include "jada/allocator.hpp"
+#include "fields/allocator.hpp"
 #include "topaz/include/all.hpp"
 #include "math/vector.hpp"
 #include "math/scalar.hpp"
