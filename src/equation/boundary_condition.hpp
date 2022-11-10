@@ -2,11 +2,11 @@
 
 #include "fields/volumetric_field.hpp"
 #include "jada/utils.hpp"
-
+#include "jada/rank.hpp"
 
 auto compute_shift(auto padding, auto normal){
     
-    static constexpr size_t N = decltype(padding)::rank();
+    static constexpr size_t N = rank(padding);
 
     std::array<size_t, N> shift_amount;
     for (size_t i = 0; i < N; ++i){

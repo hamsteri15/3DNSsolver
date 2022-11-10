@@ -18,17 +18,15 @@ template<class Field>
 static inline auto make_span(Field& field, auto dims) {
     using value_type          = typename Field::value_type;
     auto ext = make_extent(dims);
-    static constexpr size_t N = decltype(ext)::rank();
     runtime_assert(flat_size(dims) == field.size(), "Dimension mismatch in make_span");
-    return span<value_type, N>(field.data(), ext);
+    return span<value_type, rank(ext)>(field.data(), ext);
 }
 template<class Field>
 static inline auto make_span(const Field& field, auto dims) {
     using value_type          = const typename Field::value_type;
     auto ext = make_extent(dims);
-    static constexpr size_t N = decltype(ext)::rank();
     runtime_assert(flat_size(dims) == field.size(), "Dimension mismatch in make_span");
-    return span<value_type, N>(field.data(), ext);
+    return span<value_type, rank(ext)>(field.data(), ext);
 }
 
 

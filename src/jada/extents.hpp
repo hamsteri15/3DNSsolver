@@ -14,7 +14,7 @@ using extents = stdex::dextents<size_t, N>;
 
 
 
-static auto make_extent(auto dims){
+static constexpr auto make_extent(auto dims){
     return extents<rank(dims)>{dims};
 }
 
@@ -22,7 +22,7 @@ static auto make_extent(auto dims){
 
 static auto extent_to_array(auto ext){
 
-    static constexpr size_t N = decltype(ext)::rank();
+    static constexpr size_t N = rank(ext);
     using idx_t = typename decltype(ext)::index_type;
 
     std::array<idx_t, N> ret{};
@@ -37,7 +37,7 @@ static auto extent_to_array(auto ext){
 static constexpr size_t flat_size(auto ext){
 
     size_t ret(1);
-    for (size_t i = 0; i < ext.rank(); ++i){
+    for (size_t i = 0; i < rank(ext); ++i){
         ret *= ext.extent(i);
     }
     return ret;
@@ -47,10 +47,9 @@ static constexpr size_t flat_size(auto ext){
 
 bool indices_in_bounds(auto indices, auto extents){
 
-    static constexpr size_t N = decltype(extents)::rank();
     auto inds = tuple_to_array(indices);
 
-    for (size_t i = 0; i < N; ++i){
+    for (size_t i = 0; i < rank(extents); ++i){
         if (inds[i] >= extents.extent(i)){
             return false;
         }
