@@ -5,6 +5,8 @@
 #include "jada/loop.hpp"
 #include "jada/subspan.hpp"
 #include "jada/evaluate_tiled.hpp"
+#include "jada/neighbours.hpp"
+#include "jada/decomposition.hpp"
 
 #include "spatial_schemes/cd-n.hpp"
 
@@ -543,3 +545,240 @@ TEST_CASE("2D cd-2"){
 
 
 }
+
+
+TEST_CASE("Block neighbours"){
+
+
+
+    //ensures that same comparator is used for all array of array comparisons
+    auto comp = [](auto lhs, auto rhs) {
+        return std::lexicographical_compare
+        (
+            lhs.begin(),
+            lhs.end(),
+            rhs.begin(),
+            rhs.end()
+        );
+    };
+
+
+    SECTION("Neighbours"){
+
+        REQUIRE_NOTHROW(Neighbours<3, ConnectivityType::Star>());
+        REQUIRE_NOTHROW(Neighbours<3, ConnectivityType::Box>());
+
+        CHECK(is_unique(Neighbours<3, ConnectivityType::Box>().get()));
+        CHECK(is_unique(Neighbours<2, ConnectivityType::Star>().get()));
+        CHECK(is_unique(Neighbours<4, ConnectivityType::Box>().get()));
+
+
+
+        Neighbours<2, ConnectivityType::Star> ns1;
+        Neighbours<2, ConnectivityType::Box> ns2;
+
+//        static constexpr auto ns_const = Neighbours<2, ConnectivityType::Star>();
+
+        constexpr Neighbours<2, ConnectivityType::Star> ns_const;
+
+
+        static_assert(Neighbours<2, ConnectivityType::Star>::idx({0,1}) == 0, "Neighbours not constexpr");
+
+        CHECK(ns1.idx({0,1}) == 0);
+        CHECK(ns2.idx({0,1}) == 0);
+        static_assert(ns_const.idx({0,1}) == 0, "Neighbours not constexpr");
+
+    }
+
+
+    
+
+    SECTION("Star connectivity"){
+
+        SECTION("1D") {
+            auto test = Neighbours<1, ConnectivityType::Star>().get();
+
+            std::array<direction<1>, 2> correct
+            {
+                direction<1>{1}, direction<1>{-1}
+            };
+
+            std::sort(test.begin(), test.end());
+            std::sort(correct.begin(), correct.end());
+
+            CHECK(test == correct);
+
+        }
+
+
+        SECTION("2D") {
+
+            using namespace Catch::Matchers;
+
+            std::array<direction<2>, 4> test = Neighbours<2, ConnectivityType::Star>().get();
+
+            std::array<direction<2>, 4> correct
+            {
+                direction<2>{1, 0},
+                direction<2>{0, 1},
+                direction<2>{-1, 0},
+                direction<2>{0, -1}
+            };
+
+            std::sort(test.begin(), test.end(), comp);
+            std::sort(correct.begin(), correct.end(), comp);
+
+            CHECK(test == correct);
+
+            test[2][0] = 3;
+            CHECK(test != correct);
+
+        }
+
+
+        SECTION("3D") {
+            auto test = Neighbours<3, ConnectivityType::Star>().get();
+
+            std::array<direction<3>, 6> correct
+            {
+                direction<3>{1, 0, 0},
+                direction<3>{0, 1, 0},
+                direction<3>{0, 0, 1},
+                direction<3>{-1, 0, 0},
+                direction<3>{0, -1, 0},
+                direction<3>{0, 0, -1}
+
+            };
+
+            std::sort(test.begin(), test.end(), comp);
+            std::sort(correct.begin(), correct.end(), comp);
+
+            CHECK(test == correct);
+
+            test[2][0] = 3;
+            CHECK(test != correct);
+
+
+        }
+
+    }
+
+
+
+    SECTION("Box connecitvity"){
+
+        SECTION("1D") {
+            auto test = Neighbours<1, ConnectivityType::Box>().get();
+
+            std::array<direction<1>, 2> correct
+            {
+                direction<1>{1}, direction<1>{-1}
+            };
+
+            std::sort(test.begin(), test.end(), comp);
+            std::sort(correct.begin(), correct.end(), comp);
+
+            CHECK(test == correct);
+
+
+        }
+
+
+        SECTION("2D") {
+            auto test = Neighbours<2, ConnectivityType::Box>().get();
+
+            std::array<direction<2>, 8> correct
+            {
+                direction<2>{1, 0},
+                direction<2>{0, 1},
+                direction<2>{1, 1},
+                direction<2>{-1, 0},
+                direction<2>{0, -1},
+                direction<2>{-1, -1},
+                direction<2>{-1, 1},
+                direction<2>{1, -1}
+
+            };
+
+            std::sort(test.begin(), test.end(), comp);
+            std::sort(correct.begin(), correct.end(), comp);
+
+            CHECK(test == correct);
+
+
+
+        }
+
+    }
+    
+
+}
+
+TEST_CASE("Test Decomposition"){
+
+    SECTION("get_offset"){
+
+        SECTION("Even splitting"){
+            SECTION("1d"){
+                std::array<size_t, 1> global_grid_dims  = {4};
+                std::array<size_t, 1> coord_dims = {4};
+
+                CHECK(offset(std::array<size_t, 1>{0}, coord_dims, global_grid_dims) == std::array<size_t, 1>{0});
+                CHECK(offset(std::array<size_t, 1>{1}, coord_dims, global_grid_dims) == std::array<size_t, 1>{1});
+                CHECK(offset(std::array<size_t, 1>{2}, coord_dims, global_grid_dims) == std::array<size_t, 1>{2});
+                CHECK(offset(std::array<size_t, 1>{3}, coord_dims, global_grid_dims) == std::array<size_t, 1>{3});
+
+            }
+        }
+        SECTION("Uneven splitting"){
+            SECTION("1d"){
+                std::array<size_t, 1> global_grid_dims  = {5};
+                std::array<size_t, 1> coord_dims = {4};
+
+                CHECK(offset(std::array<size_t, 1>{0}, coord_dims, global_grid_dims) == std::array<size_t, 1>{0});
+                CHECK(offset(std::array<size_t, 1>{1}, coord_dims, global_grid_dims) == std::array<size_t, 1>{1});
+                CHECK(offset(std::array<size_t, 1>{2}, coord_dims, global_grid_dims) == std::array<size_t, 1>{2});
+                CHECK(offset(std::array<size_t, 1>{3}, coord_dims, global_grid_dims) == std::array<size_t, 1>{3});
+
+                REQUIRE_THROWS(offset(std::array<size_t, 1>{4}, coord_dims, global_grid_dims));
+
+            }
+        }
+        
+    }
+
+
+    
+    SECTION("local_extent()") {
+
+
+        SECTION("Even splitting"){
+            std::array<size_t, 3> global_grid_dims  = {4,4,4};
+            std::array<size_t, 3> coord_dims = {4,4,4};
+
+            CHECK(local_dimensions(std::array<size_t, 3>{0,0,0}, coord_dims, global_grid_dims) == std::array<size_t, 3>{1,1,1});
+            CHECK(local_dimensions(std::array<size_t, 3>{1,1,1}, coord_dims, global_grid_dims) == std::array<size_t, 3>{1,1,1});
+            CHECK(local_dimensions(std::array<size_t, 3>{0,1,0}, coord_dims, global_grid_dims) == std::array<size_t, 3>{1,1,1});
+            CHECK(local_dimensions(std::array<size_t, 3>{3,1,0}, coord_dims, global_grid_dims) == std::array<size_t, 3>{1,1,1});
+
+            REQUIRE_THROWS(local_dimensions(std::array<size_t, 3>{4,0,0}, coord_dims, global_grid_dims));
+
+        }
+        SECTION("Uneven splitting"){
+            std::array<size_t, 3> global_grid_dims  = {4,5,4};
+            std::array<size_t, 3> coord_dims = {4,4,4};
+
+            CHECK(local_dimensions(std::array<size_t, 3>{0,0,0}, coord_dims, global_grid_dims) == std::array<size_t, 3>{1,1,1});
+            CHECK(local_dimensions(std::array<size_t, 3>{1,1,1}, coord_dims, global_grid_dims) == std::array<size_t, 3>{1,1,1});
+            CHECK(local_dimensions(std::array<size_t, 3>{0,1,0}, coord_dims, global_grid_dims) == std::array<size_t, 3>{1,1,1});
+            CHECK(local_dimensions(std::array<size_t, 3>{3,1,0}, coord_dims, global_grid_dims) == std::array<size_t, 3>{1,1,1});
+            CHECK(local_dimensions(std::array<size_t, 3>{3,3,0}, coord_dims, global_grid_dims) == std::array<size_t, 3>{1,2,1});
+            CHECK(local_dimensions(std::array<size_t, 3>{2,3,1}, coord_dims, global_grid_dims) == std::array<size_t, 3>{1,2,1});
+
+
+        }
+        
+
+}
+
+

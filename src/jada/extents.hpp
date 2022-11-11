@@ -37,12 +37,14 @@ static constexpr size_t flat_size(auto ext) {
     return ret;
 }
 
-/// @brief Ensures that the input indices are all smaller than the input extents
+/// @brief Ensures that the input indices are all smaller than the input dims
 /// @param indices set of indices (array/tuple) corresponding to a spatial location
-/// @param extents input extensions
+/// @param dims input extensions
 /// @return true if all indices in bounds, false otherwise
-bool indices_in_bounds(auto indices, auto extents) {
+static constexpr bool indices_in_bounds(auto indices, auto dims) {
 
+    auto extents = make_extent(dims);
+    
     auto f = [=]<size_t... Is>(std::index_sequence<Is...>) {
         return std::array<bool, sizeof...(Is)>{std::get<Is>(indices) < extents.extent(Is)...};
     };

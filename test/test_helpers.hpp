@@ -81,3 +81,15 @@ void mirror_all(Euler<N>& eq){
     }
 
 }
+
+
+template<class Container>
+bool is_unique(const Container& arr){
+
+    auto copy = arr;
+    std::sort(std::begin(copy), std::end(copy));
+    auto it = std::unique( copy.begin(), copy.end() );
+    bool isUnique = (it == copy.end() );
+
+    return isUnique;
+}
