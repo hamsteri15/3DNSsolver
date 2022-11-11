@@ -1,7 +1,6 @@
 #pragma once
 
-#include "H5Wrapper/include/h5_datatype_creator.hpp"
-#include "H5Wrapper/include/h5_datatype_array.hpp"
+#include <h5wrapper.hpp>
 #include "math/math_vector.hpp"
 
 

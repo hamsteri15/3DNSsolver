@@ -1,10 +1,7 @@
 #pragma once
 
-#include "H5Wrapper/include/h5_dataset.hpp"
-#include "H5Wrapper/include/h5_dataspace.hpp"
-#include "H5Wrapper/include/h5_dataspace_hyperslab.hpp"
-#include "H5Wrapper/include/h5_file.hpp"
-#include "H5Wrapper/include/h5_group.hpp"
+#include <h5wrapper.hpp>
+
 #include "fields/cartesian_grid.hpp"
 #include "fields/volumetric_field.hpp"
 #include "io/constants.hpp"
