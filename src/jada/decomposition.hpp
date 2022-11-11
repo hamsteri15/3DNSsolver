@@ -41,13 +41,14 @@ static constexpr auto local_dimensions(auto coords, auto coord_dims, auto global
     runtime_assert(indices_in_bounds(coords, coord_dims), "Domain coordinates not in bounds.");
 
     decltype(global_grid_dims) local_dims{};
+    using index_type = typename decltype(local_dims)::value_type;
 
     for (size_t i = 0; i < rank(coords); ++i) {
-        local_dims[i] = global_grid_dims[i] / coord_dims[i];
+        local_dims[i] = index_type(global_grid_dims[i] / coord_dims[i]);
 
         // Uneven points added to the last subdomain in the corresponding direction
-        if (coords[i] == coord_dims[i] - 1) {
-            local_dims[i] += (global_grid_dims[i] % coord_dims[i]);
+        if (coords[i] == index_type(coord_dims[i] - 1)) {
+            local_dims[i] += index_type(global_grid_dims[i] % coord_dims[i]);
         }
     }
     return local_dims;

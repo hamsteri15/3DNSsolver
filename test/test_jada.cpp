@@ -7,10 +7,17 @@
 #include "jada/evaluate_tiled.hpp"
 #include "jada/neighbours.hpp"
 #include "jada/decomposition.hpp"
+#include "jada/check_mpi.hpp"
 
 #include "spatial_schemes/cd-n.hpp"
 
 #include "test_helpers.hpp"
+
+TEST_CASE("check_mpi"){
+
+    CHECK(mpi_function() == 5);
+
+}
 
 TEST_CASE("rank"){
 
@@ -714,35 +721,31 @@ TEST_CASE("Block neighbours"){
 
 }
 
-TEST_CASE("Test Decomposition"){
+TEST_CASE("Test decomposition"){
 
     SECTION("get_offset"){
 
         SECTION("Even splitting"){
-            SECTION("1d"){
-                std::array<size_t, 1> global_grid_dims  = {4};
-                std::array<size_t, 1> coord_dims = {4};
+            std::array<size_t, 1> global_grid_dims  = {4};
+            std::array<size_t, 1> coord_dims = {4};
 
-                CHECK(offset(std::array<size_t, 1>{0}, coord_dims, global_grid_dims) == std::array<size_t, 1>{0});
-                CHECK(offset(std::array<size_t, 1>{1}, coord_dims, global_grid_dims) == std::array<size_t, 1>{1});
-                CHECK(offset(std::array<size_t, 1>{2}, coord_dims, global_grid_dims) == std::array<size_t, 1>{2});
-                CHECK(offset(std::array<size_t, 1>{3}, coord_dims, global_grid_dims) == std::array<size_t, 1>{3});
+            CHECK(offset(std::array<size_t, 1>{0}, coord_dims, global_grid_dims) == std::array<size_t, 1>{0});
+            CHECK(offset(std::array<size_t, 1>{1}, coord_dims, global_grid_dims) == std::array<size_t, 1>{1});
+            CHECK(offset(std::array<size_t, 1>{2}, coord_dims, global_grid_dims) == std::array<size_t, 1>{2});
+            CHECK(offset(std::array<size_t, 1>{3}, coord_dims, global_grid_dims) == std::array<size_t, 1>{3});
 
-            }
         }
         SECTION("Uneven splitting"){
-            SECTION("1d"){
-                std::array<size_t, 1> global_grid_dims  = {5};
-                std::array<size_t, 1> coord_dims = {4};
+            std::array<size_t, 1> global_grid_dims  = {5};
+            std::array<size_t, 1> coord_dims = {4};
 
-                CHECK(offset(std::array<size_t, 1>{0}, coord_dims, global_grid_dims) == std::array<size_t, 1>{0});
-                CHECK(offset(std::array<size_t, 1>{1}, coord_dims, global_grid_dims) == std::array<size_t, 1>{1});
-                CHECK(offset(std::array<size_t, 1>{2}, coord_dims, global_grid_dims) == std::array<size_t, 1>{2});
-                CHECK(offset(std::array<size_t, 1>{3}, coord_dims, global_grid_dims) == std::array<size_t, 1>{3});
+            CHECK(offset(std::array<size_t, 1>{0}, coord_dims, global_grid_dims) == std::array<size_t, 1>{0});
+            CHECK(offset(std::array<size_t, 1>{1}, coord_dims, global_grid_dims) == std::array<size_t, 1>{1});
+            CHECK(offset(std::array<size_t, 1>{2}, coord_dims, global_grid_dims) == std::array<size_t, 1>{2});
+            CHECK(offset(std::array<size_t, 1>{3}, coord_dims, global_grid_dims) == std::array<size_t, 1>{3});
 
-                REQUIRE_THROWS(offset(std::array<size_t, 1>{4}, coord_dims, global_grid_dims));
+            REQUIRE_THROWS(offset(std::array<size_t, 1>{4}, coord_dims, global_grid_dims));
 
-            }
         }
         
     }
@@ -778,7 +781,7 @@ TEST_CASE("Test Decomposition"){
 
         }
         
-
+    }
 }
 
 

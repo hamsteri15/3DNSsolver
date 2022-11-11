@@ -29,8 +29,17 @@ include(cmake/StaticAnalyzers.cmake)
 
 
 #Configure MPI
+option(USE_MPI "Enable building with mpi" ON)
+
+
+if (USE_MPI)
 find_package(MPI REQUIRED)
 message("STATUS MPI FOUND: ${MPI_CXX_FOUND}")
+add_compile_definitions(USE_MPI)
+endif()
+
+
+
 
 
 #Configure HDF5
