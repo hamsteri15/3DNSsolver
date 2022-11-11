@@ -1,6 +1,6 @@
 #pragma once
 
-#include "jada/tiled_stencil.hpp"
+#include <jada.hpp>
 
 
 struct d_CD2 : public TiledStencil<d_CD2> {

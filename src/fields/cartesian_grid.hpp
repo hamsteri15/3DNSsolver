@@ -1,8 +1,6 @@
 #pragma once
 
-#include "jada/extents.hpp"
-#include "jada/loop.hpp"
-#include "jada/utils.hpp"
+#include <jada.hpp>
 #include "fields/vector_field.hpp"
 #include "fields/scalar_field.hpp"
 #include "fields/coordinate_system.hpp"

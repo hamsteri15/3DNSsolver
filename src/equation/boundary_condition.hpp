@@ -1,8 +1,8 @@
 #pragma once
 
 #include "fields/volumetric_field.hpp"
-#include "jada/utils.hpp"
-#include "jada/rank.hpp"
+#include <jada.hpp>
+#include <jada.hpp>
 
 auto compute_shift(auto padding, auto normal){
     

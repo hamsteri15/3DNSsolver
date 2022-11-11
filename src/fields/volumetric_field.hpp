@@ -1,10 +1,8 @@
 #pragma once
 
-#include "jada/mdspan.hpp"
-#include "jada/subspan.hpp"
+#include <jada.hpp>
 #include "fields/field.hpp"
 #include "fields/cartesian_grid.hpp"
-#include "jada/evaluate_tiled.hpp"
 
 template <class ET, size_t N> struct VolumetricField : public Field<ET> {
 

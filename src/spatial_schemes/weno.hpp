@@ -2,7 +2,7 @@
 
 #include <array>
 
-#include "jada/tiled_stencil.hpp"
+#include <jada.hpp>
 #include "spatial_schemes/eno.hpp"
 
 template <typename T>

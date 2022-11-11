@@ -1,6 +1,6 @@
 #pragma once
 
-#include "jada/mdspan.hpp"
+#include <jada.hpp>
 #include "equation/euler.hpp"
 #include "fields/volumetric_field.hpp"
 #include "equation/boundary_condition.hpp"
