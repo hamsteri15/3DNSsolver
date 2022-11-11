@@ -19,11 +19,6 @@ set(Sources
 
 add_library(equation ${Sources} ${Headers})
 
-target_include_directories(equation PUBLIC
-                            ${CMAKE_SOURCE_DIR}/external/
-                            #${MPI_CXX_INCLUDE_PATH}
-                          )
-
 target_link_libraries(equation PUBLIC
                         #containers
                         project_options

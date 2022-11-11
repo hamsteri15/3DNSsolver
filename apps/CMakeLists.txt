@@ -10,7 +10,6 @@ add_executable(OnedEuler ${Sources} ${Headers})
 
 
 target_include_directories(OnedEuler PUBLIC
-                            ${CMAKE_SOURCE_DIR}/external/
                             ${CMAKE_SOURCE_DIR}/src/
                             #${MPI_CXX_INCLUDE_PATH}
                           )
@@ -35,7 +34,6 @@ add_executable(TwodEuler ${Sources} ${Headers})
 #set_target_properties(TwodEuler PROPERTIES DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})
 
 target_include_directories(TwodEuler PUBLIC
-                            ${CMAKE_SOURCE_DIR}/external/
                             ${CMAKE_SOURCE_DIR}/src/
                             #${MPI_CXX_INCLUDE_PATH}
                           )

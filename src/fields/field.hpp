@@ -1,8 +1,8 @@
 #pragma once
 
 #include <concepts>
+#include <topaz.hpp>
 #include "fields/allocator.hpp"
-#include "topaz/include/all.hpp"
 #include "math/vector.hpp"
 #include "math/scalar.hpp"
 

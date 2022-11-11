@@ -1,8 +1,8 @@
 #pragma once
 
+#include <topaz.hpp>
 #include "fields/cartesian_grid.hpp"
 #include "fields/volumetric_field.hpp"
-#include "topaz/include/all.hpp"
 
 template <size_t N> struct PrimitiveVariables {
 

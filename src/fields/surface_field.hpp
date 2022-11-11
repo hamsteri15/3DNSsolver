@@ -1,8 +1,8 @@
 #pragma once
 
+#include <topaz.hpp>
 #include "fields/field.hpp"
 #include "fields/cartesian_grid.hpp"
-#include "topaz/include/all.hpp"
 #include <cstddef>
 
 template <class ET, size_t N> struct SurfaceField : public Field<ET> {

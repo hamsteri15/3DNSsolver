@@ -15,9 +15,6 @@ set(Sources
 
 add_library(io ${Sources} ${Headers})
 
-target_include_directories(io PUBLIC
-                            ${CMAKE_SOURCE_DIR}/external/
-                          )
 
 #The SYSTEM prevents warnings from H5/MPI headers
 target_include_directories(io SYSTEM PUBLIC

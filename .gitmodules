@@ -1,3 +1,0 @@
-[submodule "external/topaz"]
-	path = external/topaz
-	url = git@github.com:hamsteri15/topaz.git
