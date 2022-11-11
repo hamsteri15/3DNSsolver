@@ -19,7 +19,7 @@ int main(){
     scalar T = 0.3;
     size_t nx = 50;
     size_t ny = 51;
-    auto eq = make_euler_equation<2>(extents<2>{ny, nx}, extents<2>{2, 2});
+    auto eq = make_euler_equation<2>(jada::extents<2>{ny, nx}, jada::extents<2>{2, 2});
     assign_shocktube<1>(eq);
 
 

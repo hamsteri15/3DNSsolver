@@ -36,10 +36,10 @@ struct Writeable{
 };
 
 template<size_t N>
-static inline auto make_writeable(const Field<scalar>& f, extents<N> dims, extents<N> padding){
+static inline auto make_writeable(const Field<scalar>& f, jada::extents<N> dims, jada::extents<N> padding){
     using namespace H5Wrapper;
-    auto                  dims_arr = extent_to_array(dims);
-    auto                  padd_arr = extent_to_array(padding);
+    auto                  dims_arr = jada::extent_to_array(dims);
+    auto                  padd_arr = jada::extent_to_array(padding);
     std::array<size_t, N> total_dims{};
 
     // total = dims + 2*padding
@@ -57,11 +57,11 @@ static inline auto make_writeable(const Field<scalar>& f, extents<N> dims, exten
 }
 
 template<size_t N, size_t L>
-static inline auto make_writeable(const Field<Vector<L>>& f, extents<N> dims, extents<N> padding){
+static inline auto make_writeable(const Field<Vector<L>>& f, jada::extents<N> dims, jada::extents<N> padding){
 
     using namespace H5Wrapper;
-    auto                  dims_arr = extent_to_array(dims);
-    auto                  padd_arr = extent_to_array(padding);
+    auto                  dims_arr = jada::extent_to_array(dims);
+    auto                  padd_arr = jada::extent_to_array(padding);
     std::array<size_t, N> total_dims{};
 
     // total = dims + 2*padding
@@ -220,14 +220,14 @@ private:
 
     template <size_t N, class ET>
     void write(const Field<ET>& field,
-               extents<N>       dims,
+               jada::extents<N>       dims,
                std::string      group_name,
                std::string      field_name) const {
 
         using namespace H5Wrapper;
 
         auto dt       = H5DatatypeCreator<ET>::create();
-        auto dims_arr = extent_to_array(dims);
+        auto dims_arr = jada::extent_to_array(dims);
 
         auto file = file_open();
 
@@ -243,8 +243,8 @@ private:
 
     template <size_t N, class ET>
     void write(const Field<ET>& field,
-               extents<N>       dims,
-               extents<N>       padding,
+               jada::extents<N>       dims,
+               jada::extents<N>       padding,
                std::string      group_name,
                std::string      field_name) const {
 
@@ -261,11 +261,11 @@ private:
         file.close();
     }
 
-    template <size_t N> auto create_memory_dataspace(extents<N> dims, extents<N> padding) const {
+    template <size_t N> auto create_memory_dataspace(jada::extents<N> dims, jada::extents<N> padding) const {
 
         using namespace H5Wrapper;
-        auto                  dims_arr = extent_to_array(dims);
-        auto                  padd_arr = extent_to_array(padding);
+        auto                  dims_arr = jada::extent_to_array(dims);
+        auto                  padd_arr = jada::extent_to_array(padding);
         std::array<size_t, N> total_dims{};
 
         // total = dims + 2*padding

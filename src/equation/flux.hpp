@@ -6,7 +6,7 @@ template <class ET, size_t N> struct Flux {
 
     Flux() = default;
 
-    Flux(const CartesianGrid<N>& grid, extents<N> padding)
+    Flux(const CartesianGrid<N>& grid, jada::extents<N> padding)
         : m_f(grid, padding) {}
 
     // TODO: use concepts
@@ -29,7 +29,7 @@ template <class ET, size_t N> struct SplitFlux {
 
     SplitFlux() = default;
 
-    SplitFlux(const CartesianGrid<N>& grid, extents<N> padding)
+    SplitFlux(const CartesianGrid<N>& grid, jada::extents<N> padding)
         : m_f_left(grid, padding)
         , m_f_right(grid, padding) {}
 

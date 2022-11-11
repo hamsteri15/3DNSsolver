@@ -8,8 +8,11 @@
 #include "spatial_schemes/weno.hpp"
 #include "spatial_schemes/cd-n.hpp"
 
+#include <jada.hpp>
 #include "test_helpers.hpp"
 
+
+using namespace jada;
 
 TEST_CASE("Test boundary_condition"){
 

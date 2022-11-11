@@ -11,7 +11,7 @@ template <class ET, size_t N> struct VolumetricField : public Field<ET> {
 
     VolumetricField() = default;
 
-    VolumetricField(const CartesianGrid<N>& grid, extents<N> padding = extents<N>{})
+    VolumetricField(const CartesianGrid<N>& grid, jada::extents<N> padding = jada::extents<N>{})
         : Field<ET>(size_to_allocate(grid, padding))
         , m_grid(grid)
         , m_padding(padding) {}
@@ -23,7 +23,7 @@ template <class ET, size_t N> struct VolumetricField : public Field<ET> {
     auto&       grid() { return m_grid; }
 
 private:
-    static size_t size_to_allocate(const CartesianGrid<N>& grid, extents<N> padding) {
+    static size_t size_to_allocate(const CartesianGrid<N>& grid, jada::extents<N> padding) {
 
         MathVector<size_t, N> full;
         for (size_t i = 0; i < N; ++i) {
@@ -33,7 +33,7 @@ private:
     }
 
     CartesianGrid<N> m_grid;
-    extents<N>       m_padding;
+    jada::extents<N>       m_padding;
 };
 
 template<class ET, size_t N>
@@ -74,7 +74,7 @@ std::array<size_t, N> full_end(const VolumetricField<ET, N>& f){
 }
 
 template<class ET, size_t N>
-extents<N> full_extent(const VolumetricField<ET, N>& f){
+jada::extents<N> full_extent(const VolumetricField<ET, N>& f){
 
     return full_end(f);
 }
@@ -82,23 +82,23 @@ extents<N> full_extent(const VolumetricField<ET, N>& f){
 
 template<class ET, size_t N>
 auto make_full_span(VolumetricField<ET, N>& f){
-    return make_span(f, full_extent(f));
+    return jada::make_span(f, full_extent(f));
 }
 
 template<class ET, size_t N>
 auto make_full_span(const VolumetricField<ET, N>& f){
-    return make_span(f, full_extent(f));
+    return jada::make_span(f, full_extent(f));
 }
 
 
 template<class ET, size_t N>
 auto make_internal_span(VolumetricField<ET, N>& f){
-    return make_subspan(make_full_span(f), internal_begin(f), internal_end(f));
+    return jada::make_subspan(make_full_span(f), internal_begin(f), internal_end(f));
 }
 
 template<class ET, size_t N>
 auto make_internal_span(const VolumetricField<ET, N>& f){
-    return make_subspan(make_full_span(f), internal_begin(f), internal_end(f));
+    return jada::make_subspan(make_full_span(f), internal_begin(f), internal_end(f));
 }
 
 
@@ -124,7 +124,7 @@ std::array<size_t, N> boundary_subspan_dims(const VolumetricField<ET, N>& f, Vec
 template <class ET, size_t N>
 std::array<size_t, N> boundary_subspan_begin(const VolumetricField<ET, N>& f, Vector<N> normal) {
 
-    auto begin = extent_to_array(f.padding());
+    auto begin = jada::extent_to_array(f.padding());
     for (size_t i = 0; i < N; ++i) {
         if (normal[i] > 0) { begin[i] = f.dimensions().extent(i); }
     }
@@ -145,13 +145,13 @@ std::array<size_t, N> boundary_subspan_end(const VolumetricField<ET, N>& f, Vect
 
 template <class ET, size_t N> auto boundary_subspan(VolumetricField<ET, N>& f, Vector<N> normal) {
 
-    return make_subspan(
+    return jada::make_subspan(
         make_full_span(f), boundary_subspan_begin(f, normal), boundary_subspan_end(f, normal));
 }
 
 template <class ET, size_t N> auto boundary_subspan(const VolumetricField<ET, N>& f, Vector<N> normal) {
 
-    return make_subspan(
+    return jada::make_subspan(
         make_full_span(f), boundary_subspan_begin(f, normal), boundary_subspan_end(f, normal));
 }
 
@@ -161,8 +161,8 @@ void for_all_coordinates(VolumetricField<ET, N>& f, Op op){
 
     auto span = make_internal_span(f);
 
-    for (auto idx : all_indices(span)){
-        span(tuple_to_array(idx)) = op(index_to_cell_center(f.grid(), idx));
+    for (auto idx : jada::all_indices(span)){
+        span(jada::tuple_to_array(idx)) = op(index_to_cell_center(f.grid(), idx));
     }
 
 }
@@ -178,7 +178,7 @@ void evaluate_tiled(const VolumetricField<ET, N>& in, VolumetricField<ET, N>& ou
         s_in,
         s_out,
         op,
-        all_indices(s_in)
+        jada::all_indices(s_in)
     );
 
 }

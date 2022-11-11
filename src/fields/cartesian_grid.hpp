@@ -13,18 +13,18 @@ template <size_t N> struct CartesianGrid {
 
     CartesianGrid() = default;
 
-    CartesianGrid(extents<N> ext, Vector<N> p0, Vector<N> p1)
+    CartesianGrid(jada::extents<N> ext, Vector<N> p0, Vector<N> p1)
         : m_extents(ext)
         , m_p0(p0)
         , m_p1(p1) {
-        runtime_assert(all_positive(p1 - p0), "Point p1 components not larger than p0.");
+        jada::runtime_assert(all_positive(p1 - p0), "Point p1 components not larger than p0.");
     }
 
     static constexpr size_t num_dimensions() { return N; }
 
-    size_t point_count() const { return flat_size(m_extents); }
+    size_t point_count() const { return jada::flat_size(m_extents); }
 
-    extents<N> dimensions() const { return m_extents; }
+    jada::extents<N> dimensions() const { return m_extents; }
 
     Vector<N> p0() const { return m_p0; }
     Vector<N> p1() const { return m_p1; }
@@ -35,7 +35,7 @@ template <size_t N> struct CartesianGrid {
 
 
 private:
-    extents<N> m_extents;
+    jada::extents<N> m_extents;
     Vector<N>  m_p0;
     Vector<N>  m_p1;
 };
@@ -56,7 +56,7 @@ template<size_t N> Vector<N> index_to_cell_center(const CartesianGrid<N>& grid, 
     const auto delta = spatial_stepsize(grid);
     const auto p0 = grid.p0();
 
-    const auto idx = tuple_to_array(indices);
+    const auto idx = jada::tuple_to_array(indices);
 
 
     Vector<N> c{};
@@ -92,11 +92,11 @@ template <size_t N> auto cell_centers(const CartesianGrid<N>& grid) {
 }
 
 template<size_t N> auto vertex_dimensions(const CartesianGrid<N>& grid){
-    auto dims  = extent_to_array(grid.dimensions());
+    auto dims  = jada::extent_to_array(grid.dimensions());
     for (size_t i = 0; i < N; ++i){
         dims[i] += 1;
     }
-    return extents<N>{dims};
+    return jada::extents<N>{dims};
 }
 
 template <size_t N> auto vertices(const CartesianGrid<N>& grid) {
@@ -126,15 +126,15 @@ template <size_t N> auto vertices(const CartesianGrid<N>& grid) {
 
 template <size_t N> auto surface_field_dims(size_t dir, const CartesianGrid<N>& grid) {
 
-    runtime_assert(dir < N, "Invalid direction.");
-    auto d = extent_to_array(grid.dimensions());
+    jada::runtime_assert(dir < N, "Invalid direction.");
+    auto d = jada::extent_to_array(grid.dimensions());
     d[dir] += 1;
-    return extents<N>{d};
+    return jada::extents<N>{d};
 }
 
 template <size_t N> auto surface_count(const CartesianGrid<N>& grid) {
 
     size_t count = 0;
-    for (size_t i = 0; i < N; ++i) { count += flat_size(surface_field_dims(i, grid)); }
+    for (size_t i = 0; i < N; ++i) { count += jada::flat_size(surface_field_dims(i, grid)); }
     return count;
 }

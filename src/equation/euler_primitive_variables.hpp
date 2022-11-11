@@ -6,7 +6,7 @@
 
 template <size_t N> struct PrimitiveVariables {
 
-    PrimitiveVariables(const CartesianGrid<N>& grid, extents<N> padding)
+    PrimitiveVariables(const CartesianGrid<N>& grid, jada::extents<N> padding)
         : rho(grid, padding)
         , p(grid, padding)
         , U(grid, padding) {}

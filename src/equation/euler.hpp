@@ -8,7 +8,7 @@
 
 template <size_t N> struct Euler {
 
-    Euler(const CartesianGrid<N>& grid, extents<N> padding, EquationOfState eos)
+    Euler(const CartesianGrid<N>& grid, jada::extents<N> padding, EquationOfState eos)
         : m_grid(grid)
         , m_variables(grid, padding)
         , m_eos(eos) {}

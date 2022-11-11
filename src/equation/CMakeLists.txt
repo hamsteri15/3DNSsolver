@@ -12,6 +12,7 @@ set(Sources
     ./euler_primitive_variables.cpp
     ./euler.cpp
     ./euler_flux.cpp
+    ./equation_of_state.cpp
     ./flux.cpp
 )
 

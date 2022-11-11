@@ -30,7 +30,7 @@ template <class ET, size_t N> struct SurfaceField : public Field<ET> {
     template <class Field_t> void set(size_t I, const Field_t& f) {
         auto [b_idx, e_idx] = get_chunk(I);
 
-        runtime_assert((e_idx - b_idx) == f.size(), "Size mismatch in SurfaceField::set()");
+        jada::runtime_assert((e_idx - b_idx) == f.size(), "Size mismatch in SurfaceField::set()");
 
         auto dst = topaz::slice(*this, b_idx, e_idx);
         topaz::copy(f, dst);
@@ -51,8 +51,8 @@ private:
     auto get_chunk(size_t I) const{
 
         size_t begin = 0;
-        for (size_t i = 0; i < I; ++i) { begin += flat_size(surface_field_dims(i, m_grid)); }
-        size_t end = begin + flat_size(surface_field_dims(I, m_grid));
+        for (size_t i = 0; i < I; ++i) { begin += jada::flat_size(surface_field_dims(i, m_grid)); }
+        size_t end = begin + jada::flat_size(surface_field_dims(I, m_grid));
 
         return std::make_pair(begin, end);
 

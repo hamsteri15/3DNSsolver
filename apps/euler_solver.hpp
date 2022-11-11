@@ -84,7 +84,7 @@ struct EulerSolver2D : EulerSolver<2>{
 
 
 template<size_t N>
-auto make_euler_equation(extents<N> dims, extents<N> padding){
+auto make_euler_equation(jada::extents<N> dims, jada::extents<N> padding){
 
     Vector<N> p0;
     Vector<N> p1;

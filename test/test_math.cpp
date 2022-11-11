@@ -4,6 +4,7 @@
 #include "math/vector.hpp"
 #include "math/math_vector.hpp"
 
+
 TEST_CASE("Test scalar"){
     CHECK(mag(-3.0) == 3.0);
     CHECK(mag(2.0) == 2.0);

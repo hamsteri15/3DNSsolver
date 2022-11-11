@@ -7,8 +7,10 @@
 #include "fields/scalar_field.hpp"
 #include "spatial_schemes/cd-n.hpp"
 
+#include <jada.hpp>
 #include "test_helpers.hpp"
 
+using namespace jada;
 
 TEST_CASE("Test CoordinateSystem"){
 
@@ -255,8 +257,8 @@ TEST_CASE("Test VolumetricField"){
 
         auto s = make_internal_span(f);
 
-        for (auto i : all_indices(s)){
-            auto ii = tuple_to_array(i);
+        for (auto i : jada::all_indices(s)){
+            auto ii = jada::tuple_to_array(i);
             s(ii) = 43;
 
         }
@@ -314,8 +316,8 @@ TEST_CASE("Test VolumetricField"){
 
             auto assign_linear = [](auto s){
                 scalar first = 1;
-                for (auto idx : all_indices(s)){
-                    auto ii = tuple_to_array(idx);
+                for (auto idx : jada::all_indices(s)){
+                    auto ii = jada::tuple_to_array(idx);
                     s(ii) = first;
                     first = first + 1;
                 }
