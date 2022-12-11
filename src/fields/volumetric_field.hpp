@@ -173,7 +173,7 @@ void evaluate_tiled(const VolumetricField<ET, N>& in, VolumetricField<ET, N>& ou
     
     auto s_in = make_internal_span(in);
     auto s_out = make_internal_span(out);
-    evaluate<Dir>
+    jada::evaluate<Dir>
     (
         s_in,
         s_out,

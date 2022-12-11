@@ -3,7 +3,7 @@
 #include <jada.hpp>
 
 
-struct d_CD2 : public jada::TiledStencil<d_CD2> {
+struct d_CD2 {
 
     static constexpr size_t padding   = 1;
 
@@ -12,7 +12,7 @@ struct d_CD2 : public jada::TiledStencil<d_CD2> {
     }
 };
 
-struct dd_CD2 : public jada::TiledStencil<dd_CD2>{
+struct dd_CD2{
 
 
     static constexpr size_t padding = 1;

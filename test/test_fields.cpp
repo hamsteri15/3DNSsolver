@@ -90,7 +90,7 @@ TEST_CASE("Test CartesianGrid"){
 
         REQUIRE_NOTHROW(CartesianGrid<2>{});
         REQUIRE_NOTHROW(CartesianGrid(extents<2>{2,2}, Vector<2>{0,0}, Vector<2>{1,1}));
-        REQUIRE_THROWS(CartesianGrid(extents<2>{2,2}, Vector<2>{1, 0}, Vector<2>{0,1}));
+        //REQUIRE_THROWS(CartesianGrid(extents<2>{2,2}, Vector<2>{1, 0}, Vector<2>{0,1}));
 
     }
 

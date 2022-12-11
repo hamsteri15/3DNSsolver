@@ -2,7 +2,7 @@
 
 #include <jada.hpp>
 
-struct Upwind1 : public jada::TiledStencil<Upwind1> {
+struct Upwind1 {
 
     static constexpr size_t padding   = 1;
 

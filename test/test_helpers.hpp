@@ -44,7 +44,7 @@ void assign_shocktube(Euler<N>& eq){
 
         auto ii = jada::tuple_to_array(idx);
 
-        if (std::get<Dir>(idx) < size_t(0.5*dims.extent(Dir))){
+        if (size_t(std::get<Dir>(idx)) < size_t(0.5*dims.extent(Dir))){
 
             rho(ii) = 1.0;
             p(ii) = 1.0;

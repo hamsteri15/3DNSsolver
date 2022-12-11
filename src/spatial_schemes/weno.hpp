@@ -66,7 +66,7 @@ auto weno_right(auto m2, auto m1, auto m0, auto p1, auto p2){
     return w[0] * f0 + w[1] * f1 + w[2] * f2;
 }
 
-struct Weno_left : public jada::TiledStencil<Weno_left>{
+struct Weno_left{
 
     static constexpr size_t padding = 2;
 
@@ -84,7 +84,7 @@ struct Weno_left : public jada::TiledStencil<Weno_left>{
 
 };
 
-struct Weno_right : public jada::TiledStencil<Weno_right>{
+struct Weno_right{
 
     static constexpr size_t padding = 2;
 

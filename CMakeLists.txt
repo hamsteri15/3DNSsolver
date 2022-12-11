@@ -15,6 +15,10 @@ add_library(project_options INTERFACE)
 target_compile_features(project_options INTERFACE cxx_std_20)
 #target_compile_features(project_options INTERFACE cxx_std_20)
 
+find_package(TBB REQUIRED)
+target_link_libraries(project_options INTERFACE TBB::tbb)
+
+
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # Link this 'library' to use the warnings specified in CompilerWarnings.cmake
