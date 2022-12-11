@@ -7,6 +7,7 @@
 #include "fields/scalar_field.hpp"
 #include "spatial_schemes/cd-n.hpp"
 
+#include "equation/boundary_mirror.hpp"
 #include <jada.hpp>
 #include "test_helpers.hpp"
 
@@ -418,7 +419,42 @@ TEST_CASE("Test VolumetricField"){
 
     }
 
+    SECTION("boundary_op_mirror"){
 
+        std::vector<int> v =
+        {
+            0, 2,  3,   0,
+            0, 6,  7,   0,
+            0, 10, 11,  0
+        };
+
+        auto span = make_span(v, std::array<size_t, 2>{3, 4});
+
+        auto op = make_boundary_op_mirror(1);
+
+        auto internal = make_subspan(span, 
+                std::array<index_type, 2>{1,1},
+                std::array<index_type, 2>{2,3}
+                );
+
+        std::array<index_type, 2> dir = {0, 1};
+
+        boundary_apply(internal, dir, op);
+
+        //for_each_boundary_index(dir, dimensions(internal), op);
+        std::vector<int> correct =
+        {
+            0, 2,  3,   0,
+            0, 6,  7,   7,
+            0, 10, 11,  0
+        };
+
+        CHECK(v == correct);
+
+
+
+
+    }
 
     
     

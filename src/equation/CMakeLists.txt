@@ -5,6 +5,7 @@ set(Headers
     ./euler_flux.hpp
     ./equation_of_state.hpp
     ./flux.hpp
+    ./boundary_mirror.hpp
 )
 
 set(Sources
@@ -14,6 +15,7 @@ set(Sources
     ./euler_flux.cpp
     ./equation_of_state.cpp
     ./flux.cpp
+    ./boundary_mirror.cpp
 )
 
 
