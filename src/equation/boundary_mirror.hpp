@@ -16,16 +16,4 @@ static constexpr auto make_boundary_op_mirror(size_t padding){
 
 }
 
-static constexpr void boundary_apply(auto span, auto dir, auto op){
 
-    using namespace jada;
-
-    auto new_op = [=](auto idx){
-        auto handle = idxhandle_boundary_md_to_oned(span, idx, dir);
-        op(handle);
-    };
-
-    for_each_boundary_index(dir, dimensions(span), new_op);
-
-
-}
