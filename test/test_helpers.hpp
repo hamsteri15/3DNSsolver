@@ -82,6 +82,23 @@ void mirror_all(Euler<N>& eq){
 
 }
 
+template <class Span> void print(Span span) {
+
+    using namespace jada;
+
+    if constexpr (rank(span) == 1) {
+
+        for (size_t i = 0; i < span.extent(0); ++i) { std::cout << span(i) << " "; }
+        std::cout << std::endl;
+    } else if constexpr (rank(span) == 2) {
+        for (size_t i = 0; i < span.extent(0); ++i) {
+            for (size_t j = 0; j < span.extent(1); ++j) { std::cout << span(i, j) << " "; }
+            std::cout << std::endl;
+        }
+    } else {
+        throw std::logic_error("Only ranks 1 and 2 spans can be printed");
+    }
+}
 
 template<class Container>
 bool is_unique(const Container& arr){

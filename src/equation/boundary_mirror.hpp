@@ -8,7 +8,7 @@ static constexpr auto make_boundary_op_mirror(size_t padding){
 
     auto op = [=](auto f){
         for (size_t i = 0; i < padding; ++i){
-            f(index_type(i)) = f(-index_type(i));
+            f(index_type(i) + index_type(1)) = f(-index_type(i));
         }
     };
 

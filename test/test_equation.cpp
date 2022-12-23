@@ -17,12 +17,12 @@ using namespace jada;
 
 TEST_CASE("Test boundary_condition"){
 
-    SECTION("mirror"){
+    SECTION("mirror one barrier node"){
         CartesianGrid<2> grid(extents<2>{2,2}, Vector<2>{0,0}, Vector<2>{1,1});
         volScalarField<2> field(grid, extents<2>{1,1});
-        auto op = [](auto f){
-            f(1) = f(0);
-        };
+        
+        auto op = make_boundary_op_mirror(1);
+
 
         field = scalarField
         {
@@ -45,6 +45,43 @@ TEST_CASE("Test boundary_condition"){
         boundary_apply(span, std::array<index_type, 2>{1,0}, op);
         boundary_apply(span, std::array<index_type, 2>{-1,0}, op);
         CHECK(std::vector<scalar>{field.begin(), field.end()} == correct);
+
+    }
+
+    SECTION("mirror two barrier nodes"){
+        CartesianGrid<2> grid(extents<2>{2,2}, Vector<2>{0,0}, Vector<2>{1,1});
+        volScalarField<2> field(grid, extents<2>{2,2});
+        
+        auto op = make_boundary_op_mirror(2);
+
+        scalar X = 0;
+
+        field = scalarField
+        {
+            0,0,X,X,0,0,
+            0,0,X,X,0,0,
+            X,X,1,2,X,X,
+            X,X,3,4,X,X,
+            0,0,X,X,0,0,
+            0,0,X,X,0,0
+        };
+        std::vector<scalar> correct = 
+        {
+            0,0,3,4,0,0,
+            0,0,1,2,0,0,
+            2,1,1,2,2,1,
+            4,3,3,4,4,3,
+            0,0,3,4,0,0,
+            0,0,1,2,0,0
+        };
+
+        auto span = make_internal_span(field);
+        boundary_apply(span, std::array<index_type, 2>{0,1}, op);
+        boundary_apply(span, std::array<index_type, 2>{0,-1}, op);
+        boundary_apply(span, std::array<index_type, 2>{1,0}, op);
+        boundary_apply(span, std::array<index_type, 2>{-1,0}, op);
+        CHECK(std::vector<scalar>{field.begin(), field.end()} == correct);
+
 
     }
 
